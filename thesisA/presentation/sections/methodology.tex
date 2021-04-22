@@ -1,0 +1,44 @@
+\section{Methodology}
+\subsection{Overview}
+\begin{frame}{Overview}
+    \begin{enumerate}
+        \item Establish requirements for actors in the system.
+        \item Formalise authorities in the Hydrogen market as nodes in Fabric.
+        \item Express business logic for actors as `chaincode'.
+        \item Develop a user interface for actors to interact with the
+              blockchain.
+    \end{enumerate}
+\end{frame}
+\subsection{Architecture Methodology}
+\begin{frame}{Architecture Details}
+    \begin{itemize}
+        \item Crash Fault Tolerant consensus algorithm: \textit{Raft}.
+              \begin{itemize}
+                  \item Ensures high throughput transactions.
+              \end{itemize}
+        \item Utilise Fabric channels to keep pricing information related
+              to Hydrogen suppliers confidential.
+        \item API endpoints to interface with the blockchain.
+        \item Web application for users to query and modify the blockchain.
+    \end{itemize}
+\end{frame}
+\subsection{Extensible Contracts}
+\begin{frame}[fragile]{Solidity Example}
+    \begin{lstlisting}[language=Solidity]
+pragma solidity >=0.8.3;
+
+contract Certificate {
+	function purity() constant returns (uint256) {
+	    return ...;
+	}
+}
+contract CarbonIntensity is Certificate {
+	function purity() constant returns (uint256) {
+	    return ...;
+	}
+    function intensity() constant returns (uint256) {
+        return ...;
+    }
+}
+\end{lstlisting}
+\end{frame}

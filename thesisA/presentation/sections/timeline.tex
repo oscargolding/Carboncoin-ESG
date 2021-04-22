@@ -1,0 +1,53 @@
+\section{Timeline}
+\subsection{Current Situation}
+\begin{frame}{Current Progress}
+    \begin{enumerate}
+        \item Problem has been defined.
+        \item Deep-dive on Hyperledger.
+        \item Learning about smart contracts and Fabric's novel approach
+              using `chaincode'.
+        \item Literature review on previous blockchain solutions in the
+              energy market and supply chains employing Hyperledger.
+    \end{enumerate}
+\end{frame}
+\subsection{Research Timeline}
+\begin{frame}{Research Timeline}
+    \begin{adjustbox}{max totalsize={.9\textwidth}{.7\textheight},center}
+        \begin{tikzpicture}[timespan={}]
+
+            \timeline[custom interval=true]{Thesis A, Thesis B, Thesis C}
+
+            % Phases for the project
+            \begin{phases}
+                \initialphase{involvement degree=1.75cm,phase color=black}
+                \phase{between week=1 and 3 in 0.01,involvement degree=2cm}
+                \phase{between week=1 and 2 in 0.4,involvement degree=3cm}
+                \phase{between week=1 and 2 in 1.1,involvement degree=5cm}
+                \phase{between week=2 and 3 in 1.1, involvement degree=6cm}
+            \end{phases}
+
+            % Project milestones 0-360 on the individual phase
+            \addmilestone{at=phase-0.90,direction=90:1cm,
+                text={Initial meeting},
+                text options={above}}
+            \addmilestone{at=phase-0.270,direction=270:1cm,
+                text={Blockchain Patterns},text options={below}}
+            \addmilestone{at=phase-1.240,direction=240:1cm,
+                text={Domain Analysis},text options={below}}
+            \addmilestone{at=phase-2.110,direction=120:1.5cm,
+                text={Investigate Technical Details},text options={above}}
+            \addmilestone{at=phase-2.250,direction=240:1.5cm,
+                text={Literature Review},text options={below}}
+            \addmilestone{at=phase-3.250,direction=240:1.5cm,
+                text={Create Architecture},text options={below}}
+            \addmilestone{at=phase-4.250,direction=240:1.5cm,
+                text={Cretae User Interface},text options={below}}
+            \addmilestone{at=phase-3.75,direction=120:1.5cm,
+                text={Develop Chaincode},text options={above}}
+            \addmilestone{at=phase-4.0035,direction=45:2.5cm,
+                text={Improvements},text options={above}}
+            \addmilestone{at=phase-4.125,direction=45:2.5cm,
+                text={Chain Authorities},text options={above}}
+        \end{tikzpicture}
+    \end{adjustbox}
+\end{frame}

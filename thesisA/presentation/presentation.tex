@@ -1,0 +1,44 @@
+\documentclass{beamer}
+
+% Inputs required
+\input{solidity-highlighting.tex}
+\usepackage{tikz}
+\usepackage{color}
+\usepackage{adjustbox}
+\usetikzlibrary{timeline}
+
+% Settings for the presentation
+\usetheme{Hannover}
+\setbeamerfont{footnote}{size=\tiny}
+
+% Title information
+\title{Blockchain-based payment for supply chains}
+\author[Oscar Golding]
+{\textbf {Oscar Golding
+\texorpdfstring{\\} 
+\footnotesize Supervised by: Sherry Xu, Qinghua Lu}} 
+\institute[UNSW]{Thesis A: UNSW}
+\date{\today}
+
+\begin{document}
+
+% The title page
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% The outline for the presentation
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+% Sections to cover in the report
+\include{sections/introduction}
+
+\include{sections/background}
+
+\include{sections/methodology}
+
+\include{sections/timeline}
+
+\end{document}

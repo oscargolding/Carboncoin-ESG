@@ -1,25 +1,20 @@
 \section{Background}
 \subsection{Economic Rationale}
-\begin{frame}{General Theory}
+\begin{frame}{Economics of Emissions Trading}
     \begin{itemize}
-        \item The level of output is determined by the level of
-              \textit{effective demand}.
-              \begin{enumerate}
-                  \item Effective demand is made volatile by the
-                        presence of investment spending and
-                        \textit{expectations} in the market.
-              \end{enumerate}
-        \item A change in aggregate industrial wide income $Y$ is
-              impacted by a multiplier with investment
-              and savings ($I$ and $S$).
-              \begin{enumerate}
-                  \item $\Delta I \rightarrow \Delta S$.
-              \end{enumerate}
-        \item The government can play a role in spurring \textit{effective
-                  demand} using fiscal tools in the hydrogen market.
+        \item Fix the supply $S$ of carbon in a market. \textit{Ceteris paribus}
+              quantity $Q \downarrow$ and the carbon price $P \uparrow$.
+        \item Increasing popularity: big markets are China ETS and EU ETS.
+        \item Market price for carbon permits set through an auction.
     \end{itemize}
-    \footnotetext[1]{Keynes, John Maynard. 2021. \textit{The General Theory Of
-            Employment, Interest And Money}. London: Palgrave Macmillan.}
+    \begin{figure}
+        \includegraphics[height=0.5\textheight, width=\linewidth,
+            keepaspectratio]{photos/ets.png}
+        \centering
+    \end{figure}
+    \footnotetext[1]{``The World Urgently Needs To Expand Its Use Of Carbon
+        Prices''. 2020. \textit{The Economist}.
+        \url{https://www.economist.com/briefing/2020/05/23/the-world-urgently-needs-to-expand-its-use-of-carbon-prices}}
 \end{frame}
 \begin{frame}{Taxation}
     \begin{itemize}
@@ -33,6 +28,9 @@
               \begin{enumerate}
                   \item Rapidly adjust to `cleaner' equilibria inside a market.
               \end{enumerate}
+        \item Economic support: ``If economists ruled the world, carbon
+              prices would drive most of the action on climate change''
+              - \textit{The Economist}.
     \end{itemize}
 \end{frame}
 \subsection{Hydrogen Certificates}
@@ -46,6 +44,8 @@
                         safety and quality.
               \end{enumerate}
         \item An agent in the blockchain can act as the certification body.
+        \item Producers can \textbf{use} hydrogen certificates in the carbon
+              market to spend carbon tokens.
     \end{itemize}
 \end{frame}
 \subsection{Existing Work in Energy Domain}
@@ -76,18 +76,97 @@
     \footnotetext[1]{``Certifhy''. 2021. \textit{Certifhy.eu}.
         \url{https://www.certifhy.eu/}.}
 \end{frame}
+\begin{frame}{ETS for Industry 4.0}
+    \begin{itemize}
+        \item Khaqqi uses blockchain components to address issues with
+              ETS management and fraud.
+        \item Goal was to improve ETS efficiency and motivate industry
+              participation.
+        \item Uses a reputation system to assist with pricing.
+        \item Used \textit{MultiChain} to implement.
+    \end{itemize}
+    \footnotetext[1]{1Khaqqi, Khamila Nurul, Janusz J. Sikorski, Kunn Hadinoto,
+        and Markus Kraft. 2018. ``Incorporating
+        Seller/Buyer Reputation-Based System In Blockchain-Enabled Emission
+        Trading Application''. Applied
+        Energy 209: 8-19. doi:10.1016/j.apenergy.2017.10.070.}
+\end{frame}
+\begin{frame}{TransActiveGrid}
+    \begin{itemize}
+        \item Blockchain and distributed generation of electricy to create a
+              `point-to-point' trading model.
+        \item Allowed households to sell electricity between each other.
+              \begin{itemize}
+                  \item Reason for the failure of the platform.
+              \end{itemize}
+        \item First energy market based blockchain technology in the world.
+    \end{itemize}
+    \footnotetext[1]{Pan, Yuting, Xiaosong Zhang, Yi Wang, Junhui Yan,
+        Shuonv Zhou, Guanghua Li, and Jiexiong Bao.
+        2019. ``Application Of Blockchain In Carbon Trading''.
+        Energy Procedia 158: 4286-4291.
+        doi:10.1016/j.egypro.2019.01.509.}
+\end{frame}
 \subsection{Blockchain Patterns}
 \begin{frame}{Patterns}
     \begin{itemize}
         \item Token template pattern
         \item Token registry pattern
-        \item Escrow
+        \item Policy contract
     \end{itemize}
     \begin{figure}
         \includegraphics[height=0.5\textheight, width=\linewidth,
             keepaspectratio]{photos/token.png}
         \centering
     \end{figure}
+    \footnotetext[1]{Lu, Qinghua, Xiwei Xu, Dilum Bandara, Shiping Chen,
+        and Liming Zhu. 2021. \\
+        ``Design Patterns For Blockchain-Based Payment Applications''.
+        \textit{ACM}. doi:10.1145/1122445.1122456.\\}
+\end{frame}
+\begin{frame}{Token Patterns}
+    \begin{itemize}
+        \item Have a \textit{Carbon Coin} to represent a permit to
+              emit a certain amount of carbon units (a token).
+        \item \textit{Carbon Coin} is spent or `burned' on using a
+              hydrogen certificate.
+              \begin{itemize}
+                  \item A hydrogen certificate has a level of associated carbon.
+              \end{itemize}
+        \item An authority handles the issuance of tokens to producers of
+              carbon.
+        \item Tokens are able to be purchased in auctions run by an
+              authority (e.g. EU ETS).
+    \end{itemize}
+\end{frame}
+\begin{frame}{Token Derivatives}
+    \begin{itemize}
+        \item To replicate a real emissions trading scheme like EU ETS,
+              individuals can buy and sell derivatives of carbon tokens outside of
+              a centralised authority.
+        \item Financial derivatives are mappable to real tokens allowing
+              producers to emit carbon.
+        \item Optional trading of carbon tokens based on a `carbon reputation'
+              of a buyer/seller.
+    \end{itemize}
+    \footnotetext[1]{Talberg, Anita, and Kai Swoboda. 2013.
+        ``Emissions Trading Schemes Around The World''. Parliament
+        of Australia.
+        \href{https://parlinfo.aph.gov.au/parlInfo/download/library/prspub/2501441/upload_binary/2501441.pdf}
+        {parlinfo.aph.gov.au}.}
+\end{frame}
+\begin{frame}{Policy Contract}
+    \begin{itemize}
+        \item Assumption is that Hydrogen Certificates already exist in the
+              system.
+        \item An example policy is for carbon emissions - a certificate can be
+              provided to spend carbon tokens.
+              \begin{figure}
+                  \includegraphics[height=0.4\textheight, width=\linewidth,
+                      keepaspectratio]{photos/policy.png}
+                  \centering
+              \end{figure}
+    \end{itemize}
     \footnotetext[1]{Lu, Qinghua, Xiwei Xu, Dilum Bandara, Shiping Chen,
         and Liming Zhu. 2021. \\
         ``Design Patterns For Blockchain-Based Payment Applications''.
@@ -152,11 +231,15 @@
 \begin{frame}{Summary}
     \begin{itemize}
         \item The government can use the blockchain to deliver trust and growth
-              in hydrogen energy.
-        \item Smart contracts can be applied for verification of hydrogen
-              quality.
+              in emissions trading.
+        \item Smart contracts can be applied for the buying/recording of
+              emissions in a carbon market for producers.
         \item Previous blockchain energy
               solutions rely on centralised parties
               or use the blockchain to act as an `auction house'.
+        \item Prior attempts disrespect user freedom by assigning a
+              reputation to actors in a carbon market.
+        \item Blockchain has seen recent leaps with high throughput transactions
+              making the technology for a blockchain carbon market feasible.
     \end{itemize}
 \end{frame}

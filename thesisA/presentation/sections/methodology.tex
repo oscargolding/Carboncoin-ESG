@@ -22,6 +22,15 @@
         \item Web application for users to query and modify the blockchain.
     \end{itemize}
 \end{frame}
+\begin{frame}{Certificate Interaction}
+    \begin{itemize}
+        \item An ETS system validates hydrogen certificates with carbon tokens. 
+        \item Trading hydrogen certificates requires approval from ETS.
+    \end{itemize} 
+    \begin{adjustbox}{max totalsize={1.8\textwidth}{.9\textheight},center}
+        \includesvg[inkscapelatex=false]{photos/diagram.svg}
+    \end{adjustbox}
+\end{frame}
 \subsection{Extensible Contracts}
 \begin{frame}[fragile]{Solidity Example}
     \begin{lstlisting}[language=Solidity]
@@ -32,11 +41,11 @@ contract Certificate {
 	    return ...;
 	}
 }
-contract CarbonIntensity is Certificate {
-	function purity() constant returns (uint256) {
-	    return ...;
-	}
-    function intensity() constant returns (uint256) {
+contract ETSProvider {
+    function burnCarbon(Certificate certificate) constant returns (uint256) {
+        return ...;
+    }
+    function placeBid() constant returns (bool) {
         return ...;
     }
 }

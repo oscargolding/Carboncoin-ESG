@@ -171,3 +171,89 @@ are not turing complete. Therefore, it would not be possible to
 express detailed business logic such as the auctioning of tokens
 or custom carbon prices into such an architecture. Simply stated -
 a Bitcoin-based ETS is insufficient for a carbon market.
+
+\subsection{Blockchain-based Smart Grid}
+A more innovative public blockchain, such as Ethereum, has been
+proposed as a system to host local energy markets~\cite{beer}.
+The benefit of using Ehtereum primarily comes from the use of
+a turing-complete Ethereum Virtual Machine allowing for
+the creation of complex smart contracts. Hence, the creation
+of an intricate local energy market becomes possible through a
+distributed programs written in a high level language (such as Solidity) which is then compiled into Etherum bytecode. The
+researchers found the use of Ethereum as a local energy market
+allowed for electricy cost reductions across a
+model scenario~\cite{beer}.
+
+Despite the technical feasibility of developing an ETS on
+Ethereum, the platform is not suitable due to technical limitations.
+The researchers acknowledged that further analysis into the
+suitability of public blockchains for energy markets is
+required~\cite{beer}. Specifically, Ethereum supports a 25 TPS for
+system throughput~\cite{racz}.
+For an active ETS in an emerging industry such
+as hydrogen production, such a low system throughput would do
+damage to the usability and customer satisfaction involved in
+carbon trading. Moreover, Ethereum is being actively developed
+and has planned forks due to a move towards a proof of stake
+consensus algorithm~\cite{pos} - making it unstable
+for a certificate-based ETS requiring customer trust.
+
+\subsection{Reputation-based ETS Blockhain}
+
+Researchers in 2017 proposed the use of a reputation-based
+ETS with a blockchain infrastructure,
+employing a permissioned blockchain to overcome
+the throughput issues asscoiated with public
+blockchain networks~\cite{KHAQQI20188}. The researchers concluded
+that the environment \textit{Multichain} would be a good
+candidate for a blockchain ETS due to its support for
+a system throughput with up to 1000 theoretical TPS~\cite{KHAQQI20188}. Similar to
+previous blockchain carbon markets, the researchers made smart
+meters and the trading of tokens
+central components to the functioning of
+the system - as observed in Figure~\ref{fig:rep}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.37]{photos/reputation.png}
+    \caption{Reputation-based Blockchain ETS}
+    \label{fig:rep}
+\end{figure}
+
+Khaqqi et al believed that the critical element holding back
+the success of a blockchain ETS is the lack of a reputation
+model present in the pricing of carbon tokens. Often,
+markets can increase in quality and therefore grow when there is a way
+to remove systemic information asymmetry~\cite{KHAQQI20188}
+(as an example consider online marketplaces and seller scores).
+Therefore, Khaqqi et al proposed the incorporation of the
+`carbon reputation' of a seller into the pricing of carbon tokens.
+As observerd in Equation~\ref{eqn:pv}, changing the `reputation'
+parameter to factor a seller's carbon emissions can influence the price
+offered to agents buying tokens in the
+ETS blockchain~\cite{KHAQQI20188}.
+
+\begin{equation}
+    \text{PV} =
+    \frac{\text{askingprice}}
+    {\text{reputation} - \text{basedfactor}}
+    \label{eqn:pv}
+\end{equation}
+
+Despite offering a solution with significantly more
+system throughput than both Ethereum and Bitcoin-based offerings
+there has not been a general movement towards
+an ETS with reputation pricing. A weakness of the
+architecture employed by Khaqqi et al is the requirement that
+prices must automatically reflect the `carbon reputation' of
+sellers in the marketplace. Forcing reputation systems
+upon users is disrespecting of user freedom, and
+should be made an option and not a requirement for
+participating in the system. Moreover, as The Economist
+stated - public criticism and politics are key factors holding
+back the success of a carbon market~\cite{EconE}. Hence,
+a system driven by on-chain energy certificates would make
+a blockchain ETS more usable driving long-term adoption of a
+carbon market. Moreover, to garner public support a dividend
+payout from the system to the public/end customers would help in
+getting necessary political support~\cite{EconE}.

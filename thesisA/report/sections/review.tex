@@ -240,20 +240,217 @@ ETS blockchain~\cite{KHAQQI20188}.
     \label{eqn:pv}
 \end{equation}
 
-Despite offering a solution with significantly more
+Despite offering a solution with more
 system throughput than both Ethereum and Bitcoin-based offerings
 there has not been a general movement towards
-an ETS with reputation pricing. A weakness of the
+a carbon market with reputation pricing. A weakness of the
 architecture employed by Khaqqi et al is the requirement that
 prices must automatically reflect the `carbon reputation' of
 sellers in the marketplace. Forcing reputation systems
 upon users is disrespecting of user freedom, and
 should be made an option and not a requirement for
 participating in the system. Moreover, as The Economist
-stated - public criticism and politics are key factors holding
+stated: public criticism and politics are key factors holding
 back the success of a carbon market~\cite{EconE}. Hence,
 a system driven by on-chain energy certificates would make
-a blockchain ETS more usable driving long-term adoption of a
+a blockchain ETS more usable driving longstanding adoption of a
 carbon market. Moreover, to garner public support a dividend
-payout from the system to the public/end customers would help in
+payout from the system to the public and end customers would help in
 getting necessary political support~\cite{EconE}.
+
+\subsection{Hyperledger Carbon Market}
+In 2018 Yuan et al developed a carbon market using the
+permissioned blockchain network Hyperledger Fabric~\cite{article}.
+The researchers identified that a core issue holding back the
+success of existing ETS systems was a lack of trust
+along with data security problems associated with centralised carbon
+markets.
+The researchers determined the Hyperledger project as offering
+a customisable ledger structure well suited to the security
+needs of a distributed carbon market. As such, a simple
+architecture comprising of nodes offering an environmental
+agency, approver, traders and a trading centre was designed. The
+`approver' in the Hyperledger ETS system manually inspects
+projects and allocates permits to allow for access to a `trading
+centre' (as seen in Figure~\ref{fig:htrad}).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.6]{photos/hyptrade.png}
+    \caption{Hyperledger Carbon Market}
+    \label{fig:htrad}
+\end{figure}
+
+The algorithms employed in trading carbon permits are
+trivial by design - the trading mechanism employs a smart contract
+checking the number of permits in the seller's account. If the
+seller has a valid number of permits, then the trade is executed
+and carbon permits are allowed to be traded between market
+participants~\cite{article}. The architecture employs a single
+Hyperledger \textit{channel} allowing for the ordering of transactions
+between both the environmental agency and the trading centre.
+Interaction with the blockchain happens through a HTTP server
+offering RESTful APIs. Within the Hyperledger blockchain there
+are two smart contracts: an application contract (AC) for the
+environmental agency and a trading contract (TC) for emissions
+trading~\cite{article}.
+
+The Hyperledger carbon market's innvoation comes from
+using the new technology of Hyperledger - which offers
+superior TPS performance and architectural modularity. Yuan et al
+were able to get the Hyperledger carbon market to handle
+up to 340 requests per second~\cite{article} - significantly
+more than what the Ethereum blockchain offers. Despite the
+success coming from Hyperledger adoption the proposed system is
+trivial and requires significant manual approval on the
+behalf of a centralised environment agency. A better
+approach would make use of an existing form of automation (such
+as certification) to spend permits. Moreoever, making smart contracts
+more complex through \textit{optional} carbon reputations
+would improve the quality of the market for carbon~\cite{KHAQQI20188}.
+
+\section{Hyperledger}
+The Hyperledger project is an open-source collection of tools and
+frameworks that are created for developing permissioned blockchains.
+A permissioned blockchain contrasts directly with popular
+public blockchains such as Bitcoin and Ethereum: precisely
+because agents on the blockchain are able to be identified.
+The Hyperledger project follows a philosophy of modularity
+and interoperability of the blockchain, meaning the
+vision of Hyperledger is to have blockchains with a pluggable architecture
+that can seamlessly communicate with another Hyperledger blockchain~\cite{hypa}.
+
+\subsection{Hyperledger Fabric}
+One of the most popular Hyperledger frameworks is Hyperledger Fabric:
+a modular and extensible framework for developing blockchain
+applications~\cite{And18}. The primary technological innvoation of
+Fabric is the introduction of a novel `execute-order-validate' paradigm
+for transactions. A `execute-order-validate' architecture means that
+transactions with accompanying smart contracts are first
+executed by peers on the network before being sent to a specified
+ordering service, which broadcasts the transactions amongst the blockchain
+network (as observed in Figure~\ref{fig:exe}).
+The `execute-order' architecture directly contrast with
+Ethereum's `order-execute' approach which requires \textit{active replication}
+of transactions amongst all nodes in the system, thereby making consensus
+difficult to achieve.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{photos/execute.png}
+    \caption{Execute-order Architecture}
+    \label{fig:exe}
+\end{figure}
+
+During the execution phase of Fabric a client creates a \textit{transaction
+    proposal} to send to a collection of endorsers on a specific
+\textit{channel}. The proposal contains an item called \textit{chaincode}
+acting as a program running inside a secured Docker container which has
+the ability to manage and manipulate the state of the ledger.
+A client will collect endorsements from nodes until an
+\textit{endoresement policy} has been satisfied, whereby the transaction
+is then sent to the ordering service. The technological innovation
+associated with the execution phase is the toleration of
+non-determinism in transactions, meaning non-determinism only threatens the
+life of a particular transaction and not consensus on the blockchain.
+The execution phase of Fabric allows for a smart contracts in a
+carbon market to be written
+in a general programming language like Go or Javascript~\cite{And18}.
+
+The ordering phase of Fabric established a `total ordering' of transactions
+on a channel allowing for consensus in the system to be achieved~\cite{And18}.
+Fabric has specific nodes labeled \textit{Ordering Service Nodes} (OSN)
+whose purpose is to order transactions (and not engage in either
+execution or validation of transactions). Along with the OSNs there
+is an accompanying protocol called \textit{gossip} allowing for blocks
+to be distributed efficiently amongst peers on the ledger
+(see Figure~\ref{fig:harch}). Through the separation of ordering to
+specific nodes, Fabric is able to make system consensus modular.
+Hence, a popular consensus algorithm in Fabric is \textit{Raft}: a Crash Fault
+Tolerant (CFT) consensus algorithm. The \textit{Raft} algorithm uses
+a `leader follow' approach where a leader is elected per channel to
+do the ordering of transactions~\cite{raft}. By using Fabric with
+\textit{Raft} as a consensus algorithm a carbon market would be able
+to replicate a theoretical TPS of up to 3420~\cite{And18}. Moreoever,
+such a carbon market would be modular with a modifiable consenus
+algorithm suiting the requirements of market participants.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{photos/hyperarch.png}
+    \caption{Hyperledger Architecture}
+    \label{fig:harch}
+\end{figure}
+
+The final phase of Fabric is the validation phase whereby
+\textit{validation system chaincode} is run by nodes to check the
+validity of transactions~\cite{And18}. As part of the
+validation phase a check is
+performed to determine if the endorsement policy for transaction
+chaincode is satisfied.
+Due to the enterprise focus of Hyperledger, transactions that
+are determined as \textit{invalid} are persisted to the ledger to allow
+for easier auditing of transaction. The validation phase of Hyperledger
+fosters trust in a carbon market by ensuring market fraud is persisted to the
+blockchain and caught in subsequent audits on the state of the ledger.
+
+\section{Problem Statement}
+
+The success of the long-term adoption of a blockchain-based carbon
+market is reliant on the trust market patiticpants place into the
+system. Previous blockchain carbon markets have been held back by
+inefficient implementations with low system throughput - such as
+the bitcoin-based emissions trading scheme~\cite{vic15}. Often, when
+more innovative blockchain architectures are researched for carbon markets
+they come coupled with features such as `reputation' pricing that
+participants may want to opt-out of~\cite{KHAQQI20188}. Within the
+literature for carbon markets, there is a need for a solution that is
+both easy-to-use whilst also respecting of the freedom of participants.
+
+I suggest a new approach to carbon markets with energy certificates.
+Instead of relying on manual permit approvals, I suggest a novel approach
+to carbon markets where producers of carbon can automatically consume
+carbon tokens through the use of energy certificates. I will motivate
+my certificate-driven carbon market with the use of on-chain
+hydrogen certificates. Consuming carbon tokens will therefore become
+a natural part of the lifecycle of a hydrogen certificate. Such a
+carbon market has the objective of rapidly incentivising the use of
+cleaner sources of hydrogen energy.
+
+To encourage adoption of the carbon market, I will use the high throughput
+blockchain Hyperledger Fabric. Hyperledger offers a permissioned
+blockchain allowing for hydrogen producers to be identified when consuming
+carbon tokens. Moreoever, I will provide the option for buyers of
+carbon tokens to filter prices according to the carbon reputation of
+sellers, thereby encouraging the ethical exchange of carbon tokens.
+In a further bid to encourage adoption, the system will be designed to
+distribute all proceeds back to the public.
+
+\section{Aims and Outcomes}
+
+This thesis aims to use on-chain hydrogen energy certificates to
+outline how carbon markets can be efficiently run using a blockchain.
+I propose an implementation of a carbon market using Hyperledger
+Fabric, with the assumption that an already existing
+certification scheme exists. Developed alongside the carbon
+market blockchain will be a front-end to allow for the
+exchange of carbon tokens between market participants.
+
+The outcome of the thesis is a blockchain application with an architecture
+performing the automatic spending of carbon tokens using hydrogen
+energy certificates. The application is intended to be used by
+producers of hydrogen energy who are seeking to buy and sell carbon
+tokens to deal with an associated level of emissions resulting from
+hydrogen production.
+
+The primary outcomes are listed below:
+\begin{enumerate}
+    \item Ability to purchase carbon tokens from other hydrogen producers.
+    \item Ability to sell carbon tokens to other hydrogen producers.
+    \item Ability to view hydrogen certificates requiring payment with
+          carbon tokens.
+    \item Ability to filter token sale offers based on the `carbon reputation'
+          of a hydrogen producer.
+    \item Creation of a front-end for a seller to interact with a carbon
+          market.
+\end{enumerate}

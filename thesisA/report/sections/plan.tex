@@ -1,1 +1,207 @@
 \chapter{Project Plan}\label{ch:plan}
+The decomposition of the project can be
+divided into three parts:
+a user interface for interacting with the
+carbon market, a \textit{RESTful} HTTP server for
+interfacing with Fabric and smart contracts on the
+blockchain. An observation of Figure~\ref{fig:arch} details
+how the certificate-based carbon market operates from a
+high-level overview.
+
+\begin{figure}[ht]
+    \centering
+    \begin{adjustbox}{max totalsize={2.1\textwidth}{1\textheight},center}
+        \includesvg[inkscapelatex=false]{photos/arch.svg}
+    \end{adjustbox}
+    \caption{Certificate-based Carbon Market Architecture}
+    \label{fig:arch}
+\end{figure}
+
+\section{Smart Contracts}
+The smart contract component in the Fabric blockchain will
+make extensive use of the following architectural
+patterns: token template, token registry, policy contract
+and burned token~\cite{patterns}. The token template pattern
+will allow for the creation of a \textit{Carbon Token} which
+is transferred between hydrogen producers who are looking
+to purchase and sell tokens. The burned token pattern will
+allow for tokens to be burned upon supplying a hydrogen
+certificate. After the token is burned, the on-chain
+smart contract for the emissions trading scheme marks
+the particular certificate as `spent'. Token
+registry will track which individuals have ownership of
+particular tokens and will allow tokens to be transferred
+between different owners. The token policy pattern
+specifies how the associated level of hydrogen attached to
+a hydrogen certificate is spent on carbon tokens within
+the on-chain emissions trading contract.
+
+\subsection{Token Transfers}
+Hydrogen producers will be allowed to transfer tokens
+between each other at an agreed price. The market
+for transferring tokens will operate through a producer
+creating an offer for the sale of a quantity of tokens
+at a given price per token. A hydrogen producer looking
+to purchase more tokens will purchase a number of tokens from
+the seller at a given quantity. As observed in
+Algorithm~\ref{alg:offer}, the purchaser of tokens
+has the ability to consume a certain number of tokens from
+an offer at an agreed upon price per token.
+
+\begin{algorithm}
+    \caption{Offer Acceptance}
+    \begin{algorithmic}[1]
+        \Procedure{AcceptOffer}{\textit{sellerId}, \textit{buyerId},
+            \textit{offerId}, \textit{price}}
+        \State let tS be \textit{tokens(sellerId)}
+        \State let price be \textit{getOfferPrice(offerId)}
+        \If{quantity $>$ tS}
+        reject
+        \EndIf
+        \If{\textit{!hasFunds(buyerId, quantity, price)}}
+        reject
+        \EndIf
+        \State \textit{swapTokens(buyerId, sellerId, quantity)}
+        \EndProcedure
+    \end{algorithmic}
+    \label{alg:offer}
+\end{algorithm}
+
+\subsection{Token Burning}
+The user can submit a hydrogen certificate to the
+on-chain emission trading scheme smart contract. The smart-contract will check if the hydrogen certificate
+has previously been supplied to the system. If the
+certificate has not been submitted, then the smart-contract
+maps the emissions in the certificate to the carbon tokens
+contained inside the hydrogen producers carbon account. If the
+user has a sufficient number of carbon tokens, then the tokens
+will be subtracted from the account balance and `burned'.
+
+\subsection{Direct Token Purchases}
+The user will be allowed to purchase tokens from the
+emissions trading scheme smart contract. Recently, literature
+has been proposed allowing for the
+construction of a game-theoretic approach to
+pricing within blockchain energy markets~\cite{JIANG2020115239}.
+The economic intution behind the pricing model is the
+construction of a \textit{Stackelberg Competition} environment
+where consumers continually outbid another until
+equilibrium is achieved. Since the aim of the thesis
+is the technical implementation of an emissions trading
+blockchain, such a pricing feature would be out of scope.
+Initially, users will be allowed to purchase tokens from the
+emissions trading smart contract at a set price. As a
+stretch goal, an auction environment will be constructed
+allowing for a \textit{Stackelberg} competition
+environment.
+
+\section{HTTP Server}
+The HTTP server will provide API endpoints to interface
+with the Fabric blockchain. The Fabric SDK will be
+extensively used on the API layer. The server will
+employ the \textit{express} JavaScript framework
+for \textit{Node.js}. The use-case for an HTTP Server
+comes from the requirement for a user-interface to
+interact with the Fabric blockchain.
+
+\section{User Interface}
+The user interface will allow for hydrogen energy producers
+to interact with the Fabric blockchain to
+purchase, sell and spend carbon tokens. The
+user interface will be created using Facebook's
+\textit{React} framework for use in browsers on a
+mobile or desktop device. A collection of epic
+user stories are supplied in Table~\ref{tab:estories}.
+Epic user stories number one to seven are considered
+fundamental to the aims and outcomes of the project.
+Epic user story number eight allows for the creation of
+an auction environment for the purchasing of carbon
+tokens at a low price from the carbon token authority,
+and will be a stretch goal for the thesis.
+
+\begin{table}[ht]
+    \centering
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{|l|l|l|}
+            \hline
+            \textbf{No} & \textbf{Epic User Story}   & \textbf{Description}       \\ \hline
+            1           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to directly \\ purchase more carbon tokens to emit more carbon.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}A producer wants to purchase tokens \\ directly from the emissions trading \\ scheme.\end{tabular}  \\ \hline
+            2           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to sell \\ carbon tokens on a secondary market to remove\\ excess carbon token resources.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}A producer wants to sell excess tokens \\ on a secondary market.\end{tabular}  \\ \hline
+            3           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to \\ purchase carbon tokens from a token sale offer\\ to emit carbon more cost-efficiently.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}A producer wants to purchase carbon \\ tokens - preferably at a price \\ cheaper than what is offered \\ on the primary market.\end{tabular}  \\ \hline
+            4           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to spend \\ carbon tokens on energy certificates to \\ meet my environmental commitments.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}Spend carbon tokens on energy \\ certificates - allows a producer \\ to subsequently trade the \\ hydrogen asset in a commodity market.\end{tabular} \\ \hline
+            5           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to \\ view all hydrogen sale offers to find the \\ most cost-efficient offer.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Producer wants to find the most \\ cost-efficient carbon sale offer.\end{tabular} \\ \hline
+            6           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to observe\\ the number of carbon tokens inside my account \\ so I can plan for future Hydrogen production.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Hydrogen producer would like to \\ view the number of tokens to plan for \\ future production.\end{tabular} \\ \hline
+            7           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to filter \\ carbon sale offers based on carbon reputation \\ to find the most environmentally friendly \\ offers.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Environmentally conscious\\ producer wants to filter offers \\ according to the carbon \\ reputation of sellers.\end{tabular} \\ \hline
+            8           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to bid \\ in a carbon token auction to find low \\ prices for carbon emissions.\end{tabular} & \begin{tabular}[c]{@{}l@{}}An auction will be offered for \\ producers to purchase tokens at \\ timed intervals - mechanism of \\ adding carbon token inflation.\end{tabular} \\ \hline
+        \end{tabular}
+    }
+    \caption{Epic User Stories for Producer Interaction}
+    \label{tab:estories}
+\end{table}
+
+\section{Deployment}
+Deployment of the application is suitable for a cloud
+provider offering technical solutions for blockchain applications.
+Amazon Web Services (AWS) offers a product called
+\textit{Blockchain on AWS} allowing for the deployment
+of permissioned blockchains (including Hyperledger Fabric)
+on high-performance compute environments. Moreoever, the AWS
+service \textit{Amplify} would allow for the hosting of
+the user interface for Hydrogen producers to interact with the
+Fabric blockchain. The HTTP server would be suitable for
+running on an AWS service such as \textit{Lambda} or
+\textit{EC2} depending on the scale of growth in the
+hydrogen production market. The load-balancing features of
+\textit{EC2} would help to deal with a rapidly growing
+hydrogen market, with an unknown number of participants.
+
+\section{Thesis Timeline}
+The thesis timeline outlined in Table~\ref{tab:timeline}
+shows the sequential nature of project. The primary
+step, which also consumes the most effort will be smart
+contract programming using Hyperledger Fabric. The smart
+contracts will be programmed using JavaScript, thereby
+unifying the entire technical stack under a single programming
+lanaguage. I have undertaken research into Hyperledger
+Fabric and installed the \textit{fabric samples} on my
+development machine. The effort estimation for smart
+contract programming is high due to the work involved in
+understanding the Fabric SDK and the relevant libraries
+for getting \textit{chaincode} to execute on Fabric.
+My approach for completing the implementation of the thesis
+is to focus on the low-level technicalities first: the completion of the \textit{express} API happens
+after the \textit{chaincode} for the carbon market is
+constructed. The smart contract programming will take
+up to six weeks as a result of the learning curve
+associated with Fabric. The API construction will take
+up to three weeks to achieve, since I have some experience
+with the \textit{express} framework. The construction of the
+user interface for the carbon market will take a further three
+weeks, as I also have experience with the creation of
+applications using \textit{React}. Any time remaining will
+be spent on making improvements to the system along with the
+attempting of stretch goals related to blockchain pricing models.
+\begin{table}[ht]
+    \centering
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{|l|l|l|l|}
+            \hline
+            Week & Thesis A                                              & Thesis B                                           & Thesis C                                            \\ \hline
+            1    &                                                       & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            2    &                                                       & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            3    & \cellcolor[HTML]{9B9B9B}Blockchain patterns           & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            4    & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{9B9B9B}Smart contract programming & \cellcolor[HTML]{9B9B9B}User interface finalisation \\ \hline
+            5    & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            6    & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            7    & \cellcolor[HTML]{9B9B9B}Ethereum Auction Example      & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{9B9B9B}\begin{tabular}[c]{@{}l@{}}Improvements and \\ stretch goal\end{tabular}  \\ \hline
+            8    & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{9B9B9B}API construction           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            9    & \cellcolor[HTML]{9B9B9B}Problem domain and definition & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            10   & \cellcolor[HTML]{9B9B9B}Literature Review             & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            11   & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            12   & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+            13   & \cellcolor[HTML]{C0C0C0}                              & \cellcolor[HTML]{C0C0C0}                           & \cellcolor[HTML]{C0C0C0}                            \\ \hline
+        \end{tabular}
+    }
+    \caption{Timeline for Thesis}
+    \label{tab:timeline}
+\end{table}

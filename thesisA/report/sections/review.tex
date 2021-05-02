@@ -1,4 +1,5 @@
 \chapter{Literature Review}\label{ch:review}
+
 \section{Brief Background}
 The pricing of carbon emissions is a policy tool where emitters must pay
 for carbon usage - thereby disincentivising reliance of unclean source of
@@ -25,7 +26,7 @@ tonne~\cite{EconE}.
 As of 2020, the existing median price per tonne of carbon emissions is
 only \$15~\cite{EconE}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
     \includegraphics[scale=0.2]{photos/ets.png}
     \caption{Largest Emissions Trading Schemes}
@@ -77,7 +78,7 @@ is not being emitted. As of 2020, there are eight international
 hydrogen standards (see Table~\ref{tab:standards})
 defining features such as safety and quality~\cite{stan}.
 
-\begin{table}[H]
+\begin{table}[ht]
     \centering
     \begin{tabular}{|l|l|}
         \hline
@@ -94,6 +95,7 @@ defining features such as safety and quality~\cite{stan}.
     \caption{International Hydrogen Standards}
     \label{tab:standards}
 \end{table}
+
 To help develop standards, centralised certification authorities
 are being developed to act as certification schemes for hydrogen.
 One of the most popular such schemes is CertifHy - a European
@@ -119,7 +121,7 @@ assumption that such a rigorous certification scheme exists, and will
 outline how an ETS can be constructed to
 make use of certificates created by producers thereby pricing carbon.
 
-\section{Blockchain Emission Trading Schemes}
+\section{Academic Blockchain Emission Trading Schemes}
 \subsection{Bitcoin-based ETS}
 An early adoption of blockchain carbon pricing was the
 creation of a bitcoin-based emissions trading infrastructure model
@@ -136,7 +138,7 @@ authors as an appropriate solution to the shortcomings of
 the large ETS schemes.
 
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
     \includegraphics[scale=0.38]{photos/bitcoin.png}
     \caption{Bitcoin-based ETS}
@@ -213,7 +215,7 @@ meters and the trading of tokens
 central components to the functioning of
 the system - as observed in Figure~\ref{fig:rep}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
     \includegraphics[scale=0.37]{photos/reputation.png}
     \caption{Reputation-based Blockchain ETS}
@@ -309,6 +311,42 @@ as certification) to spend permits. Moreoever, making smart contracts
 more complex through \textit{optional} carbon reputations
 would improve the quality of the market for carbon~\cite{KHAQQI20188}.
 
+\section{Enterprise Energy Markets}
+
+\subsection{PowerLedger}
+
+PowerLedger is a private energy company based in Australia
+who launched a blockchain microgrid in 2016. The company is
+Australia's first peer-to-peer energy trading network~\cite{power}. PowerLedger allows for access to the
+energy market using a \textit{POWR} token, which provides
+electrical units (in kWh) and market pricing
+mechanisms. \textit{POWR} tokens are subsequently
+escrowed for a \textit{Spark} token to access the
+PowerLedger ecosystem. PowerLedger provides a public
+blockchain layer built using Ethereum for
+coin markets which links to PowerLedger's private
+permissioned blockchain~\cite{power}.
+
+PowerLedger offers a pragmatic solution to energy markets.
+PowerLedger highlights how trust can be delivered to
+an energy market hosting a consortium of energy sources.
+Although not driven by energy certification, PowerLedger
+demonstrates the technical feasibility of
+a blockchain for energy in a diverse and growing market.
+
+\subsection{SOLShare}
+
+SOLShare is a blockchain-based energy market
+for Bangladesh. The blockchain offers an effective solution
+due to the presence of over four million
+rooftop panels and batteries powering the electricity grid of
+Bangladesh~\cite{powersol}. The platform requires
+a proprietary technology called a \textit{SOLBox} allowing for
+a user to either sell or buy electricity. SOLShare
+provides a motivating example of an energy
+blockchain application delivering value and trust to
+hundreds of customers~\cite{powersol}.
+
 \section{Hyperledger}
 The Hyperledger project is an open-source collection of tools and
 frameworks that are created for developing permissioned blockchains.
@@ -335,7 +373,7 @@ Ethereum's `order-execute' approach which requires \textit{active replication}
 of transactions amongst all nodes in the system, thereby making consensus
 difficult to achieve.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
     \includegraphics[scale=0.5]{photos/execute.png}
     \caption{Execute-order Architecture}
@@ -375,9 +413,9 @@ to replicate a theoretical TPS of up to 3420~\cite{And18}. Moreoever,
 such a carbon market would be modular with a modifiable consenus
 algorithm suiting the requirements of market participants.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
-    \includegraphics[scale=0.5]{photos/hyperarch.png}
+    \includegraphics[scale=0.4]{photos/hyperarch.png}
     \caption{Hyperledger Architecture}
     \label{fig:harch}
 \end{figure}
@@ -417,14 +455,12 @@ a natural part of the lifecycle of a hydrogen certificate. Such a
 carbon market has the objective of rapidly incentivising the use of
 cleaner sources of hydrogen energy.
 
-To encourage adoption of the carbon market, I will use the high throughput
+To encourage transparency in carbon markets, I will use the high throughput
 blockchain Hyperledger Fabric. Hyperledger offers a permissioned
 blockchain allowing for hydrogen producers to be identified when consuming
 carbon tokens. Moreoever, I will provide the option for buyers of
 carbon tokens to filter prices according to the carbon reputation of
 sellers, thereby encouraging the ethical exchange of carbon tokens.
-In a further bid to encourage adoption, the system will be designed to
-distribute all proceeds back to the public.
 
 \section{Aims and Outcomes}
 
@@ -433,7 +469,7 @@ outline how carbon markets can be efficiently run using a blockchain.
 I propose an implementation of a carbon market using Hyperledger
 Fabric, with the assumption that an already existing
 certification scheme exists. Developed alongside the carbon
-market blockchain will be a front-end to allow for the
+market blockchain will be a user interface to allow for the
 exchange of carbon tokens between market participants.
 
 The outcome of the thesis is a blockchain application with an architecture
@@ -441,7 +477,11 @@ performing the automatic spending of carbon tokens using hydrogen
 energy certificates. The application is intended to be used by
 producers of hydrogen energy who are seeking to buy and sell carbon
 tokens to deal with an associated level of emissions resulting from
-hydrogen production.
+hydrogen production. The aim of the thesis is not
+to solve the economic problem of developing an efficient
+market for carbon - instead the technical feasibility of
+a blockchain carbon market employing energy
+certificates is explored.
 
 The primary outcomes are listed below:
 \begin{enumerate}
@@ -451,6 +491,6 @@ The primary outcomes are listed below:
           carbon tokens.
     \item Ability to filter token sale offers based on the `carbon reputation'
           of a hydrogen producer.
-    \item Creation of a front-end for a seller to interact with a carbon
+    \item Creation of a user interface for a seller to interact with a carbon
           market.
 \end{enumerate}

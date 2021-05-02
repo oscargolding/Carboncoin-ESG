@@ -1,1 +1,99 @@
 \chapter{Project Dependent Preparations}\label{ch:prep}
+An observation of Table~\ref{tab:technology} shows the
+libraries and frameworks I propose to use for creating the
+carbon market. My competency with the frameworks outside of
+Hyperledger Fabric are high.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \multicolumn{2}{|l|}{\textbf{User Interface}}                   \\ \hline
+        Library            & Use Case                                   \\ \hline
+        React.js           & \begin{tabular}[c]{@{}l@{}}Component and state drive JavaScript library for \\ making user interfaces.\end{tabular}                  \\ \hline
+        Material UI        & Component library.                         \\ \hline
+        React Router       & Navigational components.                   \\ \hline
+        Styled Components  & CSS in JavaScript.                         \\ \hline
+        Cypress            & Integration testing for user interfaces.   \\ \hline
+        \multicolumn{2}{|l|}{\textbf{API Layer}}                        \\ \hline
+        Library            & Use Case                                   \\ \hline
+        DynamoDB           & NoSQL database for storing off-chain data. \\ \hline
+        Express            & Back end framework for Node.               \\ \hline
+        \multicolumn{2}{|l|}{\textbf{Smart Contract Layer}}             \\ \hline
+        Library            & Use Case                                   \\ \hline
+        Hyperledger Fabric & \begin{tabular}[c]{@{}l@{}}Modular and interoperable framework for \\ making permissioned blockchains. Smart contracts\\ will be written in JavaScript.\end{tabular}                  \\ \hline
+    \end{tabular}
+    \caption{Technologies Used}
+    \label{tab:technology}
+\end{table}
+Throughout Thesis A, I have undertaken a
+deep-dive into Hyperledger Fabric in an attempt to better understand
+its novel approach to smart-contract programming. I have analysed the
+white papers for Hyperledger and understand the philosophy and
+technological theory behind the framework. Parallel to doing
+Thesis A I have done a deep-dive on blockchain technologies and
+smart-contract programming on the Ethereum blockchain.
+Although not a primary aim of this thesis, I have analysed
+the economics of emission trading schemes and the difficulties
+in encouraging long-term adoption of a carbon market.
+
+\section{Preliminary Token Auctions}
+To better understand auction applications on the blockchain, I
+created a collection of Ethereum smart contracts for auctioning
+underlying assets. Although my thesis
+will not be making use of Ethereum or the Solidity programming
+language, I thought the exercise would be useful
+in providing an instruction on `event-driven' programming and
+the performance of smart-contracts. The motivating example
+was allowing students to bid for classes at university.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{||c c c ||}
+        \hline
+        No & Operation                   & Gas Cost \\ [0.5ex]
+        \hline\hline
+        1  & Add Admin                   & 43755    \\
+        \hline
+        2  & Add Lecturer                & 43893    \\
+        \hline
+        3  & Add Student                 & 43826    \\
+        \hline
+        4  & Add Transactor              & 43766    \\
+        \hline
+        5  & Transactor Token Transfer   & 23969    \\
+        \hline
+        6  & Set UOC Fee                 & 42536    \\
+        \hline
+        7  & Set Round Deadline          & 116664   \\
+        \hline
+        8  & Make Course                 & 2850856  \\
+        \hline
+        9  & Set Quota                   & 43642    \\
+        \hline
+        10 & Set Prerequisite for Course & 75069    \\
+        \hline
+        11 & Place Bid                   & 184511   \\
+        \hline
+        12 & Give Student Prerequisite   & 51786    \\ [1ex]
+        \hline
+    \end{tabular}
+    \caption{Gas Cost for University}
+    \label{tab:gascost}
+\end{table}
+
+An observation of Table~\ref{tab:gascost} shows the cost of
+driving an auction on the blockchain comes from placing a bid
+- an action costing up to 184,511 gas. The
+example shows the difficulty in efficiently creating an auction
+environment on the blockchain with an arbitrary number $n$ of bidders.
+Using my research into pricing assets using blockchain tokens
+with an auction, I decided to make the suggested model of an auction
+for pricing
+in Jiang et al a stretch goal for the project and not a primary aim.
+The focus of the thesis is the creation of an emissions trading application
+using Hydrogen certificates as a motivating example, and not the
+efficient pricing of assets on a blockchain. Time permitting, I
+will implement economically efficient pricing for carbon tokens
+using an auctioning mechanism
+similar to the application I created for Ethereum.

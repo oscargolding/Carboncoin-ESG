@@ -35,11 +35,11 @@ only \$15~\cite{EconE}.
 
 Carbon prices are open to government manipulation from centralised
 authorities and are often the subject of heated debates. An example
-was the `axe the tax' campaign resulted in the abolishment of
+was the `axe the tax' campaign resulting in the abolishment of
 the Australian ETS in 2014~\cite{EconE}. Moreoever, there is often
 debate over where the money associated with carbon prices will go
 - particularly in the case where an auction for carbon credits occurs.
-If money raised from an ETS is used to lower taxes elsewhere then
+If money raised from an ETS is used to lower taxes elsewhere in the economy then
 opponents on the left of politics accuse the policy of not actively
 fighting climate change. Generally, opponents on the right accuse carbon
 prices of stifling economic growth - an example of an unecessary
@@ -118,8 +118,8 @@ the on-chain ETS - then due to the immutability and openness of the
 blockchain such a certificate could be marked as not valid for
 trading inside a commodity-market. This thesis will make the
 assumption that such a rigorous certification scheme exists, and will
-outline how an ETS can be constructed to
-make use of certificates created by producers thereby pricing carbon.
+outline the technical details of a carbon market using energy certification
+to place a price on carbon.
 
 \section{Academic Blockchain Emission Trading Schemes}
 \subsection{Bitcoin-based ETS}
@@ -225,7 +225,7 @@ the system - as observed in Figure~\ref{fig:rep}.
 Khaqqi et al believed that the critical element holding back
 the success of a blockchain ETS is the lack of a reputation
 model present in the pricing of carbon tokens. Often,
-markets can increase in quality and therefore grow when there is a way
+markets can increase in quality, and grow when there is a way
 to remove systemic information asymmetry~\cite{KHAQQI20188}
 (as an example consider online marketplaces and seller scores).
 Therefore, Khaqqi et al proposed the incorporation of the
@@ -253,12 +253,10 @@ upon users is disrespecting of user freedom, and
 should be made an option and not a requirement for
 participating in the system. Moreover, as The Economist
 stated: public criticism and politics are key factors holding
-back the success of a carbon market~\cite{EconE}. Hence,
-a system driven by on-chain energy certificates would make
-a blockchain ETS more usable driving longstanding adoption of a
-carbon market. Moreover, to garner public support a dividend
-payout from the system to the public and end customers would help in
-getting necessary political support~\cite{EconE}.
+back the success of a carbon market~\cite{EconE}.
+The simplicity of energy certification could be
+combined with \textit{optional} reputation pricing to deliver satisfaction
+amongst producers.
 
 \subsection{Hyperledger Carbon Market}
 In 2018 Yuan et al developed a carbon market using the
@@ -271,7 +269,7 @@ The researchers determined the Hyperledger project as offering
 a customisable ledger structure well suited to the security
 needs of a distributed carbon market. As such, a simple
 architecture comprising of nodes offering an environmental
-agency, approver, traders and a trading centre was designed. The
+agency, permit approver, traders and a trading centre was designed. The
 `approver' in the Hyperledger ETS system manually inspects
 projects and allocates permits to allow for access to a `trading
 centre' (as seen in Figure~\ref{fig:htrad}).
@@ -431,6 +429,8 @@ are determined as \textit{invalid} are persisted to the ledger to allow
 for easier auditing of transaction. The validation phase of Hyperledger
 fosters trust in a carbon market by ensuring market fraud is persisted to the
 blockchain and caught in subsequent audits on the state of the ledger.
+Potential fraud in a carbon market would be persisted to the ledger
+and caught on audits of the blockchain.
 
 \section{Problem Statement}
 

@@ -6,7 +6,9 @@ carbon market, a \textit{RESTful} HTTP server for
 interfacing with Fabric and smart contracts on the
 blockchain. An observation of Figure~\ref{fig:arch} details
 how the certificate-based carbon market operates from a
-high-level overview.
+high-level overview. On deployment, the HTTP server will be replicated
+across different regions with \textit{load balancing} enabled to avoid
+a single point of failure.
 
 \begin{figure}[ht]
     \centering
@@ -48,7 +50,7 @@ Algorithm~\ref{alg:offer}, the purchaser of tokens
 has the ability to consume a certain number of tokens from
 an offer at an agreed upon price per token.
 
-\begin{algorithm}
+\begin{algorithm}[ht]
     \caption{Offer Acceptance}
     \begin{algorithmic}[1]
         \Procedure{AcceptOffer}{\textit{sellerId}, \textit{buyerId},
@@ -77,6 +79,25 @@ maps the emissions in the certificate to the carbon tokens
 contained inside the hydrogen producers carbon account. If the
 user has a sufficient number of carbon tokens, then the tokens
 will be subtracted from the account balance and `burned'.
+Algorithm~\ref{alg:burn} gives an outline of how token supply is
+removed from the ETS smart contract when using a hydrogen energy
+certificate to `spend' carbon tokens.
+
+\begin{algorithm}[ht]
+    \caption{Token Burning}
+    \begin{algorithmic}[1]
+        \Procedure{ConsumeCertificate}{\textit{certificateId}, \textit{userId}}
+        \State let tS be \textit{tokens(userId)}
+        \State let certificate be \textit{getCertificate(certificateId)}
+        \State let carbonUsage be \textit{carbonToToken(certificate.carbon)}
+        \If{tS $<$ carbonUsage}
+        reject
+        \EndIf
+        \State \textit{burnTokens(userId, carbonUsage)}
+        \EndProcedure
+    \end{algorithmic}
+    \label{alg:burn}
+\end{algorithm}
 
 \subsection{Direct Token Purchases}
 The user will be allowed to purchase tokens from the
@@ -129,7 +150,7 @@ and will be a stretch goal for the thesis.
             1           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to directly \\ purchase more carbon tokens to emit more carbon.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}A producer wants to purchase tokens \\ directly from the emissions trading \\ scheme.\end{tabular}  \\ \hline
             2           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to sell \\ carbon tokens on a secondary market to remove\\ excess carbon token resources.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}A producer wants to sell excess tokens \\ on a secondary market.\end{tabular}  \\ \hline
             3           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to \\ purchase carbon tokens from a token sale offer\\ to emit carbon more cost-efficiently.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}A producer wants to purchase carbon \\ tokens - preferably at a price \\ cheaper than what is offered \\ on the primary market.\end{tabular}  \\ \hline
-            4           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to spend \\ carbon tokens on energy certificates to \\ meet my environmental commitments.\end{tabular}  & \begin{tabular}[c]{@{}l@{}}Spend carbon tokens on energy \\ certificates - allows a producer \\ to subsequently trade the \\ hydrogen asset in a commodity market.\end{tabular} \\ \hline
+            4           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to spend \\ carbon tokens on energy certificates to \\ meet my environmental commitments.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Spend carbon tokens on energy \\ certificates - allows a producer \\ to subsequently trade the \\ hydrogen asset in a commodity market.\end{tabular} \\ \hline
             5           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to \\ view all hydrogen sale offers to find the \\ most cost-efficient offer.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Producer wants to find the most \\ cost-efficient carbon sale offer.\end{tabular} \\ \hline
             6           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to observe\\ the number of carbon tokens inside my account \\ so I can plan for future Hydrogen production.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Hydrogen producer would like to \\ view the number of tokens to plan for \\ future production.\end{tabular} \\ \hline
             7           & \begin{tabular}[c]{@{}l@{}}As a hydrogen producer, I would like to filter \\ carbon sale offers based on carbon reputation \\ to find the most environmentally friendly \\ offers.\end{tabular} & \begin{tabular}[c]{@{}l@{}}Environmentally conscious\\ producer wants to filter offers \\ according to the carbon \\ reputation of sellers.\end{tabular} \\ \hline

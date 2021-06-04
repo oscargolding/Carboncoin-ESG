@@ -1,0 +1,38 @@
+@startuml CarbonMarket
+left to right direction
+actor "Hydrogen Producer" as hp
+actor "Market Administrator" as ma
+:Hyrdogen Certifier: as BlockCert << Blockchain Application >>
+package "Carbon Market" {
+  usecase "Direct Token Purchase" as UC1
+  usecase "Set Price Per Token" as UC2
+  usecase "Sell Carbon Tokens" as UC3
+  usecase "View Market Token Offers" as UC4
+  usecase "View Unspent Hydrogen Certificates" as UC5
+  usecase "View Token Balance" as UC6
+  usecase "Set Quantity Offered" as UC7
+  usecase "Set Price Per Token" as UC8
+  usecase "Filter on Seller Carbon Reputation" as UC9
+  usecase UC10 as "Purchase Tokens from Offer"
+  usecase UC11 as "Specify Quantity to Purchase"
+  usecase UC12 as "Submit Certificate"
+  usecase UC13 as "Deduct Tokens"
+  usecase UC14 as "Filter on Price Per Token"
+  usecase UC15 as "Specifiy Quantity"
+  (UC3) .> (UC7) : include
+  (UC3) .l.> (UC8) : include
+  (UC4) .> (UC9) : extends
+  (UC4) .l.> (UC10) : extends
+  (UC4) .down.> (UC14) : extends
+  (UC10) .l.> (UC11) : include
+  (UC12) .r.> (UC13) : include
+  (UC1) .down.> (UC15) : include
+}
+hp --> UC1
+hp --> UC3
+hp --> UC4
+hp --> UC5
+hp --> UC6
+ma --> UC2
+BlockCert --> UC12
+@enduml

@@ -1,0 +1,14 @@
+@startuml Token
+
+(*) -right-> "Issue Carbon Token"
+note top: Token Template
+note bottom: Policy Contract
+-right-> "Allocate Carbon Token"
+note bottom: Token Registery
+-right-> "Transfer Carbon Token" as T
+note top: Token Swap
+-down-> T
+-down-> "Destroy Carbon Token"
+note bottom: Burned token
+-right-> (*)
+@enduml

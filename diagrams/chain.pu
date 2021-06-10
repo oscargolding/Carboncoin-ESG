@@ -1,0 +1,22 @@
+@startuml chain
+
+box "Carbon Market Channel" #LightBlue
+participant "Hydrogen Certification Smart Contract" as HC
+participant "Carbon Market Smart Contract" as CM
+end box
+
+HC -> CM: Report Carbon Production
+activate CM
+
+alt user has sufficient tokens
+
+    CM -> HC: Tokens for user are spent
+
+else insufficient tokens
+
+    CM -> HC: Smart contract records a carbon debt
+end
+
+deactivate CM
+
+@enduml

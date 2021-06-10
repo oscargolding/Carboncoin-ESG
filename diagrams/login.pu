@@ -1,0 +1,37 @@
+@startuml Login
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+skinparam sequenceParticipant underline
+
+actor "Hydrogen Producer" as User
+participant "Carbon Market Website" as A
+participant "HTTP API" as B
+database "Off-chain Database" as C
+
+User -> A: Request Login
+activate A
+
+A -> B: Login HTTP Request
+activate B
+
+B -> C: Check Credentials
+activate C
+note right
+NB: Potential to hold user credential information as 
+private data held on the carbon market nodes.
+Hyperledger as of 2.2 supports rich querying of private 
+data using CouchDB, making the checking of user credentials 
+a trivial process.
+Question of how much data to have off-chain and on-chain.
+end note
+C --> B: Return result
+deactivate C
+
+B --> A: Credential result
+deactivate B
+
+A --> User: Done
+deactivate A
+
+@enduml

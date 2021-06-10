@@ -1,0 +1,25 @@
+@startuml chain
+
+box "Carbon Market Channel" #LightBlue
+participant "Hydrogen Certification Smart Contract" as HC
+participant "Carbon Market Smart Contract" as CM
+end box
+
+HC -> CM: Issue Hydrogen Producer
+activate CM
+
+alt Small Hydrogen Producer
+
+    CM -> HC: 1000 tokens
+
+else Medium Hydrogen Producer
+
+    CM -> HC: 5000 tokens
+else Large Hydrogen Producer
+
+    CM -> HC: 1000 tokens
+end
+
+deactivate CM
+
+@enduml

@@ -1,0 +1,16 @@
+@startuml SmartContract
+
+package "Off-Chain Infrastructure" {
+  [HTTP Server] as H
+}
+
+node "On-Chain Smart Contracts" {
+  [Registrar Smart Contract] as R
+  [Carbon Token Smart Contract] as CT
+  [Carbon Market Smart Contract] as CM
+}
+
+H --> CT
+H --> CM
+H --> R
+@enduml

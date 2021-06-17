@@ -7,7 +7,10 @@ skinparam sequenceParticipant underline
 actor "Hydrogen Producer" as User
 participant "Carbon Market Website" as A
 participant "HTTP API" as B
-participant "Carbon Market Fabric Channel" as C
+box "Carbon Market Channel" #LightBlue
+participant "Carbon Market Smart Contract" as C
+participant "Carbon Token Smart Contract" as D
+end box
 
 User -> A: Market Operation
 activate A
@@ -17,7 +20,13 @@ activate B
 
 B -> C: Blockchain Operation
 activate C
-C --> B: WorkDone
+alt Token Operations - exhange, burn, ...
+C -> D: Token Operation
+activate D
+D --> C: Work Done
+deactivate D
+end
+C --> B: Work Done
 deactivate C
 
 B --> A: Request Created

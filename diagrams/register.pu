@@ -1,12 +1,13 @@
 @startuml chain
 
 box "Carbon Market Channel" #LightBlue
-participant "Hydrogen Certification Smart Contract" as HC
-participant "Carbon Market Smart Contract" as CM
+participant "Hydrogen Producer Registrar Smart Contract" as HC
+participant "Carbon Token Smart Contract" as CM
 end box
 
 HC -> CM: Issue Hydrogen Producer
 activate CM
+note left: Registrar can be a government agency or official institution
 
 alt Small Hydrogen Producer
 

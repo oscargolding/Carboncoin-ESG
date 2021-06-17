@@ -3,7 +3,7 @@ left to right direction
 actor "Hydrogen Producer" as hp
 actor "Market Administrator" as ma
 :Hyrdogen Certifier: as BlockCert << Blockchain Application >>
-package "Carbon Market" {
+package "Carbon Market Channel" {
   usecase "Direct Token Purchase" as UC1
   usecase "Set Price Per Token" as UC2
   usecase "Sell Carbon Tokens" as UC3

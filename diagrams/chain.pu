@@ -2,11 +2,12 @@
 
 box "Carbon Market Channel" #LightBlue
 participant "Hydrogen Certification Smart Contract" as HC
-participant "Carbon Market Smart Contract" as CM
+participant "Carbon Token Smart Contract" as CM
 end box
 
 HC -> CM: Report Carbon Production
 activate CM
+note left: Certification scheme such as CertifHy
 
 alt user has sufficient tokens
 

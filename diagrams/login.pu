@@ -7,7 +7,7 @@ skinparam sequenceParticipant underline
 actor "Hydrogen Producer" as User
 participant "Carbon Market Website" as A
 participant "HTTP API" as B
-database "Off-chain Database" as C
+database "Registrar Smart Contract CouchDB" as C
 
 User -> A: Request Login
 activate A

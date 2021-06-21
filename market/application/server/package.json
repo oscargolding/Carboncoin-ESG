@@ -1,0 +1,25 @@
+{
+  "name": "carbon_market_server",
+  "version": "1.0.0",
+  "description": "A carbon market server for hyperledger.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hyperledger"
+  ],
+  "author": "oscargolding17@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fabric-ca-client": "^2.2.7",
+    "fabric-network": "^2.2.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.29.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4"
+  }
+}

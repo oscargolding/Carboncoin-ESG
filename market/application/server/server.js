@@ -1,10 +1,10 @@
 /**
  * Blockchain carbon market - Oscar Golding
  */
-const express = require('express');
-const cors = require('cors');
-const utils = require('./utils');
-const carbonMarketRouter = require('./carbonMarket');
+import express from 'express';
+import cors from 'cors';
+import utils from './utils.js';
+import carbonMarketRouter from './carbonMarket.js';
 
 const app = express();
 

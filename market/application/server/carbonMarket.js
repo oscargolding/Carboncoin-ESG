@@ -1,16 +1,23 @@
 /**
  * Carbon market as written by Oscar Golding
  */
-const express = require('express');
-const utils = require('./utils');
+import express from 'express';
+import { register, save, getEmailFromAuthorization } from './auth.js';
+import utils from './utils.js';
+import InputError from './errors/inputError.js';
+import AccessError from './errors/accessError.js';
 
 const carbonMarketRouter = express.Router();
-const { InputError } = require('./errors/inputError');
-const { AccessError } = require('./errors/accessError');
 
+/**
+ * Catching errors.
+ * @param {*} fn to catch errors and return to the user
+ * @returns the result otherwise error
+ */
 const catchErrors = (fn) => async (req, res) => {
   try {
     await fn(req, res);
+    save(); // Persist when using json storage
   } catch (err) {
     if (err instanceof InputError) {
       res.status(400).send({ error: err.message });
@@ -24,23 +31,42 @@ const catchErrors = (fn) => async (req, res) => {
 };
 
 /**
+ * Wrapper to ensure auth is provided.
+ * @param {*} fn to wrap around the auth request
+ * @returns the result if auth is provided.
+ */
+const authed = (fn) => async (req, res) => {
+  const email = getEmailFromAuthorization(req.header('Authorization'));
+  await fn(req, res, email);
+};
+
+/**
  * When a producer wants to register for the first time.
  */
 carbonMarketRouter.post('/admin/auth/register', catchErrors(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, firm, password } = req.body;
   await utils.registerProducer(email, password);
   await utils.registerTokens(email);
-  return res.json({ mssg: 'Successful register' });
+  const token = await register(email, password, firm);
+  return res.json({ token });
+}));
+
+/**
+ * Login of a producer into the system.
+ */
+carbonMarketRouter.post('/admin/auth/login', catchErrors(async (req, res) => {
+  const { email, password } = req.body;
+  const token = await utils.loginProducer(email, password);
+  return res.json({ token });
 }));
 
 /**
  * For retrieving the balance of a particular user
  */
-carbonMarketRouter.get('/token/balance/:id', catchErrors(async (req, res) => {
-  const user = req.params.id;
-  const balance = await utils.retrieveBalance(user);
-  return res.json({ balance });
-}));
+carbonMarketRouter.get('/token/balance',
+  catchErrors(authed(async (_, res, email) => {
+    const balance = await utils.retrieveBalance(email);
+    return res.json({ balance });
+  })));
 
-// Export the carbon market router
-module.exports = carbonMarketRouter;
+export default carbonMarketRouter;

@@ -8,4 +8,4 @@ class InputError extends Error {
   }
 }
 
-module.exports = { InputError };
+export default InputError;

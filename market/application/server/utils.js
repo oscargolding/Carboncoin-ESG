@@ -1,11 +1,15 @@
 /**
  * Utils for server connecting to Fabric
  */
-const fs = require('fs');
-const path = require('path');
-const FabricCAServices = require('fabric-ca-client');
-const { Wallets, Gateway } = require('fabric-network');
-const { AccessError } = require('./errors/accessError');
+import fs from 'fs';
+import path from 'path';
+import FabricCAServices from 'fabric-ca-client';
+import { Wallets, Gateway } from 'fabric-network';
+import { fileURLToPath } from 'url';
+import { login } from './auth.js';
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 // Credential details for an administrator on the organisation
 const adminUserId = 'admin';
@@ -30,7 +34,7 @@ const utils = {};
  * Get the in memory object representing the network configuration
  */
 const buildNetworkConfig = () => {
-  const ccpPath = path.resolve(__dirname, '..', '..', '..', '..', 'test-network',
+  const ccpPath = path.resolve(dirname, '..', '..', '..', '..', 'test-network',
     'organizations', 'peerOrganizations',
     'org1.example.com', 'connection-org1.json');
   const fileExists = fs.existsSync(ccpPath);
@@ -181,6 +185,23 @@ utils.registerProducer = async (username, password) => {
 };
 
 /**
+ * Login a producer into the system.
+ * @param {username} username of the producer to login.
+ * @param {*} password of the producer to login.
+ */
+utils.loginProducer = async (username, password) => {
+  console.log(`>>> Attempting login for ${username} and ${password}`);
+  const userIdentity = await wallet.get(username);
+  if (!userIdentity) {
+    throw new Error('Credentials do not exist - system error');
+  }
+  // Perform the login off-chain
+  const token = await login(username, password);
+  console.log(`>>> User is enrolled ${token}`);
+  return token;
+};
+
+/**
  * Get the associated credentials.
  * @param {credentilas} credentials given credentilas
  * @returns the credentials
@@ -231,7 +252,8 @@ utils.retrieveBalance = async (userId) => {
   // Return and disconnect from the gateway
   gateway.disconnect();
   console.log(`>>> Retrieved ${balance} for user ${userId}`);
+  // Note - have it as a string to get proper data returned (is in a buffer)
   return balance.toString();
 };
 
-module.exports = utils;
+export default utils;

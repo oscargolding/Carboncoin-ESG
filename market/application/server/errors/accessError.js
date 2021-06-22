@@ -8,4 +8,4 @@ class AccessError extends Error {
   }
 }
 
-module.exports = { AccessError };
+export default AccessError;

@@ -11,7 +11,7 @@ class CarbonMarket extends Contract {
    * @param {context} ctx the transaction context.
    * @param {defaultTokens} defaultTokens for the market.
    */
-  async AddProducer(ctx, producerId, defaultTokens) {
+  async AddProducer(ctx, producerId) {
     const producerExists = await CarbonMarket.checkProducer(ctx, producerId);
     if (producerExists) {
       throw new Error(`The producer with name ${producerId} exists`);
@@ -21,9 +21,13 @@ class CarbonMarket extends Contract {
       if (userType !== 'admin') {
         throw new Error('Only admins can add a producer');
       }
+      const ccArgs = ['FirmSize', producerId];
+      const producerSize = await ctx.stub.invokeChaincode('EnergyCertifier',
+        ccArgs);
+      const jsonSize = JSON.parse(Buffer.from(producerSize.payload));
       const producer = {
         producerId,
-        tokens: defaultTokens,
+        tokens: CarbonMarket.determineTokens(jsonSize.size),
       };
       await ctx.stub.putState(producer.producerId,
         Buffer.from(JSON.stringify(producer)));
@@ -92,6 +96,22 @@ class CarbonMarket extends Contract {
       return userid;
     }
     return ctx.clientIdentity.getAttributeValue('usertype');
+  }
+
+  /**
+   * Get the right amount of tokens for the firm.
+   * @param {string} size of the firm
+   * @returns token amount
+   */
+  static determineTokens(size) {
+    switch (size) {
+      case 'medium':
+        return 200;
+      case 'large':
+        return 300;
+      default:
+        return 100;
+    }
   }
 }
 

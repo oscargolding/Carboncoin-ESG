@@ -231,7 +231,7 @@ utils.registerTokens = async (userId) => {
   const { contract, gateway } = await getContract(adminUserId);
 
   // Add the producer and give them a number of tokens
-  await contract.submitTransaction('AddProducer', userId, '100');
+  await contract.submitTransaction('AddProducer', userId);
 
   // Leave the application
   gateway.disconnect();

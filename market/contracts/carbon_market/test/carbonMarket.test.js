@@ -1,16 +1,14 @@
 /*
- * Copyright IBM Corp. All Rights Reserved.
+ * Oscar Golding
  *
  * SPDX-License-Identifier: Apache-2.0
 */
 const sinon = require('sinon');
 const chai = require('chai');
 const sinonChai = require('sinon-chai');
+const stubs = require('./stub');
 
 const { expect } = chai;
-
-const { Context } = require('fabric-contract-api');
-const { ChaincodeStub, ClientIdentity } = require('fabric-shim');
 
 const CarbonMarket = require('../lib/carbonMarket');
 
@@ -24,51 +22,17 @@ describe('Carbon Market basic tests', () => {
 
   // Run before all
   beforeEach(() => {
-    transactionContext = new Context();
-
-    chaincodeStub = sinon.createStubInstance(ChaincodeStub);
-    clientIdentity = sinon.createStubInstance(ClientIdentity);
-    transactionContext.setChaincodeStub(chaincodeStub);
-    transactionContext.setClientIdentity(clientIdentity);
-
-    chaincodeStub.putState.callsFake((key, value) => {
-      if (!chaincodeStub.states) {
-        chaincodeStub.states = {};
-      }
-      chaincodeStub.states[key] = value;
-    });
-
-    chaincodeStub.getState.callsFake(async (key) => {
-      let ret;
-      if (chaincodeStub.states) {
-        ret = chaincodeStub.states[key];
-      }
-      return Promise.resolve(ret);
-    });
-
-    chaincodeStub.deleteState.callsFake(async (key) => {
-      if (chaincodeStub.states) {
-        delete chaincodeStub.states[key];
-      }
-      return Promise.resolve(key);
-    });
-
-    chaincodeStub.getStateByRange.callsFake(async () => {
-      function* internalGetStateByRange() {
-        if (chaincodeStub.states) {
-          // Shallow copy
-          const copied = { ...chaincodeStub.states };
-          const keys = Object.keys(copied);
-          const values = Object.values(copied);
-          for (let i = 0; i < keys.length; i += 1) {
-            yield { value: values[i] };
-          }
-        }
-      }
-
-      return Promise.resolve(internalGetStateByRange());
-    });
+    ({ transactionContext, chaincodeStub, clientIdentity } = stubs.stub());
   });
+
+  // For setting the firm size
+  const firmSize = (size) => {
+    chaincodeStub.invokeChaincode.callsFake(async () => Promise.resolve(
+      {
+        payload: Buffer.from(JSON.stringify({ size })),
+      },
+    ));
+  };
 
   /**
    * Admin permissions are being tested
@@ -84,24 +48,26 @@ describe('Carbon Market basic tests', () => {
     it('Should allow for a producer to be added', async () => {
       // GIVEN
       withRole('admin');
+      firmSize('small');
       const carbonMarket = new CarbonMarket();
       // WHEN
-      await carbonMarket.AddProducer(transactionContext, 'oscar', 10);
+      await carbonMarket.AddProducer(transactionContext, 'oscar');
       const ret = JSON.parse(
         (await chaincodeStub.getState('oscar')).toString(),
       );
       // THEN
-      expect(ret).to.eql({ producerId: 'oscar', tokens: 10 });
+      expect(ret).to.eql({ producerId: 'oscar', tokens: 100 });
     });
 
     it('Should fail when the producer exists', async () => {
       // GIVEN
       withRole('admin');
       const carbonMarket = new CarbonMarket();
-      await carbonMarket.AddProducer(transactionContext, 'oscar', 30);
+      firmSize('medium');
+      await carbonMarket.AddProducer(transactionContext, 'oscar');
       // WHEN
       try {
-        await carbonMarket.AddProducer(transactionContext, 'oscar', 50);
+        await carbonMarket.AddProducer(transactionContext, 'oscar');
         assert.fail('Should have failed with same producer');
       } catch (err) {
         // THEN
@@ -113,9 +79,10 @@ describe('Carbon Market basic tests', () => {
       // GIVEN
       withRole('producer');
       const carbonMarket = new CarbonMarket();
+      firmSize('medium');
       // WHEN
       try {
-        await carbonMarket.AddProducer(transactionContext, 'oscar', 50);
+        await carbonMarket.AddProducer(transactionContext, 'oscar');
         assert.fail('Should have failed due to the presence of producer');
       } catch (err) {
         // THEN
@@ -128,8 +95,9 @@ describe('Carbon Market basic tests', () => {
     // For adding a producer to the market
     const addProducer = async () => {
       withRole('admin');
+      firmSize('large');
       const carbonMarket = new CarbonMarket();
-      await carbonMarket.AddProducer(transactionContext, 'oscar', 100);
+      await carbonMarket.AddProducer(transactionContext, 'oscar');
       return carbonMarket;
     };
 
@@ -140,7 +108,7 @@ describe('Carbon Market basic tests', () => {
       const balance = await carbonMarket.GetBalance(transactionContext,
         'oscar');
       // THEN
-      expect(balance).to.equal(100);
+      expect(balance).to.equal(300);
     });
 
     it('Allows a producer to perform the access', async () => {
@@ -151,7 +119,7 @@ describe('Carbon Market basic tests', () => {
       const balance = await carbonMarket.GetBalance(transactionContext,
         'oscar');
       // THEN
-      expect(balance).to.equal(100);
+      expect(balance).to.equal(300);
     });
 
     it('Throws error on wrong user supplied', async () => {

@@ -1,0 +1,49 @@
+@startuml AccontCreation
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+skinparam sequenceParticipant underline
+
+actor "Hydrogen Producer" as User
+participant "Carbon Market Website" as A
+participant "HTTP API" as B
+participant "Hyperledger Certificate Authority" as C
+database "Cryptographic Wallet" as D
+database "noSQL Database" as E
+participant "Market Smart Contract" as F
+participant "Registrar Smart Contract" as G
+
+User -> A: Request Registration
+activate A
+
+A -> B: Registration HTTP Request
+activate B
+
+B -> C: Check Credentials with Certificate Authority
+activate C
+C -> B: Finish Certificate Authority Registration
+deactivate C
+B -> D: Populate Crypto Wallet
+activate D
+D -> B: Finish Populating
+deactivate D
+B -> F: Smart Contract Token Provision
+activate F
+F -> G: Check Registrar for Token Amount
+activate G
+G -> F: Return Token Amount
+deactivate G
+F -> B: Finish Initialisation
+deactivate F
+B -> E: Provide noSQL Credentials
+activate E
+E -> B: Finish noSQL Credentials
+deactivate E
+
+B --> A: Credential result
+deactivate B
+
+A --> User: Done
+deactivate A
+
+@enduml

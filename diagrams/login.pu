@@ -8,6 +8,7 @@ actor "Hydrogen Producer" as User
 participant "Carbon Market Website" as A
 participant "HTTP API" as B
 database "Registrar Smart Contract CouchDB" as C
+database "Cryptographic Wallet" as D
 
 User -> A: Request Login
 activate A
@@ -15,8 +16,10 @@ activate A
 A -> B: Login HTTP Request
 activate B
 
-B -> C: Check Credentials
+B -> C: Check Credentials in Local Database
 activate C
+C -> D: Check Wallet
+activate D
 note right
 NB: Potential to hold user credential information as 
 private data held on the carbon market nodes.
@@ -24,7 +27,10 @@ Hyperledger as of 2.2 supports rich querying of private
 data using CouchDB, making the checking of user credentials 
 a trivial process.
 Question of how much data to have off-chain and on-chain.
+Not recommended due to performance.
 end note
+D -> C: Wallet Return
+deactivate D
 C --> B: Return result
 deactivate C
 

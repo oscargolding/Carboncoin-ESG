@@ -60,6 +60,15 @@ carbonMarketRouter.post('/admin/auth/login', catchErrors(async (req, res) => {
   return res.json({ token });
 }));
 
+carbonMarketRouter.post('/offer/create',
+  catchErrors(authed(async (req, res, email) => {
+    const { amount, tokens } = req.body;
+    console.log(amount);
+    console.log(tokens);
+    await utils.addOffer(email, amount, tokens);
+    return res.json({ message: 'success' });
+  })));
+
 /**
  * For retrieving the balance of a particular user
  */

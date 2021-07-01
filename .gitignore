@@ -369,4 +369,4 @@ Thumbs.db
 
 # project specific
 database.json
-wallet
+wallet/

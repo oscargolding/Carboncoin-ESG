@@ -1,0 +1,48 @@
+@startuml CreateSale
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+skinparam sequenceParticipant underline
+title Carboncoin Sale
+
+actor "Hydrogen Producer" as User
+participant "Carbon Market Website" as Website
+participant "HTTP API" as API
+database "Cryptographic Wallet" as Wallet
+box "Carbon Market Blockchain Channel" #LightBlue
+participant "Carbon Market Smart Contract" as CMSC 
+participant "Carboncoin Smart Contract" as CCSC 
+
+User -> Website: Sell Carboncoin
+activate Website 
+
+Website -> API: Sell Coin Request 
+activate API 
+
+API -> Wallet: Get Credentials 
+activate Wallet
+
+Wallet -> API: Return Credentials 
+deactivate Wallet
+
+API -> CMSC: Create Sell Offer
+activate CMSC
+
+CMSC -> CCSC: Check Carboncoin Balance 
+activate CCSC
+CCSC -> CMSC: Balance Result 
+deactivate CCSC
+
+CMSC -> API: Process Sale Offer
+deactivate CMSC
+
+API -> API: Close Gateway with User Certificate
+
+
+API -> Website: Resturn Result of Offer
+deactivate API
+Website -> User: Observe Sale Result
+deactivate Website
+
+
+@enduml

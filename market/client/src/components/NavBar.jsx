@@ -7,6 +7,7 @@ import { storeContext, } from '../utils/store';
 import { Link, } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Balance from './Balance';
+import CoinLogo from '../images/svg.svg';
 
 // header div
 const HeaderDiv = styled.div`
@@ -16,6 +17,12 @@ const HeaderDiv = styled.div`
 // application name
 const AppName = styled(Typography)`
   flex-grow: 1;
+`;
+
+const Logo = styled.img`
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
 `;
 
 /**
@@ -29,6 +36,7 @@ const NavBar = () => {
     <HeaderDiv>
       <AppBar position='static'>
         <Toolbar>
+          <Logo src={CoinLogo} />
           <AppName variant="h6">
             Blockchain Carbon Market
           </AppName>

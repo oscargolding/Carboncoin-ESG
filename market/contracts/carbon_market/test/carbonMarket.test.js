@@ -43,6 +43,15 @@ describe('Carbon Market basic tests', () => {
     clientIdentity.getAttributeValue.callsFake(() => role);
   };
 
+  // add a producer
+  const addProducer = async () => {
+    withRole('admin');
+    firmSize('large');
+    const carbonMarket = new CarbonMarket();
+    await carbonMarket.AddProducer(transactionContext, 'oscar');
+    return carbonMarket;
+  };
+
   // Start the tests
   describe('Test Producer Added', () => {
     it('Should allow for a producer to be added', async () => {
@@ -56,7 +65,7 @@ describe('Carbon Market basic tests', () => {
         (await chaincodeStub.getState('oscar')).toString(),
       );
       // THEN
-      expect(ret).to.eql({ producerId: 'oscar', tokens: 100 });
+      expect(ret).to.eql({ producerId: 'oscar', tokens: 100, sellable: 100 });
     });
 
     it('Should fail when the producer exists', async () => {
@@ -92,15 +101,6 @@ describe('Carbon Market basic tests', () => {
   });
 
   describe('Allow for the retrieval of balance', () => {
-    // For adding a producer to the market
-    const addProducer = async () => {
-      withRole('admin');
-      firmSize('large');
-      const carbonMarket = new CarbonMarket();
-      await carbonMarket.AddProducer(transactionContext, 'oscar');
-      return carbonMarket;
-    };
-
     it('Tests a simple balance retrieval', async () => {
       // GIVEN
       const carbonMarket = await addProducer();
@@ -132,6 +132,80 @@ describe('Carbon Market basic tests', () => {
       } catch (err) {
         // THEN
         expect(err.message).to.equal('The producer requested does not exist');
+      }
+    });
+  });
+
+  describe('Allows for the retrieval of sellable', () => {
+    it('Allows for a producer to check sellable', async () => {
+      // GIVEN
+      const carbonMarket = await addProducer();
+      // WHEN
+      const sellable = await carbonMarket.GetSellable(transactionContext,
+        'oscar');
+      // THEN
+      expect(sellable).to.equal(300);
+    });
+  });
+
+  describe('Allows for the participant to make offer', () => {
+    it('Allows for the adding of a token deal', async () => {
+      // GIVEN
+      const carbonMarket = await addProducer();
+      withRole('oscar');
+      clientIdentity.getAttributeValue.callsFake(() => 'producer');
+      // WHEN
+      await carbonMarket.AddOffer(transactionContext, 'oscar', 100, 100);
+      // THEN
+      const sellable = await carbonMarket.GetSellable(transactionContext,
+        'oscar');
+      console.log(sellable);
+      expect(sellable).to.equal(200);
+    });
+    it('Does not allow more than holding', async () => {
+      // GIVEN
+      const carbonMarket = await addProducer();
+      withRole('oscar');
+      clientIdentity.getAttributeValue.callsFake(() => 'producer');
+      try {
+        // WHEN
+        await carbonMarket.AddOffer(transactionContext, 'oscar', 50, 1000);
+        assert.fail('The offer is too large');
+      } catch (err) {
+        // THEN
+        expect(err.message).to.equal(
+          'Producer oscar does not have enough tokens',
+        );
+      }
+    });
+    it('Does not allow with incorrect access', async () => {
+      // GIVEN
+      const carbonMarket = await addProducer();
+      withRole('oscar');
+      try {
+        // WHEN
+        await carbonMarket.AddOffer(transactionContext, 'oscar', 50, 1000);
+        assert.fail('Admin called');
+      } catch (err) {
+        // THEN
+        expect(err.message).to.equal(
+          'Incorrect credentials for selling Carboncoin',
+        );
+      }
+    });
+    it('Does not allow offer for bad producer', async () => {
+      // GIVEN
+      const carbonMarket = await addProducer();
+      withRole('oscar');
+      try {
+        // WHEN
+        await carbonMarket.AddOffer(transactionContext, 'james', 10, 10);
+        assert.fail('User does not exist');
+      } catch (err) {
+        // THEN
+        expect(err.message).to.equal(
+          'The producer with the name james does not exist',
+        );
       }
     });
   });

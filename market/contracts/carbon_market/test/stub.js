@@ -38,6 +38,10 @@ const createStubs = () => {
     return Promise.resolve(key);
   });
 
+  chaincodeStub.createCompositeKey.callsFake(async () => 'key');
+
+  clientIdentity.getAttributeValue.callsFake(async () => 'producer');
+
   chaincodeStub.getStateByRange.callsFake(async () => {
     function* internalGetStateByRange() {
       if (chaincodeStub.states) {

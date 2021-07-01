@@ -1,4 +1,5 @@
 import React from 'react';
+import Dashboard from '../components/DashboardPage/Dashboard';
 
 /**
  * The page for the dashboard.
@@ -6,7 +7,7 @@ import React from 'react';
  */
 const DashboardPage = () => {
   return (
-    <h1> Carbon Market Home </h1>
+    <Dashboard />
   );
 };
 

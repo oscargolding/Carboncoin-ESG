@@ -69,4 +69,28 @@ API.loginUser = async (email, password) => {
   return json;
 };
 
+/**
+ * Create offer on the open market.
+ * @param {token} token user token
+ * @param {amount} amount amount in dollars
+ * @param {quantity to trade} quantity trading
+ * @returns
+ */
+API.createOffer = async (token, amount, quantity) => {
+  const queryParam = `${access}/api/offer/create`;
+  const response = await fetch(queryParam, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ amount: amount, tokens: quantity, }),
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
 export default API;

@@ -256,4 +256,17 @@ utils.retrieveBalance = async (userId) => {
   return balance.toString();
 };
 
+utils.addOffer = async (userId, amount, tokens) => {
+  console.log('>>> Adding an offer for user');
+  console.log(`${userId}, ${amount}, ${tokens}`);
+  const { contract, gateway } = await getContract(userId);
+
+  // Submit the offer
+  await contract.submitTransaction('AddOffer', userId, amount, tokens);
+
+  // Return and disconnect
+  gateway.disconnect();
+  console.log(`>>> Added the sale offer for ${tokens},${amount},${userId}`);
+};
+
 export default utils;

@@ -24,8 +24,10 @@ class CarbonMarket extends Contract {
       const ccArgs = ['FirmSize', producerId];
       const producerSize = await ctx.stub.invokeChaincode('EnergyCertifier',
         ccArgs);
-      const jsonSize = JSON.parse(Buffer.from(producerSize.payload));
-      const tokens = CarbonMarket.determineTokens(jsonSize.size);
+      const jsonSize = Buffer.from(producerSize.payload).toString();
+      console.log(producerSize.payload);
+      console.log(jsonSize);
+      const tokens = CarbonMarket.determineTokens(jsonSize);
       const producer = {
         producerId,
         tokens,

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -13,6 +14,7 @@ const CHANNEL = "mychannel"
 const SMALL = "small"
 const MEDIUM = "medium"
 const LARGE = "large"
+const OFFER_TYPE = "offer"
 
 type SmartContract struct {
 	contractapi.Contract
@@ -25,9 +27,18 @@ type Producer struct {
 }
 
 type Offer struct {
+	DocType  string `json:"docType"`
 	Producer string `json:"producer"`
 	Amount   int    `json:"amount"`
 	Tokens   int    `json:"tokens"`
+	Active   bool   `json:"active"`
+}
+
+// The result from a query
+type PaginatedQueryResult struct {
+	Records             []*Offer `json:"records"`
+	FetchedRecordsCount int32    `json:"fetchedRecordsCount"`
+	Bookmark            string   `json:"bookmark"`
 }
 
 // Public Functions //
@@ -99,17 +110,62 @@ func (s *SmartContract) AddOffer(ctx contractapi.TransactionContextInterface,
 		}
 		sellable, err := s.GetSellable(ctx, producerId)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not get sellabe: %v", err)
 		}
 		if sellable < tokensGiven {
 			return fmt.Errorf("%v does not have enough sellable tokens", producerId)
 		}
 		err = s.createOffer(ctx, producerId, amountGiven, tokensGiven)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not create offer: %v", err)
 		}
 		return s.changeSellableForProducer(ctx, producerId, tokensGiven)
 	}
+}
+
+// Get all the offers with the following bookmark, pageSize and string
+func (s *SmartContract) GetOffers(ctx contractapi.TransactionContextInterface,
+	pageSize int32, bookmark string) (*PaginatedQueryResult, error) {
+	queryString := `{"selector":{"docType":"offer", "active": true}}`
+	stub := ctx.GetStub()
+	resultsIterator, responseMetadata, err := stub.GetQueryResultWithPagination(
+		queryString, pageSize, bookmark)
+	if err != nil {
+		return nil, fmt.Errorf("error with query: %v", err)
+	}
+	// Wait until the function finishes before closing
+	defer resultsIterator.Close()
+
+	offers, err := constructResponseFromIterator(resultsIterator)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PaginatedQueryResult{
+		Records:             offers,
+		FetchedRecordsCount: responseMetadata.FetchedRecordsCount,
+		Bookmark:            responseMetadata.Bookmark,
+	}, nil
+}
+
+// Helper to construct the response from the given iterator
+func constructResponseFromIterator(
+	iterator shim.StateQueryIteratorInterface) ([]*Offer, error) {
+	var offers []*Offer
+	for iterator.HasNext() {
+		queryresult, err := iterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var offer Offer
+		err = json.Unmarshal(queryresult.Value, &offer)
+		if err != nil {
+			return nil, err
+		}
+		offers = append(offers, &offer)
+	}
+
+	return offers, nil
 }
 
 // Private class functions //
@@ -126,22 +182,23 @@ func (s *SmartContract) changeSellableForProducer(
 	var producerObj Producer
 	err = json.Unmarshal(producer, &producerObj)
 	if err != nil {
-		return err
+		return fmt.Errorf("unmarshal error: %v", err)
 	}
 	producerObj.Sellable -= tokens
 	jsonProducer, err := json.Marshal(producerObj)
 	if err != nil {
-		return err
+		return fmt.Errorf("marshal error: %v", err)
 	}
 	return ctx.GetStub().PutState(producerId, jsonProducer)
 }
 
 func (s *SmartContract) createOffer(ctx contractapi.TransactionContextInterface,
 	producerId string, amount int, tokens int) error {
-	offer := Offer{Producer: producerId, Amount: amount, Tokens: tokens}
+	// Create the offer so that it is always active
+	offer := Offer{DocType: OFFER_TYPE, Producer: producerId, Amount: amount, Tokens: tokens, Active: true}
 	offerJSON, err := json.Marshal(offer)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to format offer conversion %v", err)
 	}
 	key := fmt.Sprintf("%s~%d~%d", producerId, amount, tokens)
 	ctx.GetStub().PutState(key, offerJSON)

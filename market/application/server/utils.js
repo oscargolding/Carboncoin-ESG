@@ -269,4 +269,25 @@ utils.addOffer = async (userId, amount, tokens) => {
   console.log(`>>> Added the sale offer for ${tokens},${amount},${userId}`);
 };
 
+/**
+ * Get the offers for a particular user
+ * @param {token} paginationToken the pagination token
+ * @param {number} number the number of results
+ */
+utils.getOffers = async (paginationToken, number) => {
+  console.log('>>> Getting offers for a user');
+  console.log(`${paginationToken} ${number}`);
+  const { contract, gateway } = await getContract(adminUserId);
+
+  // Submit the offer
+  const result = await contract.submitTransaction('GetOffers',
+    number, paginationToken);
+
+  const jsonResult = JSON.parse(result);
+  // Return and disconnect
+  gateway.disconnect();
+  console.log(`>>> Retrieved listing for ${jsonResult.fetchedRecordsCount} number`);
+  return jsonResult;
+};
+
 export default utils;

@@ -78,4 +78,12 @@ carbonMarketRouter.get('/token/balance',
     return res.json({ balance });
   })));
 
+carbonMarketRouter.get('/offers/list',
+  catchErrors(authed(async (req, res) => {
+    const token = req.query.token ? req.query.token : '';
+    const size = req.query.amount ? req.query.amount : 10;
+    const queryResult = await utils.getOffers(token, size);
+    return res.json(queryResult);
+  })));
+
 export default carbonMarketRouter;

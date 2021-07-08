@@ -93,4 +93,19 @@ API.createOffer = async (token, amount, quantity) => {
   return jsonResponse;
 };
 
+API.getOffers = async (userAuthToken) => {
+  const queryParam = `${access}/api/offers/list`;
+  const response = await fetch(queryParam, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+    },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
 export default API;

@@ -11,6 +11,7 @@ import (
 	"github.com/hyperledger/fabric-chaincode-go/pkg/cid"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	"github.com/hyperledger/fabric-protos-go/ledger/queryresult"
 	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/stretchr/testify/require"
 )
@@ -28,6 +29,11 @@ type chaincodeStub interface {
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -fake-name ClientIdentity . clientIdentity
 type clientIdentity interface {
 	cid.ClientIdentity
+}
+
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -fake-name QueryIterator . queryIterator
+type queryIterator interface {
+	shim.StateQueryIteratorInterface
 }
 
 // Get all the stubs used and return
@@ -75,7 +81,10 @@ func Test_WHEN_adminAddPresentUser_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_nonAdminAdd_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, id, contract := GetTestStubs()
-	id.GetIDReturns("/CN=producer::/C=", nil)
+	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
+		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
+	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
+	id.GetIDReturns(sEnc, nil)
 	id.GetAttributeValueReturns("producer", true, nil)
 	stub.GetStateReturns(nil, nil)
 	stub.InvokeChaincodeReturns(peer.Response{Payload: []byte("small")})
@@ -91,7 +100,10 @@ func Test_WHEN_nonAdminAdd_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_adminAddsFailedChain_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, id, contract := GetTestStubs()
-	id.GetIDReturns("/CN=admin::/C=", nil)
+	str := "x509::CN=admin,OU=client::CN=ca.org1.example.com," +
+		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
+	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
+	id.GetIDReturns(sEnc, nil)
 	stub.GetStateReturns(nil, nil)
 	stub.InvokeChaincodeReturns(peer.Response{Payload: []byte("small")})
 	stub.PutStateReturns(fmt.Errorf("failed"))
@@ -139,7 +151,10 @@ func Test_WHEN_addOfferValid_THEN_SUCCESS(t *testing.T) {
 	bytes, err := json.Marshal(expectedFirm)
 	require.NoError(t, err)
 	stub.GetStateReturns(bytes, nil)
-	id.GetIDReturns("/CN=oscar::/C=", nil)
+	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
+		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
+	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
+	id.GetIDReturns(sEnc, nil)
 	id.GetAttributeValueReturns("producer", true, nil)
 	stub.PutStateReturns(nil)
 
@@ -168,7 +183,10 @@ func Test_WHEN_notProducer_THEN_FAILURE(t *testing.T) {
 	bytes, err := json.Marshal(expectedFirm)
 	require.NoError(t, err)
 	stub.GetStateReturns(bytes, nil)
-	id.GetIDReturns("/CN=oscar::/C=", nil)
+	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
+		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
+	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
+	id.GetIDReturns(sEnc, nil)
 	id.GetAttributeValueReturns("user", true, nil)
 	stub.PutStateReturns(nil)
 
@@ -186,7 +204,10 @@ func Test_WHEN_addOfferNotEnoughTokens_THEN_FAILURE(t *testing.T) {
 	bytes, err := json.Marshal(expectedFirm)
 	require.NoError(t, err)
 	stub.GetStateReturns(bytes, nil)
-	id.GetIDReturns("/CN=oscar::/C=", nil)
+	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
+		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
+	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
+	id.GetIDReturns(sEnc, nil)
 	id.GetAttributeValueReturns("producer", true, nil)
 	stub.PutStateReturns(nil)
 
@@ -195,4 +216,45 @@ func Test_WHEN_addOfferNotEnoughTokens_THEN_FAILURE(t *testing.T) {
 
 	// THEN
 	require.EqualError(t, err, "oscar does not have enough sellable tokens")
+}
+
+func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, _, contract := GetTestStubs()
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	queryResultIterator.HasNextReturnsOnCall(0, true)
+	queryResultIterator.HasNextReturnsOnCall(1, false)
+	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: "oscar",
+		Amount: 30, Tokens: 30, Active: true}
+	bytes, err := json.Marshal(expectedOffer)
+	require.NoError(t, err)
+	queryResultIterator.NextReturns(&queryresult.KV{Value: bytes}, nil)
+	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 1,
+		Bookmark: ""}
+	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
+
+	// WHEN
+	result, err := contract.GetOffers(ctx, 5, "")
+
+	// THEN
+	require.NoError(t, err)
+	require.Equal(t, "", result.Bookmark)
+	require.Equal(t, int32(1), result.FetchedRecordsCount)
+	offers := result.Records[0]
+	require.Equal(t, "oscar", offers.Producer)
+	require.Equal(t, 30, offers.Tokens)
+	require.Equal(t, 1, len(result.Records))
+}
+
+func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, _, contract := GetTestStubs()
+	stub.GetQueryResultWithPaginationReturns(nil, nil, fmt.Errorf("failure"))
+
+	// WHEN
+	result, err := contract.GetOffers(ctx, 5, "")
+
+	// THEN
+	require.EqualError(t, err, "error with query: failure")
+	require.Nil(t, result)
 }

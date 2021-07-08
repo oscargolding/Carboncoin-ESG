@@ -5,6 +5,7 @@ import { Switch, Route, } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import CreateOfferPage from '../pages/CreateOfferPage';
+import Landing from './LandingPage/Landing';
 
 // the dimensions of the page
 const BodyPage = styled.div`
@@ -30,6 +31,9 @@ const Pages = () => {
         </Route>
         <Route path='/offer/createoffer'>
           <CreateOfferPage />
+        </Route>
+        <Route path='/'>
+          <Landing />
         </Route>
       </Switch>
     </BodyPage>

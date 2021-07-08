@@ -1,0 +1,51 @@
+@startuml GetOffers
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+skinparam sequenceParticipant underline
+title Carboncoin Offer Retrieval
+
+actor "Hydrogen Producer" as User
+participant "Carbon Market Website" as Website
+participant "HTTP API" as API
+database "Cryptographic Wallet" as Wallet
+box "Carbon Market Blockchain Channel" #LightBlue
+participant "Carbon Market Smart Contract" as CMSC 
+database "Carbon Market On Chain Database" as CMJD
+
+User -> Website: Retrieve Offers
+activate Website 
+
+Website -> API: Get Offer Request
+activate API 
+
+API -> Wallet: Get admin credentials
+activate Wallet
+
+Wallet -> API: Return credentials
+deactivate Wallet
+
+API -> CMSC: Request observation of offers
+activate CMSC
+
+CMSC -> CMJD: Perform Index Query (warmed on block cut)
+activate CMJD
+note right
+Whenever Hyperledger cuts a new block, an offer index is warmed to 
+reflect the latest information on the blockchain. 
+Such a feature strikes the perfect trade-off between the most accurate 
+financial information with on chain smart contract performance.
+end note
+CMJD -> CMSC: Offer Results
+deactivate CMJD
+
+CMSC -> API: Return offers
+deactivate CMSC
+
+API -> API: Close Gateway with User Certificate
+API -> Website: Return offers
+deactivate API
+Website -> User: Observe available offers 
+deactivate Website
+
+@enduml

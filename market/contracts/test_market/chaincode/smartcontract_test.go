@@ -246,6 +246,24 @@ func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 	require.Equal(t, 1, len(result.Records))
 }
 
+func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, _, contract := GetTestStubs()
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	queryResultIterator.HasNextReturnsOnCall(0, false)
+	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 0,
+		Bookmark: ""}
+	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
+
+	// WHEN
+	result, err := contract.GetOffers(ctx, 5, "")
+
+	// THEN
+	require.NoError(t, err)
+	require.Equal(t, int32(0), result.FetchedRecordsCount)
+	require.Equal(t, 0, len(result.Records))
+}
+
 func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, _, contract := GetTestStubs()

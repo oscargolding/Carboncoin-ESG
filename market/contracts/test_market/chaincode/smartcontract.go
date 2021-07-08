@@ -151,7 +151,7 @@ func (s *SmartContract) GetOffers(ctx contractapi.TransactionContextInterface,
 // Helper to construct the response from the given iterator
 func constructResponseFromIterator(
 	iterator shim.StateQueryIteratorInterface) ([]*Offer, error) {
-	var offers []*Offer
+	offers := make([]*Offer, 0)
 	for iterator.HasNext() {
 		queryresult, err := iterator.Next()
 		if err != nil {

@@ -40,14 +40,12 @@ const Offer = (props) => {
         value={dollar}
         onChange={(event) => { setDollar(event.target.value); }}
         startAdornment={<InputAdornment position="start">$</InputAdornment>}
-        labelWidth={60}
       />
       <InputLabel htmlFor="outlined-adornment-quantity">Quantity</InputLabel>
       <OutlinedInput
         id="outlined-adornment-quantity"
         value={quantity}
         onChange={(event) => { setQuantity(event.target.value); }}
-        labelWidth={60}
       />
       {dollar !== '0' && quantity !== '0'
         ? <p>Sell {quantity} Carboncoin
@@ -57,7 +55,6 @@ const Offer = (props) => {
         variant="contained"
         color="primary"
         size='medium'
-        labelWidth={60}
         onClick={() => handleSubmit()}
       >
         Sell Carboncoin!

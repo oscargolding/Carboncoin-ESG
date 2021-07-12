@@ -15,8 +15,10 @@ const BalanceText = styled.p`
  */
 const Balance = () => {
   const [loaded, isLoaded] = useState(false);
-  const [balance, setBalance] = useState('');
-  const { authToken: [authToken], } = storeContext();
+  const {
+    authToken: [authToken],
+    balance: [balance, setBalance],
+  } = storeContext();
   useEffect(() => {
     console.log('calling use effect');
     const performRetrieve = async () => {

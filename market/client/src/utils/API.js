@@ -93,13 +93,44 @@ API.createOffer = async (token, amount, quantity) => {
   return jsonResponse;
 };
 
-API.getOffers = async (userAuthToken) => {
-  const queryParam = `${access}/api/offers/list`;
+API.getOffers = async (userAuthToken, signal, paginationToken) => {
+  const queryParam = `${access}/api/offers/list?token=${paginationToken}`;
   const response = await fetch(queryParam, {
     method: 'GET',
+    signal: signal,
     headers: {
       Authorization: `Bearer ${userAuthToken}`,
     },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
+/**
+ * Accept the offer for the purchase of tokens
+ * @param {authToken} userAuthToken the user auth token
+ * @param {offerId} offerId the offerId to purchase from
+ * @param {quantity} quantity the number to purchase
+ * @returns the jsonResponse
+ */
+API.acceptOffer = async (userAuthToken, offerId, quantity) => {
+  const queryParam = `${access}/api/offer/buy`;
+  console.log(offerId);
+  console.log(quantity);
+  const quantityBuying = String(quantity);
+  const response = await fetch(queryParam, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      purchased: quantityBuying,
+      id: offerId,
+    }),
   });
   const jsonResponse = await response.json();
   if (!response.ok) {

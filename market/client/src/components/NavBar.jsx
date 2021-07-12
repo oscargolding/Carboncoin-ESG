@@ -8,6 +8,8 @@ import { Link, } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Balance from './Balance';
 import CoinLogo from '../images/svg.svg';
+import IconButton from '@material-ui/core/IconButton';
+import HomeIcon from '@material-ui/icons/Home';
 
 // header div
 const HeaderDiv = styled.div`
@@ -50,6 +52,14 @@ const NavBar = () => {
               </Button>
             </>
             : <>
+              <IconButton
+                aria-label="home"
+                component={Link}
+                to='/dashboard'
+                id='home-btn'
+              >
+                <HomeIcon />
+              </IconButton>
               <Balance />
             </>}
         </Toolbar>

@@ -6,6 +6,7 @@ import path from 'path';
 import FabricCAServices from 'fabric-ca-client';
 import { Wallets, Gateway } from 'fabric-network';
 import { fileURLToPath } from 'url';
+import { v4 as uuidv4 } from 'uuid';
 import { login } from './auth.js';
 
 const filename = fileURLToPath(import.meta.url);
@@ -262,11 +263,27 @@ utils.addOffer = async (userId, amount, tokens) => {
   const { contract, gateway } = await getContract(userId);
 
   // Submit the offer
-  await contract.submitTransaction('AddOffer', userId, amount, tokens);
+  const offeruuid = uuidv4();
+  await contract.submitTransaction('AddOffer', userId, amount, tokens, offeruuid);
 
   // Return and disconnect
   gateway.disconnect();
   console.log(`>>> Added the sale offer for ${tokens},${amount},${userId}`);
+};
+
+utils.acceptOffer = async (userId, amount, offerId) => {
+  console.log('>>> Purchasing an offer for a user');
+  console.log(`${userId}, ${amount}, ${offerId}`);
+  const { contract, gateway } = await getContract(userId);
+
+  // Submit the offer
+  const balance = await contract.submitTransaction('PurchaseOfferTokens',
+    offerId, amount);
+
+  // Return and disconnect
+  gateway.disconnect();
+  console.log(`>>> Purchased tokens for ${amount} with offer id ${offerId}`);
+  return balance.toString();
 };
 
 /**

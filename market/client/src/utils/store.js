@@ -11,9 +11,11 @@ export const storeContext = () => useContext(StoreContext);
  */
 const Store = ({ children, }) => {
   const [authToken, setAuthToken] = React.useState('');
+  const [balance, setBalance] = React.useState('');
 
   const store = {
     authToken: [authToken, setAuthToken],
+    balance: [balance, setBalance],
   };
 
   return (

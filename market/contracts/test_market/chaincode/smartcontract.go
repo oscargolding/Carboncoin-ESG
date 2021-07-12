@@ -1,37 +1,16 @@
 package chaincode
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"regexp"
 
-	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 const CHANNEL = "mychannel"
-const SMALL = "small"
-const MEDIUM = "medium"
-const LARGE = "large"
-const OFFER_TYPE = "offer"
+const PRODUCER = "producer"
 
 type SmartContract struct {
 	contractapi.Contract
-}
-
-type Producer struct {
-	ID       string `json:"ID"`
-	Tokens   int    `json:"tokens"`
-	Sellable int    `json:"sellable"`
-}
-
-type Offer struct {
-	DocType  string `json:"docType"`
-	Producer string `json:"producer"`
-	Amount   int    `json:"amount"`
-	Tokens   int    `json:"tokens"`
-	Active   bool   `json:"active"`
 }
 
 // The result from a query
@@ -44,8 +23,8 @@ type PaginatedQueryResult struct {
 // Public Functions //
 // The Public exposable on-chain functions - for dealing with producers //
 
-func (s *SmartContract) AddProducer(ctx contractapi.TransactionContextInterface, producerId string) error {
-	exists, err := s.CheckProducer(ctx, producerId)
+func (s *SmartContract) AddProducer(ctx CustomMarketContextInterface, producerId string) error {
+	exists, err := ctx.CheckProducer(producerId)
 	if err != nil {
 		return err
 	}
@@ -53,7 +32,7 @@ func (s *SmartContract) AddProducer(ctx contractapi.TransactionContextInterface,
 		return fmt.Errorf("producer with name %v exists", producerId)
 	} else {
 		// Here we know the producer does not exists
-		permissions, err := s.getUserType(ctx)
+		permissions, err := ctx.GetUserType()
 		if err != nil {
 			return fmt.Errorf("error with user attribute %v", err)
 		}
@@ -66,24 +45,14 @@ func (s *SmartContract) AddProducer(ctx contractapi.TransactionContextInterface,
 		matrix = append(matrix, []byte(producerId))
 		res := ctx.GetStub().InvokeChaincode("EnergyCertifier", matrix, CHANNEL)
 		size := string(res.GetPayload())
-		tokenAllocation := s.determineToken(size)
-		producer := Producer{ID: producerId, Tokens: tokenAllocation, Sellable: tokenAllocation}
-		producerJSON, err := json.Marshal(producer)
-		if err != nil {
-			return err
-		}
-		err = ctx.GetStub().PutState(producer.ID, producerJSON)
-		if err != nil {
-			return fmt.Errorf("error putting to world state. %v", err)
-		}
-		// Return nil, producer was successfully put inside the world state
-		return nil
+		produce := NewProducer(producerId, size)
+		return produce.ChainFlush(ctx)
 	}
 }
 
 // Get the balance of a given producer
-func (s *SmartContract) GetBalance(ctx contractapi.TransactionContextInterface, producerId string) (int, error) {
-	producer := s.GetProducer(ctx, producerId)
+func (s *SmartContract) GetBalance(ctx CustomMarketContextInterface, producerId string) (int, error) {
+	producer := ctx.GetProducer(producerId)
 	if producer == nil {
 		return 0, fmt.Errorf("unable to get producer with name: %v", producerId)
 	}
@@ -91,40 +60,38 @@ func (s *SmartContract) GetBalance(ctx contractapi.TransactionContextInterface, 
 }
 
 // Add an offer for the sale of tokens on chain
-func (s *SmartContract) AddOffer(ctx contractapi.TransactionContextInterface,
-	producerId string, amountGiven int, tokensGiven int) error {
-	exists, err := s.CheckProducer(ctx, producerId)
-	if !exists || err != nil {
+// the offerID is required to be unique
+func (s *SmartContract) AddOffer(ctx CustomMarketContextInterface,
+	producerId string, amountGiven int, tokensGiven int, offerID string) error {
+	exists := ctx.GetProducer(producerId)
+	if exists == nil {
 		return fmt.Errorf("failed to determine the existence of producer")
 	} else {
-		userType, err := s.getUserType(ctx)
+		userType, err := ctx.GetUserType()
 		if err != nil {
 			return err
 		}
-		userId, err := s.getUserId(ctx)
+		userId, err := ctx.GetUserId()
 		if err != nil {
 			return err
 		}
 		if userType != "producer" || userId != producerId {
 			return fmt.Errorf("carboncoin offers only allowed by valid producers")
 		}
-		sellable, err := s.GetSellable(ctx, producerId)
+		err = exists.DeductSellable(tokensGiven)
 		if err != nil {
-			return fmt.Errorf("could not get sellabe: %v", err)
+			return fmt.Errorf("error deducting: %v", err)
 		}
-		if sellable < tokensGiven {
-			return fmt.Errorf("%v does not have enough sellable tokens", producerId)
-		}
-		err = s.createOffer(ctx, producerId, amountGiven, tokensGiven)
+		err = exists.ChainFlush(ctx)
 		if err != nil {
-			return fmt.Errorf("could not create offer: %v", err)
+			return err
 		}
-		return s.changeSellableForProducer(ctx, producerId, tokensGiven)
+		return ctx.CreateOffer(producerId, amountGiven, tokensGiven, offerID)
 	}
 }
 
 // Get all the offers with the following bookmark, pageSize and string
-func (s *SmartContract) GetOffers(ctx contractapi.TransactionContextInterface,
+func (s *SmartContract) GetOffers(ctx CustomMarketContextInterface,
 	pageSize int32, bookmark string) (*PaginatedQueryResult, error) {
 	queryString := `{"selector":{"docType":"offer", "active": true}}`
 	stub := ctx.GetStub()
@@ -136,7 +103,10 @@ func (s *SmartContract) GetOffers(ctx contractapi.TransactionContextInterface,
 	// Wait until the function finishes before closing
 	defer resultsIterator.Close()
 
-	offers, err := constructResponseFromIterator(resultsIterator)
+	offers := make([]*Offer, 0)
+	err = ctx.IteratorResults(resultsIterator, func(offer *Offer) {
+		offers = append(offers, offer)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -148,147 +118,66 @@ func (s *SmartContract) GetOffers(ctx contractapi.TransactionContextInterface,
 	}, nil
 }
 
-// Helper to construct the response from the given iterator
-func constructResponseFromIterator(
-	iterator shim.StateQueryIteratorInterface) ([]*Offer, error) {
-	offers := make([]*Offer, 0)
-	for iterator.HasNext() {
-		queryresult, err := iterator.Next()
-		if err != nil {
-			return nil, err
-		}
-		var offer Offer
-		err = json.Unmarshal(queryresult.Value, &offer)
-		if err != nil {
-			return nil, err
-		}
-		offers = append(offers, &offer)
-	}
-
-	return offers, nil
-}
-
-// Private class functions //
-// Helper functions for the smart contract //
-
-func (s *SmartContract) changeSellableForProducer(
-	ctx contractapi.TransactionContextInterface,
-	producerId string,
-	tokens int) error {
-	producer, err := ctx.GetStub().GetState(producerId)
-	if producer == nil || err != nil {
-		return fmt.Errorf("unabled to change sellable for %v", producerId)
-	}
-	var producerObj Producer
-	err = json.Unmarshal(producer, &producerObj)
+// Purchase tokens from an offer
+func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
+	purchasingOfferId string, tokenAmount int) (int, error) {
+	// Get the producer wanting to buy
+	userId, err := ctx.GetUserId()
 	if err != nil {
-		return fmt.Errorf("unmarshal error: %v", err)
+		return 0, err
 	}
-	producerObj.Sellable -= tokens
-	jsonProducer, err := json.Marshal(producerObj)
+	userType, err := ctx.GetUserType()
 	if err != nil {
-		return fmt.Errorf("marshal error: %v", err)
+		return 0, err
 	}
-	return ctx.GetStub().PutState(producerId, jsonProducer)
-}
-
-func (s *SmartContract) createOffer(ctx contractapi.TransactionContextInterface,
-	producerId string, amount int, tokens int) error {
-	// Create the offer so that it is always active
-	offer := Offer{DocType: OFFER_TYPE, Producer: producerId, Amount: amount, Tokens: tokens, Active: true}
-	offerJSON, err := json.Marshal(offer)
+	if userType != PRODUCER {
+		return 0, fmt.Errorf("must be a producer to purchase")
+	}
+	buyer := ctx.GetProducer(userId)
+	if buyer == nil {
+		return 0, fmt.Errorf("err: buyer could not be found")
+	}
+	var usingOffer *Offer
+	err = ctx.GetResult(purchasingOfferId, func(offer *Offer) {
+		usingOffer = offer
+	})
 	if err != nil {
-		return fmt.Errorf("unable to format offer conversion %v", err)
+		return 0, fmt.Errorf("error getting offer: %v", err)
 	}
-	key := fmt.Sprintf("%s~%d~%d", producerId, amount, tokens)
-	ctx.GetStub().PutState(key, offerJSON)
-	return nil
-}
-
-// Get the sellable tokens
-func (s *SmartContract) GetSellable(ctx contractapi.TransactionContextInterface,
-	producerId string) (int, error) {
-	producer := s.GetProducer(ctx, producerId)
-	if producer == nil {
-		return 0, fmt.Errorf("unable to get sellable with name: %v", producerId)
+	seller := ctx.GetProducer(usingOffer.Producer)
+	if seller == nil {
+		return 0, fmt.Errorf("err: seller could not be found")
 	}
-	return producer.Sellable, nil
-}
-
-// Get the specified producer
-func (s *SmartContract) GetProducer(ctx contractapi.TransactionContextInterface, producerId string) *Producer {
-	producerJSON, err := ctx.GetStub().GetState(producerId)
-	if err != nil || producerJSON == nil {
-		return nil
+	if seller.ID == userId {
+		return 0, fmt.Errorf("err: cannot purchase tokens from self")
 	}
-	var usingProducer Producer
-	err = json.Unmarshal(producerJSON, &usingProducer)
-	if err != nil {
-		return nil
+	// Now have the offer, seller and buyer
+	// Deduct sellable
+	if err = usingOffer.RemoveTokens(tokenAmount); err != nil {
+		return 0, err
 	}
-	return &usingProducer
-}
-
-// Check if the producer exists or not
-func (s *SmartContract) CheckProducer(ctx contractapi.TransactionContextInterface, producerId string) (bool, error) {
-	producerJSON, err := ctx.GetStub().GetState(producerId)
-	if err != nil {
-		return false, fmt.Errorf("failed to read world state. %v", err)
+	if err = seller.DeductTokens(tokenAmount); err != nil {
+		return 0, err
 	}
-	if producerJSON == nil {
-		return false, nil
+	if err = seller.IncrementSellable(tokenAmount); err != nil {
+		return 0, err
 	}
-	return true, nil
-}
-
-func (s *SmartContract) getUserId(ctx contractapi.TransactionContextInterface) (string, error) {
-	id, err := ctx.GetClientIdentity().GetID()
-	if err != nil {
-		return "", err
+	// Give the tokens to the requesting user
+	if err = buyer.IncrementTokens(tokenAmount); err != nil {
+		return 0, err
 	}
-	re := regexp.MustCompile("x509::CN=(.*?),.")
-	clientID, err := base64.StdEncoding.DecodeString(id)
-	clientIDString := string(clientID)
-	if err != nil {
-		return "", err
+	if usingOffer.IsStale() {
+		usingOffer.MakeOfferStale()
 	}
-	// Find the substring in the regex
-	match := re.FindStringSubmatch(clientIDString)
-	fmt.Println("the id -->", clientIDString)
-	fmt.Println("found", match[1], len(match))
-	if len(match) < 2 {
-		return "", fmt.Errorf("invalid ID")
+	// Now flush
+	if err = buyer.ChainFlush(ctx); err != nil {
+		return 0, fmt.Errorf("error flushing buyer: %v", err)
 	}
-	return match[1], nil
-}
-
-func (s *SmartContract) getUserType(ctx contractapi.TransactionContextInterface) (string, error) {
-	userId, err := s.getUserId(ctx)
-	if err != nil {
-		return "", err
+	if err = seller.ChainFlush(ctx); err != nil {
+		return 0, fmt.Errorf("error flushing seller: %v", err)
 	}
-	if userId == "admin" {
-		return userId, nil
+	if err = usingOffer.ChainFlush(ctx); err != nil {
+		return 0, fmt.Errorf("error flusing offer: %v", err)
 	}
-	att, found, err := ctx.GetClientIdentity().GetAttributeValue("usertype")
-	if !found {
-		return "", fmt.Errorf("no `usertype` attribute value found")
-	}
-	if err != nil {
-		return "", err
-	}
-	return att, nil
-}
-
-func (s *SmartContract) determineToken(size string) int {
-	switch size {
-	case SMALL:
-		return 100
-	case MEDIUM:
-		return 200
-	case LARGE:
-		return 300
-	default:
-		return 100
-	}
+	return buyer.Tokens, nil
 }

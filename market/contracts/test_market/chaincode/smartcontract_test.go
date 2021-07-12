@@ -1,25 +1,18 @@
 package chaincode_test
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"market/chaincode"
 	"market/chaincode/chaincodefakes"
+	"reflect"
 	"testing"
 
 	"github.com/hyperledger/fabric-chaincode-go/pkg/cid"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
-	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/hyperledger/fabric-protos-go/ledger/queryresult"
 	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/stretchr/testify/require"
 )
-
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -fake-name TransactionContext . transactionContext
-type transactionContext interface {
-	contractapi.TransactionContextInterface
-}
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -fake-name ChaincodeStub . chaincodeStub
 type chaincodeStub interface {
@@ -36,25 +29,27 @@ type queryIterator interface {
 	shim.StateQueryIteratorInterface
 }
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -fake-name CustomContex . customContext
+type customContext interface {
+	chaincode.CustomMarketContextInterface
+}
+
 // Get all the stubs used and return
-func GetTestStubs() (*chaincodefakes.ChaincodeStub, *chaincodefakes.TransactionContext, *chaincodefakes.ClientIdentity, chaincode.SmartContract) {
+func GetTestStubs() (*chaincodefakes.ChaincodeStub,
+	*chaincodefakes.CustomContex,
+	chaincode.SmartContract) {
 	chaincodeStub := &chaincodefakes.ChaincodeStub{}
-	transactionContext := &chaincodefakes.TransactionContext{}
-	clientIdentity := &chaincodefakes.ClientIdentity{}
+	transactionContext := &chaincodefakes.CustomContex{}
 	transactionContext.GetStubReturns(chaincodeStub)
-	transactionContext.GetClientIdentityReturns(clientIdentity)
 
 	certifier := chaincode.SmartContract{}
-	return chaincodeStub, transactionContext, clientIdentity, certifier
+	return chaincodeStub, transactionContext, certifier
 }
 
 func Test_WHEN_adminAdd_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
-	str := "x509::CN=admin,OU=client::CN=ca.org1.example.com," +
-		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
-	stub, ctx, id, contract := GetTestStubs()
-	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
-	id.GetIDReturns(sEnc, nil)
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("admin", nil)
 	stub.GetStateReturns(nil, nil)
 	stub.InvokeChaincodeReturns(peer.Response{Payload: []byte("small")})
 	stub.PutStateReturns(nil)
@@ -68,8 +63,8 @@ func Test_WHEN_adminAdd_THEN_SUCCESS(t *testing.T) {
 
 func Test_WHEN_adminAddPresentUser_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
-	stub.GetStateReturns([]byte("producer"), nil)
+	_, ctx, contract := GetTestStubs()
+	ctx.CheckProducerReturns(true, nil)
 
 	// WHEN
 	err := contract.AddProducer(ctx, "oscar")
@@ -80,15 +75,9 @@ func Test_WHEN_adminAddPresentUser_THEN_FAILURE(t *testing.T) {
 
 func Test_WHEN_nonAdminAdd_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, id, contract := GetTestStubs()
-	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
-		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
-	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
-	id.GetIDReturns(sEnc, nil)
-	id.GetAttributeValueReturns("producer", true, nil)
-	stub.GetStateReturns(nil, nil)
-	stub.InvokeChaincodeReturns(peer.Response{Payload: []byte("small")})
-	stub.PutStateReturns(nil)
+	_, ctx, contract := GetTestStubs()
+	ctx.CheckProducerReturns(false, nil)
+	ctx.GetUserTypeReturns("producer", nil)
 
 	// WHEN
 	err := contract.AddProducer(ctx, "oscar")
@@ -99,11 +88,8 @@ func Test_WHEN_nonAdminAdd_THEN_FAILURE(t *testing.T) {
 
 func Test_WHEN_adminAddsFailedChain_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, id, contract := GetTestStubs()
-	str := "x509::CN=admin,OU=client::CN=ca.org1.example.com," +
-		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
-	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
-	id.GetIDReturns(sEnc, nil)
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("admin", nil)
 	stub.GetStateReturns(nil, nil)
 	stub.InvokeChaincodeReturns(peer.Response{Payload: []byte("small")})
 	stub.PutStateReturns(fmt.Errorf("failed"))
@@ -112,16 +98,14 @@ func Test_WHEN_adminAddsFailedChain_THEN_FAILURE(t *testing.T) {
 	err := contract.AddProducer(ctx, "oscar")
 
 	// THEN
-	require.EqualError(t, err, "error putting to world state. failed")
+	require.EqualError(t, err, "failed")
 }
 
 func Test_WHEN_getBalance_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
+	_, ctx, contract := GetTestStubs()
 	expectedFirm := &chaincode.Producer{Tokens: 500}
-	bytes, err := json.Marshal(expectedFirm)
-	require.NoError(t, err)
-	stub.GetStateReturns(bytes, nil)
+	ctx.GetProducerReturns(expectedFirm)
 
 	// WHEN
 	tokens, err := contract.GetBalance(ctx, "oscar")
@@ -133,8 +117,8 @@ func Test_WHEN_getBalance_THEN_SUCCESS(t *testing.T) {
 
 func Test_WHEN_getBalanceNotValid_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
-	stub.GetStateReturns(nil, nil)
+	_, ctx, contract := GetTestStubs()
+	ctx.GetProducerReturns(nil)
 
 	// WHEN
 	tokens, err := contract.GetBalance(ctx, "oscar")
@@ -146,20 +130,16 @@ func Test_WHEN_getBalanceNotValid_THEN_FAILURE(t *testing.T) {
 
 func Test_WHEN_addOfferValid_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
-	stub, ctx, id, contract := GetTestStubs()
+	stub, ctx, contract := GetTestStubs()
 	expectedFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 500}
-	bytes, err := json.Marshal(expectedFirm)
-	require.NoError(t, err)
-	stub.GetStateReturns(bytes, nil)
-	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
-		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
-	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
-	id.GetIDReturns(sEnc, nil)
-	id.GetAttributeValueReturns("producer", true, nil)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.CreateOfferReturns(nil)
 	stub.PutStateReturns(nil)
 
 	// WHEN
-	err = contract.AddOffer(ctx, "oscar", 200, 300)
+	err := contract.AddOffer(ctx, "oscar", 200, 300, "1")
 
 	// THEN
 	require.Nil(t, err)
@@ -167,31 +147,25 @@ func Test_WHEN_addOfferValid_THEN_SUCCESS(t *testing.T) {
 
 func Test_WHEN_addOfferNoProducer_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
-	stub.GetStateReturns(nil, nil)
+	_, ctx, contract := GetTestStubs()
+	ctx.GetProducerReturns(nil)
 
 	// WHEN
-	err := contract.AddOffer(ctx, "oscar", 200, 200)
+	err := contract.AddOffer(ctx, "oscar", 200, 200, "1")
 
 	require.EqualError(t, err, "failed to determine the existence of producer")
 }
 
-func Test_WHEN_notProducer_THEN_FAILURE(t *testing.T) {
+func Test_WHEN_addOfferNotProducer_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, id, contract := GetTestStubs()
+	_, ctx, contract := GetTestStubs()
 	expectedFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 500}
-	bytes, err := json.Marshal(expectedFirm)
-	require.NoError(t, err)
-	stub.GetStateReturns(bytes, nil)
-	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
-		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
-	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
-	id.GetIDReturns(sEnc, nil)
-	id.GetAttributeValueReturns("user", true, nil)
-	stub.PutStateReturns(nil)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetUserTypeReturns("", nil)
+	ctx.GetSellableReturns(500, nil)
 
 	// WHEN
-	err = contract.AddOffer(ctx, "oscar", 200, 200)
+	err := contract.AddOffer(ctx, "oscar", 200, 200, "1")
 
 	// THEN
 	require.EqualError(t, err, "carboncoin offers only allowed by valid producers")
@@ -199,36 +173,44 @@ func Test_WHEN_notProducer_THEN_FAILURE(t *testing.T) {
 
 func Test_WHEN_addOfferNotEnoughTokens_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, id, contract := GetTestStubs()
+	_, ctx, contract := GetTestStubs()
 	expectedFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 100}
-	bytes, err := json.Marshal(expectedFirm)
-	require.NoError(t, err)
-	stub.GetStateReturns(bytes, nil)
-	str := "x509::CN=oscar,OU=client::CN=ca.org1.example.com," +
-		"O=org1.example.com,L=Durham,ST=North Carolina,C=US"
-	sEnc := base64.StdEncoding.EncodeToString([]byte(str))
-	id.GetIDReturns(sEnc, nil)
-	id.GetAttributeValueReturns("producer", true, nil)
-	stub.PutStateReturns(nil)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
 
 	// WHEN
-	err = contract.AddOffer(ctx, "oscar", 200, 300)
+	err := contract.AddOffer(ctx, "oscar", 200, 300, "1")
 
 	// THEN
-	require.EqualError(t, err, "oscar does not have enough sellable tokens")
+	require.EqualError(t, err,
+		"error deducting: err producer does not have enough sellable tokens")
+}
+
+func mock_function_offer(call interface{}, name string) (*reflect.Value,
+	*reflect.Value) {
+	funcType := reflect.TypeOf(call)
+	docType := funcType.In(0).Elem()
+	callBackFunc := reflect.ValueOf(call)
+	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: name,
+		Amount: 30, Tokens: 30, Active: true, OfferID: "1"}
+	bytes, _ := json.Marshal(expectedOffer)
+	doc := reflect.New(docType)
+	docInterface := doc.Interface()
+	json.Unmarshal(bytes, &docInterface)
+	return &callBackFunc, &doc
 }
 
 func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
+	stub, ctx, contract := GetTestStubs()
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_offer(call, "oscar")
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
 	queryResultIterator := &chaincodefakes.QueryIterator{}
-	queryResultIterator.HasNextReturnsOnCall(0, true)
-	queryResultIterator.HasNextReturnsOnCall(1, false)
-	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: "oscar",
-		Amount: 30, Tokens: 30, Active: true}
-	bytes, err := json.Marshal(expectedOffer)
-	require.NoError(t, err)
-	queryResultIterator.NextReturns(&queryresult.KV{Value: bytes}, nil)
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 1,
 		Bookmark: ""}
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
@@ -248,9 +230,12 @@ func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 
 func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
+	stub, ctx, contract := GetTestStubs()
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		_ interface{}) error {
+		return nil
+	}
 	queryResultIterator := &chaincodefakes.QueryIterator{}
-	queryResultIterator.HasNextReturnsOnCall(0, false)
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 0,
 		Bookmark: ""}
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
@@ -266,7 +251,7 @@ func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
 
 func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
 	// GIVEN
-	stub, ctx, _, contract := GetTestStubs()
+	stub, ctx, contract := GetTestStubs()
 	stub.GetQueryResultWithPaginationReturns(nil, nil, fmt.Errorf("failure"))
 
 	// WHEN
@@ -275,4 +260,84 @@ func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
 	// THEN
 	require.EqualError(t, err, "error with query: failure")
 	require.Nil(t, result)
+}
+
+func IdealPurchaseStub(stub *chaincodefakes.ChaincodeStub,
+	ctx *chaincodefakes.CustomContex) {
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.GetUserTypeReturns("producer", nil)
+	buyingFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 100}
+	sellingFirm := &chaincode.Producer{ID: "john", Tokens: 300, Sellable: 300}
+	ctx.GetProducerReturnsOnCall(0, buyingFirm)
+	ctx.GetProducerReturnsOnCall(1, sellingFirm)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_function_offer(i, "john")
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	stub.PutStateReturns(nil)
+}
+func Test_WHEN_purchaseTokens_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	IdealPurchaseStub(stub, ctx)
+	// WHEN
+	amount, err := contract.PurchaseOfferTokens(ctx, "1", 5)
+
+	// THEN
+	require.Nil(t, err)
+	require.EqualValues(t, 505, amount)
+}
+
+func Test_WHEN_purchaseTokensTooMuch_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	IdealPurchaseStub(stub, ctx)
+
+	// WHEN
+	_, err := contract.PurchaseOfferTokens(ctx, "1", 1000)
+
+	// THEN
+	require.EqualError(t, err, "cannot purchase more tokens than offered")
+}
+
+func Test_WHEN_purchaseTokensNotProducer_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.GetUserTypeReturns("certifier", nil)
+
+	// WHEN
+	_, err := contract.PurchaseOfferTokens(ctx, "1", 10)
+
+	// THEN
+	require.EqualError(t, err, "must be a producer to purchase")
+}
+
+func Test_WHEN_producerNotEnoughTokens_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	IdealPurchaseStub(stub, ctx)
+	sellingFirm := &chaincode.Producer{ID: "john", Tokens: 5, Sellable: 300}
+	ctx.GetProducerReturnsOnCall(1, sellingFirm)
+
+	// WHEN
+	_, err := contract.PurchaseOfferTokens(ctx, "1", 10)
+
+	// THEN
+	require.EqualError(t, err, "err producer does not have enough tokens")
+}
+
+func Test_WHEN_sellerIsSelf_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	IdealPurchaseStub(stub, ctx)
+	sellingFirm := &chaincode.Producer{ID: "oscar", Tokens: 5, Sellable: 300}
+	ctx.GetProducerReturnsOnCall(1, sellingFirm)
+
+	// WHEN
+	_, err := contract.PurchaseOfferTokens(ctx, "1", 10)
+
+	// THEN
+	require.EqualError(t, err, "err: cannot purchase tokens from self")
 }

@@ -70,6 +70,18 @@ carbonMarketRouter.post('/offer/create',
   })));
 
 /**
+ * POST to get tokens to purchase from the market
+ */
+carbonMarketRouter.post('/offer/buy',
+  catchErrors(authed(async (req, res, email) => {
+    const { purchased, id } = req.body;
+    console.log(purchased);
+    console.log(id);
+    const balance = await utils.acceptOffer(email, purchased, id);
+    return res.json({ balance });
+  })));
+
+/**
  * For retrieving the balance of a particular user
  */
 carbonMarketRouter.get('/token/balance',

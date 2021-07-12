@@ -2,7 +2,8 @@
     "index": {
         "fields": [
             "docType",
-            "active"
+            "active",
+            "offerId"
         ]
     },
     "ddoc": "indexActiveDoc",

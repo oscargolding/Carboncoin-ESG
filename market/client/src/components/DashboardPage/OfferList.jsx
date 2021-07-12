@@ -1,25 +1,46 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useRef, useCallback, } from 'react';
 import OfferCard from './OfferCard';
 import { CentralLoading, } from './styles/DashboardStyles';
 import { CircularProgress, } from '@material-ui/core';
 import { storeContext, } from '../../utils/store';
 import { Alert, } from '@material-ui/lab';
-import API from '../../utils/API';
+import useOfferSearch from './useOfferSearch';
 
 /**
  * Represent an offer list being provided.
  * @returns the offerlist
  */
 const OfferList = () => {
-  const [loading, setLoading] = useState(true);
-  const [gameList, setGameList] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
   const { authToken: [authToken], } = storeContext();
-  useEffect(() => {
-    const getOffers = async () => {
-      try {
-        const response = await API.getOffers(authToken);
-        const apiGameList = response.records.map((offer, i) => {
+  const [pageToken, setPageToken] = useState('');
+  const {
+    loading,
+    error,
+    offers,
+    hasMore,
+    paginationToken,
+  } = useOfferSearch(pageToken, authToken);
+  const observer = useRef();
+  const lastElementRef = useCallback(node => {
+    if (loading === true) {
+      return;
+    }
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPageToken(paginationToken);
+      }
+    });
+    if (node) {
+      observer.current.observe(node);
+    }
+  }, [loading, hasMore]);
+  return (
+    <>
+      {offers.map((offer, i) => {
+        if (offers.length === i + 1) {
           return (
             <OfferCard
               key={i}
@@ -27,24 +48,28 @@ const OfferList = () => {
               price={offer.amount}
               quantity={offer.tokens}
               active={offer.active}
+              offerid={offer.offerId}
+              usingRef={lastElementRef}
             />
           );
-        });
-        setGameList(apiGameList);
-      } catch (err) {
-        setErrorMessage(err.message);
-      }
-      setLoading(false);
-    };
-    getOffers();
-  }, []);
-  return (
-    <>
+        } else {
+          return (
+            <OfferCard
+              key={i}
+              producer={offer.producer}
+              price={offer.amount}
+              quantity={offer.tokens}
+              active={offer.active}
+              offerid={offer.offerId}
+            />
+          );
+        }
+      })}
       {loading
         ? <CentralLoading> <CircularProgress /> </CentralLoading>
-        : gameList}
-      {errorMessage !== ''
-        ? <Alert severity='error'>{errorMessage}</Alert>
+        : <></>}
+      {error !== ''
+        ? <Alert severity='error'>{error}</Alert>
         : <></>}
     </>
   );

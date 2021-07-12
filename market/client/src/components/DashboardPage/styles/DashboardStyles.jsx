@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import { Card, Button, } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import { Card, Button, Chip, } from '@material-ui/core';
 
 // Envrionment for creating sale offer
 export const CreateOfferButton = styled(Button)`
@@ -11,8 +10,8 @@ export const SpacedCard = styled(Card)`
   margin: 15px;
 `;
 
-export const OfferStatus = styled(Alert)`
-  margin-top: 5px;
+export const OfferStatus = styled(Chip)`
+  margin-top: 10px;
 `;
 
 export const CentralLoading = styled.div`

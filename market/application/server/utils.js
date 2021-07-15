@@ -18,7 +18,7 @@ const adminUserPasswd = 'adminpw';
 
 // Channel / chaincode details
 const channel = 'mychannel';
-const chaincode = 'basic';
+let chaincode = 'basic';
 
 // The wallet - note the wallet can often be out of sync and might need deleting
 let wallet;
@@ -26,18 +26,26 @@ let caClient;
 let ccpConfig;
 
 // The msp credentials for organisation one
-const mspOrg1 = 'Org1MSP';
+let mspOrg1 = 'Org1MSP';
 
 // Utilities available when accessing the blockchain.
 const utils = {};
 
 /**
+ * Populate the chaincode with a new name
+ * @param {chaincodeName} chaincodeName setting the chaincode
+ */
+utils.setChaincode = (chaincodeName) => {
+  chaincode = chaincodeName;
+};
+
+/**
  * Get the in memory object representing the network configuration
  */
-const buildNetworkConfig = () => {
+const buildNetworkConfig = (orgName) => {
   const ccpPath = path.resolve(dirname, '..', '..', '..', '..', 'test-network',
     'organizations', 'peerOrganizations',
-    'org1.example.com', 'connection-org1.json');
+    `${orgName}.example.com`, `connection-${orgName}.json`);
   const fileExists = fs.existsSync(ccpPath);
   if (!fileExists) {
     throw new Error(`No such file or directory: ${ccpPath}`);
@@ -80,7 +88,7 @@ const buildWallet = async (walletPath) => {
   return usingWallet;
 };
 
-const enrolAdmin = async (usableCaClient, usableWallet, orgMspId) => {
+const enrolAdmin = async (usableCaClient, usableWallet, orgMspId, adValue) => {
   try {
     // Is the admin user present
     const adminIdentity = await usableWallet.get(adminUserId);
@@ -95,7 +103,7 @@ const enrolAdmin = async (usableCaClient, usableWallet, orgMspId) => {
       attrs: [
         {
           name: 'usertype', // application role
-          value: 'admin',
+          value: adValue,
           ecert: true,
         }],
     });
@@ -115,19 +123,23 @@ const enrolAdmin = async (usableCaClient, usableWallet, orgMspId) => {
 };
 
 /**
+ * @param {orgName} orgName organisation ame to use when connecting
+ * @param {mspId} mspId the mspId to use when connecting
+ * @param {adValue} adValue the admin value to use when connecting
  * Launch the middleware layer for creating the Hydrogen market.
  */
-utils.connectGateway = async () => {
-  console.log('>>> Starting a connection to the gateway');
+utils.connectGateway = async (orgName, mspId, adValue) => {
+  console.log(`>>> Starting a connection to the gateway with msp ${mspId}`);
+  mspOrg1 = mspId;
   // Generate the network configuration from the file system
-  ccpConfig = buildNetworkConfig();
+  ccpConfig = buildNetworkConfig(orgName);
   // Build the certificate authority for the application
-  caClient = buildCaClient(ccpConfig, 'ca.org1.example.com');
+  caClient = buildCaClient(ccpConfig, `ca.${orgName}.example.com`);
   // Create a wallet
   wallet = await buildWallet('wallet');
   console.log('Built a certificate authority and a wallet');
   // Now enroll the admin
-  await enrolAdmin(caClient, wallet, mspOrg1);
+  await enrolAdmin(caClient, wallet, mspOrg1, adValue);
   console.log('>>> The admin is now enrolled');
 };
 
@@ -207,7 +219,7 @@ utils.loginProducer = async (username, password) => {
  * @param {credentilas} credentials given credentilas
  * @returns the credentials
  */
-const getContract = async (credentials) => {
+utils.getContract = async (credentials) => {
   // Create the gateway and connect to it
   const gateway = new Gateway();
   await gateway.connect(ccpConfig, {
@@ -229,7 +241,7 @@ const getContract = async (credentials) => {
  */
 utils.registerTokens = async (userId) => {
   console.log('>>> Starting the process of providing tokens');
-  const { contract, gateway } = await getContract(adminUserId);
+  const { contract, gateway } = await utils.getContract(adminUserId);
 
   // Add the producer and give them a number of tokens
   await contract.submitTransaction('AddProducer', userId);
@@ -245,7 +257,7 @@ utils.registerTokens = async (userId) => {
  */
 utils.retrieveBalance = async (userId) => {
   console.log('>>> Retrieving the balance for a user');
-  const { contract, gateway } = await getContract(adminUserId);
+  const { contract, gateway } = await utils.getContract(adminUserId);
 
   // Submit the transaction
   const balance = await contract.submitTransaction('GetBalance', userId);
@@ -260,7 +272,7 @@ utils.retrieveBalance = async (userId) => {
 utils.addOffer = async (userId, amount, tokens) => {
   console.log('>>> Adding an offer for user');
   console.log(`${userId}, ${amount}, ${tokens}`);
-  const { contract, gateway } = await getContract(userId);
+  const { contract, gateway } = await utils.getContract(userId);
 
   // Submit the offer
   const offeruuid = uuidv4();
@@ -274,7 +286,7 @@ utils.addOffer = async (userId, amount, tokens) => {
 utils.acceptOffer = async (userId, amount, offerId) => {
   console.log('>>> Purchasing an offer for a user');
   console.log(`${userId}, ${amount}, ${offerId}`);
-  const { contract, gateway } = await getContract(userId);
+  const { contract, gateway } = await utils.getContract(userId);
 
   // Submit the offer
   const balance = await contract.submitTransaction('PurchaseOfferTokens',
@@ -294,7 +306,7 @@ utils.acceptOffer = async (userId, amount, offerId) => {
 utils.getOffers = async (paginationToken, number) => {
   console.log('>>> Getting offers for a user');
   console.log(`${paginationToken} ${number}`);
-  const { contract, gateway } = await getContract(adminUserId);
+  const { contract, gateway } = await utils.getContract(adminUserId);
 
   // Submit the offer
   const result = await contract.submitTransaction('GetOffers',
@@ -304,6 +316,22 @@ utils.getOffers = async (paginationToken, number) => {
   // Return and disconnect
   gateway.disconnect();
   console.log(`>>> Retrieved listing for ${jsonResult.fetchedRecordsCount} number`);
+  return jsonResult;
+};
+
+utils.getProduction = async (userId, paginationToken, number) => {
+  console.log('>>> Getting production for a user');
+  console.log(`${paginationToken} ${number}`);
+  const { contract, gateway } = await utils.getContract(userId);
+
+  // Submit the request to get production for a user
+  const result = await contract.submitTransaction('GetProduction', number,
+    paginationToken);
+
+  const jsonResult = JSON.parse(result);
+  // Return and disconnect
+  gateway.disconnect();
+  console.log(`>>> Retrieved listing for ${jsonResult.fetchedRecordsCount}`);
   return jsonResult;
 };
 

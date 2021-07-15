@@ -249,6 +249,59 @@ func Test_WHEN_queryIterator_THEN_SUCCESS(t *testing.T) {
 	})
 }
 
+func Test_WHEN_GetHighThrough_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	queryResultIterator := chaincodefakes.QueryIterator{}
+	queryResultIterator.HasNextReturnsOnCall(0, true)
+	queryResultIterator.HasNextReturnsOnCall(1, true)
+	queryResultIterator.HasNextReturnsOnCall(2, false)
+	str := "oscarIndustry~+~2~1"
+	queryResultIterator.NextReturns(&queryresult.KV{Key: str}, nil)
+	stub.GetStateByPartialCompositeKeyReturns(&queryResultIterator, nil)
+	stub.SplitCompositeKeyReturns("", []string{"", "+", "2"}, nil)
+
+	// WHEN
+	val, err := ctx.GetHighThrough("oscarIndustry")
+
+	// THEN
+	require.Nil(t, err)
+	require.EqualValues(t, 2, val)
+}
+
+func Test_WHEN_GetHighThroughBadOper_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	queryResultIterator := chaincodefakes.QueryIterator{}
+	queryResultIterator.HasNextReturnsOnCall(0, true)
+	queryResultIterator.HasNextReturnsOnCall(1, true)
+	queryResultIterator.HasNextReturnsOnCall(2, false)
+	str := "oscarIndustry~+~2~1"
+	queryResultIterator.NextReturns(&queryresult.KV{Key: str}, nil)
+	stub.GetStateByPartialCompositeKeyReturns(&queryResultIterator, nil)
+	stub.SplitCompositeKeyReturns("", []string{"", "/", "2"}, nil)
+
+	// WHEN
+	val, err := ctx.GetHighThrough("oscarIndustry")
+
+	// THEN
+	require.EqualValues(t, val, 0)
+	require.EqualError(t, err, "unexpected operation /")
+}
+
+func Test_WHEN_GetHighThroughCompErr_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.GetStateByPartialCompositeKeyReturns(nil, fmt.Errorf("err"))
+
+	// WHEN
+	val, err := ctx.GetHighThrough("oscarIndustry")
+
+	// THEN
+	require.EqualError(t, err, "could not retrieve value for oscarIndustry: err")
+	require.EqualValues(t, val, 0)
+}
+
 func Test_WHEN_getResult_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	ctx, _, stub := PerformTestStub()
@@ -276,4 +329,70 @@ func Test_WHEN_getResult_THEN_ERROR(t *testing.T) {
 	// WHEN
 	err := ctx.GetResult("oscar", func(offer *chaincode.Offer) {})
 	require.EqualError(t, err, "failed getting state")
+}
+
+func Test_WHEN_createProduction_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.GetStateReturns(nil, nil)
+	stub.PutStateReturns(nil)
+
+	// WHEN
+	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true)
+
+	// THEN
+	require.Nil(t, err)
+}
+
+func Test_WHEN_createProductionExists_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	producer := &chaincode.Production{DocType: "production"}
+	bytes, err := json.Marshal(producer)
+	require.NoError(t, err)
+	stub.GetStateReturns(bytes, nil)
+
+	// WHEN
+	err = ctx.CreateProduction("1", 2, "12/2", "oscar", true)
+
+	// THEN
+	require.EqualError(t, err, "production with id already exists on the market")
+}
+
+func Test_WHEN_createProductionBlcokError_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.GetStateReturns(nil, nil)
+	stub.PutStateReturns(fmt.Errorf("error"))
+
+	// WHEN
+	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true)
+
+	// THEN
+	require.EqualError(t, err, "error")
+}
+
+func Test_WHEN_updateHighThroughput_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.GetTxIDReturns("1")
+	stub.PutStateReturns(nil)
+
+	// WHEN
+	err := ctx.UpdateHighThrough("oscarproduction", "+", 5)
+
+	// THEN
+	require.Nil(t, err)
+}
+
+func Test_WHEN_updateHighThroughputMinus_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.GetTxIDReturns("1")
+
+	// WHEN
+	err := ctx.UpdateHighThrough("oscarproduction", "/", 6)
+
+	// THEN
+	require.EqualError(t, err, "operator / op is not supported")
 }

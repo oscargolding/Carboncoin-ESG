@@ -98,4 +98,12 @@ carbonMarketRouter.get('/offers/list',
     return res.json(queryResult);
   })));
 
+carbonMarketRouter.get('/production/list',
+  catchErrors(authed(async (req, res, email) => {
+    const token = req.query.token ? req.query.token : '';
+    const size = req.query.amount ? req.query.amount : 10;
+    const queryResult = await utils.getProduction(email, token, size);
+    return res.json(queryResult);
+  })));
+
 export default carbonMarketRouter;

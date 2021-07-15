@@ -106,6 +106,7 @@ func Test_WHEN_getBalance_THEN_SUCCESS(t *testing.T) {
 	_, ctx, contract := GetTestStubs()
 	expectedFirm := &chaincode.Producer{Tokens: 500}
 	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetHighThroughReturns(500, nil)
 
 	// WHEN
 	tokens, err := contract.GetBalance(ctx, "oscar")
@@ -199,6 +200,81 @@ func mock_function_offer(call interface{}, name string) (*reflect.Value,
 	docInterface := doc.Interface()
 	json.Unmarshal(bytes, &docInterface)
 	return &callBackFunc, &doc
+}
+
+func mock_function_production(call interface{}, id string) (*reflect.Value,
+	*reflect.Value) {
+	funcType := reflect.TypeOf(call)
+	docType := funcType.In(0).Elem()
+	callBackFunc := reflect.ValueOf(call)
+	expectedProd := &chaincode.Production{ProductionID: id, DocType: "production",
+		Paid: false, Produced: 4}
+	bytes, _ := json.Marshal(expectedProd)
+	doc := reflect.New(docType)
+	docInterface := doc.Interface()
+	json.Unmarshal(bytes, &docInterface)
+	return &callBackFunc, &doc
+}
+
+func Test_WHEN_getProduction_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_production(call, "oscar")
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 1,
+		Bookmark: ""}
+	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
+
+	// WHEN
+	result, err := contract.GetProduction(ctx, 5, "")
+
+	// THEN
+	require.Nil(t, err)
+	require.Equal(t, "", result.Bookmark)
+	require.Equal(t, int32(1), result.FetchedRecordsCount)
+	require.Equal(t, 1, len(result.Records))
+	production := result.Records[0]
+	require.Equal(t, false, production.Paid)
+}
+
+func Test_WHEN_getProductionNone_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		_ interface{}) error {
+		return nil
+	}
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 0,
+		Bookmark: ""}
+	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
+
+	// WHEN
+	result, err := contract.GetProduction(ctx, 5, "")
+
+	// THEN
+	require.Nil(t, err)
+	require.Equal(t, int32(0), result.FetchedRecordsCount)
+	require.Equal(t, 0, len(result.Records))
+}
+
+func Test_WHEN_getProductionErrors_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	stub.GetQueryResultWithPaginationReturns(nil, nil, fmt.Errorf("failure"))
+
+	// WHEN
+	result, err := contract.GetProduction(ctx, 5, "")
+
+	// THEN
+	require.EqualError(t, err, "error with query: failure")
+	require.Nil(t, result)
 }
 
 func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
@@ -340,4 +416,65 @@ func Test_WHEN_sellerIsSelf_THEN_FAILURE(t *testing.T) {
 
 	// THEN
 	require.EqualError(t, err, "err: cannot purchase tokens from self")
+}
+
+func Test_WHEN_producerProduction_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("certifier", nil)
+	sellingFirm := &chaincode.Producer{ID: "oscar", Tokens: 5, Sellable: 300,
+		Carbon: 0}
+	ctx.GetProducerReturns(sellingFirm)
+	ctx.CreateProductionReturns(nil)
+	ctx.UpdateHighThroughReturns(nil)
+	stub.PutStateReturns(nil)
+
+	// WHEN
+	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1")
+
+	// THEN
+	require.Nil(t, err)
+}
+
+func Test_WHEN_producerProductionNotCertifier_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("producer", nil)
+
+	// WHEN
+	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1")
+
+	// THEN
+	require.EqualError(t, err,
+		"err: only certifiers/admins can report carbon production")
+}
+
+func Test_WHEN_producerProductionDNE_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetProducerReturns(nil)
+	ctx.GetUserTypeReturns("certifier", nil)
+
+	// WHEN
+	err := contract.ProducerProduction(ctx, "oscar", 15, "1/1", "1")
+
+	// THEN
+	require.EqualError(t, err, "err: producer does not exist")
+}
+
+func Test_WHEN_producerProductionErrorCreating_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("certifier", nil)
+	sellingFirm := &chaincode.Producer{ID: "oscar", Tokens: 5, Sellable: 300,
+		Carbon: 0}
+	ctx.GetProducerReturns(sellingFirm)
+	ctx.CreateProductionReturns(fmt.Errorf("failed adding production"))
+	stub.PutStateReturns(nil)
+
+	// WHEN
+	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1")
+
+	// THEN
+	require.EqualError(t, err, "failed adding production")
 }

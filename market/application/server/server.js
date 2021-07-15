@@ -33,7 +33,7 @@ app.get('/ping', (_, res) => {
 const main = async () => {
   const port = process.env.PORT || 3000;
   try {
-    await utils.connectGateway();
+    await utils.connectGateway('org1', 'Org1MSP', 'admin');
   } catch (error) {
     console.log(`Error in connecting to Fabric network ${error}`);
   }

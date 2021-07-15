@@ -63,3 +63,21 @@ func (s *SmartContract) FirmSize(ctx contractapi.TransactionContextInterface, fi
 	// Return the size of the given firm
 	return usingFirm.Size, nil
 }
+
+// Represents logic onchain calling the market
+func (s *SmartContract) ReportProduction(
+	ctx contractapi.TransactionContextInterface, firm string,
+	carbonProduction int, day string, id string) error {
+	var matrix [][]byte
+	matrix = append(matrix, []byte("ProducerProduction"))
+	matrix = append(matrix, []byte(firm))
+	matrix = append(matrix, []byte(fmt.Sprintf("%d", carbonProduction)))
+	matrix = append(matrix, []byte(day))
+	matrix = append(matrix, []byte(id))
+	res := ctx.GetStub().InvokeChaincode("basic", matrix, "mychannel")
+	fmt.Printf("status code ->> %d", res.Status)
+	if res.Status != 200 {
+		return fmt.Errorf("err: failed calling chaincode: %v", res.Message)
+	}
+	return nil
+}

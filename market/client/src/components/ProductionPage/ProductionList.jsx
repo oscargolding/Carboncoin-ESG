@@ -1,17 +1,17 @@
 import React, { useState, useRef, useCallback, } from 'react';
-import OfferCard from './OfferCard';
-import { CentralLoading, } from './styles/DashboardStyles';
-import { CircularProgress, } from '@material-ui/core';
-import { storeContext, } from '../../utils/store';
-import { Alert, } from '@material-ui/lab';
-import useOfferSearch from './useOfferSearch';
 import API from '../../utils/API';
+import { storeContext, } from '../../utils/store';
+import { CentralLoading, } from '../DashboardPage/styles/DashboardStyles';
+import { CircularProgress, } from '@material-ui/core';
+import { Alert, } from '@material-ui/lab';
+import useOfferSearch from '../DashboardPage/useOfferSearch';
+import ProductionCard from './ProductionCard';
 
 /**
- * Represent an offer list being provided.
- * @returns the offerlist
+ * The production list
+ * @returns the production associated with an individual on the carbon market.
  */
-const OfferList = () => {
+const ProductionList = () => {
   const { authToken: [authToken], } = storeContext();
   const [pageToken, setPageToken] = useState('');
   const {
@@ -20,7 +20,7 @@ const OfferList = () => {
     offers,
     hasMore,
     paginationToken,
-  } = useOfferSearch(pageToken, authToken, API.getOffers);
+  } = useOfferSearch(pageToken, authToken, API.getProduction);
   const observer = useRef();
   const lastElementRef = useCallback(node => {
     if (loading === true) {
@@ -40,28 +40,24 @@ const OfferList = () => {
   }, [loading, hasMore]);
   return (
     <>
-      {offers.map((offer, i) => {
+      {offers.map((production, i) => {
         if (offers.length === i + 1) {
           return (
-            <OfferCard
+            <ProductionCard
               key={i}
-              producer={offer.producer}
-              price={offer.amount}
-              quantity={offer.tokens}
-              active={offer.active}
-              offerid={offer.offerId}
+              produced={production.produced}
+              date={production.date}
+              paid={production.paid}
               usingRef={lastElementRef}
             />
           );
         } else {
           return (
-            <OfferCard
+            <ProductionCard
               key={i}
-              producer={offer.producer}
-              price={offer.amount}
-              quantity={offer.tokens}
-              active={offer.active}
-              offerid={offer.offerId}
+              produced={production.produced}
+              date={production.date}
+              paid={production.paid}
             />
           );
         }
@@ -71,9 +67,10 @@ const OfferList = () => {
         : <></>}
       {error !== ''
         ? <Alert severity='error'>{error}</Alert>
-        : <></>}
+        : <></>
+      }
     </>
   );
 };
 
-export default OfferList;
+export default ProductionList;

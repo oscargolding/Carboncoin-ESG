@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"strconv"
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 const OFFER_TYPE = "offer"
+const PRODUCTION_TYPE = "production"
 
 // The custom object for dealing with the market
 type CustomMarketContextInterface interface {
@@ -22,9 +24,12 @@ type CustomMarketContextInterface interface {
 	GetUserId() (string, error)
 	GetUserType() (string, error)
 	CreateOffer(string, int, int, string) error
+	CreateProduction(string, int, string, string, bool) error
 	GetSellable(string) (int, error)
 	IteratorResults(shim.StateQueryIteratorInterface, interface{}) error
 	GetResult(string, interface{}) error
+	UpdateHighThrough(string, string, int) error
+	GetHighThrough(string) (int, error)
 }
 
 type CustomMarketContext struct {
@@ -124,6 +129,23 @@ func (s *CustomMarketContext) CreateOffer(producerId string, amount int,
 	return s.GetStub().PutState(offerID, offerJSON)
 }
 
+// Create production on the blockchain
+func (s *CustomMarketContext) CreateProduction(productionId string, carbon int,
+	date string, firm string, paid bool) error {
+	duplicateProductionJSON, err := s.GetStub().GetState(productionId)
+	if err != nil || duplicateProductionJSON != nil {
+		return fmt.Errorf("production with id already exists on the market")
+	}
+	// Create the production
+	production := Production{DocType: PRODUCTION_TYPE, ProductionID: productionId,
+		Produced: carbon, Date: date, Firm: firm, Paid: paid}
+	productionJSON, err := json.Marshal(production)
+	if err != nil {
+		return fmt.Errorf("unable to format production: %v", err)
+	}
+	return s.GetStub().PutState(productionId, productionJSON)
+}
+
 func (s *CustomMarketContext) IteratorResults(
 	iterator shim.StateQueryIteratorInterface, callBackFuncI interface{}) error {
 	funcType := reflect.TypeOf(callBackFuncI)
@@ -162,4 +184,73 @@ func (s *CustomMarketContext) GetResult(name string,
 	}
 	callBackFunc.Call([]reflect.Value{doc})
 	return nil
+}
+
+// Update a high throughput variable - implementation using delta streams
+func (s *CustomMarketContext) UpdateHighThrough(name string, op string,
+	val int) error {
+	if op != "+" && op != "-" {
+		return fmt.Errorf("operator %s op is not supported", op)
+	}
+	txid := s.GetStub().GetTxID()
+	compositeValueKey := "varName~op~value~txID"
+
+	// Create the composite key allowing for the future query
+	compositeKey, compositeErr := s.GetStub().CreateCompositeKey(
+		compositeValueKey, []string{name, op, fmt.Sprint(val), txid})
+	if compositeErr != nil {
+		return fmt.Errorf("could not create a composite key %v", compositeErr)
+	}
+
+	// Save the composite key
+	compositePutErr := s.GetStub().PutState(compositeKey, []byte{0x00})
+	if compositePutErr != nil {
+		return compositePutErr
+	}
+	return nil
+}
+
+// Get a high throughput variable - implementation using delta streams
+func (s *CustomMarketContext) GetHighThrough(name string) (int, error) {
+	deltaResultsIterator, err := s.GetStub().GetStateByPartialCompositeKey(
+		"varName~op~value~txID", []string{name})
+	if err != nil {
+		return 0, fmt.Errorf("could not retrieve value for %s: %v", name, err)
+	}
+	defer deltaResultsIterator.Close()
+
+	// Check if the variable even existed
+	if !deltaResultsIterator.HasNext() {
+		return 0, fmt.Errorf("no variable with name %s exists", name)
+	}
+	finalVal := 0
+	for deltaResultsIterator.HasNext() {
+		// Get the next row
+		responseRange, nextErr := deltaResultsIterator.Next()
+		if nextErr != nil {
+			return 0, nextErr
+		}
+		_, keyParts, splitKeyErr := s.GetStub().SplitCompositeKey(responseRange.Key)
+		if splitKeyErr != nil {
+			return 0, err
+		}
+
+		// Retrieve the delta value and operation
+		operation := keyParts[1]
+		valueStr := keyParts[2]
+		value, err := strconv.Atoi(valueStr)
+		fmt.Printf("%d", value)
+		if err != nil {
+			return 0, fmt.Errorf("err converting to int %v", err)
+		}
+		switch operation {
+		case "+":
+			finalVal += value
+		case "-":
+			finalVal -= value
+		default:
+			return 0, fmt.Errorf("unexpected operation %s", operation)
+		}
+	}
+	return finalVal, nil
 }

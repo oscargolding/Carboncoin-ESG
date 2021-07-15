@@ -109,6 +109,22 @@ API.getOffers = async (userAuthToken, signal, paginationToken) => {
   return jsonResponse;
 };
 
+API.getProduction = async (userAuthToken, signal, paginationToken) => {
+  const queryParam = `${access}/api/production/list?token${paginationToken}`;
+  const response = await fetch(queryParam, {
+    method: 'GET',
+    signal: signal,
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+    },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
 /**
  * Accept the offer for the purchase of tokens
  * @param {authToken} userAuthToken the user auth token

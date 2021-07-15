@@ -9,6 +9,7 @@ import (
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/stretchr/testify/require"
 )
 
@@ -114,4 +115,29 @@ func TestMarshalError(t *testing.T) {
 	// THEN
 	require.EqualError(t, err, "unexpected end of JSON input")
 	require.Equal(t, "", size)
+}
+
+func Test_WHEN_reportProduction_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	chaincodeStub, transactionContext, certifier := GetTestStubs()
+	chaincodeStub.InvokeChaincodeReturns(peer.Response{Status: 200})
+
+	// WHEN
+	err := certifier.ReportProduction(transactionContext, "oscar", 5, "1", "2")
+
+	// THEN
+	require.Nil(t, err)
+}
+
+func Test_WHEN_reportProductionError_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	chaincodeStub, transactionContext, certifier := GetTestStubs()
+	chaincodeStub.InvokeChaincodeReturns(peer.Response{Status: 400,
+		Message: "failed"})
+
+	// WHEN
+	err := certifier.ReportProduction(transactionContext, "oscar", 5, "1", "2")
+
+	// THEN
+	require.EqualError(t, err, "err: failed calling chaincode: failed")
 }

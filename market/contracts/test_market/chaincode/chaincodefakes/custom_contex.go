@@ -37,6 +37,21 @@ type CustomContex struct {
 	createOfferReturnsOnCall map[int]struct {
 		result1 error
 	}
+	CreateProductionStub        func(string, int, string, string, bool) error
+	createProductionMutex       sync.RWMutex
+	createProductionArgsForCall []struct {
+		arg1 string
+		arg2 int
+		arg3 string
+		arg4 string
+		arg5 bool
+	}
+	createProductionReturns struct {
+		result1 error
+	}
+	createProductionReturnsOnCall map[int]struct {
+		result1 error
+	}
 	GetClientIdentityStub        func() cid.ClientIdentity
 	getClientIdentityMutex       sync.RWMutex
 	getClientIdentityArgsForCall []struct {
@@ -46,6 +61,19 @@ type CustomContex struct {
 	}
 	getClientIdentityReturnsOnCall map[int]struct {
 		result1 cid.ClientIdentity
+	}
+	GetHighThroughStub        func(string) (int, error)
+	getHighThroughMutex       sync.RWMutex
+	getHighThroughArgsForCall []struct {
+		arg1 string
+	}
+	getHighThroughReturns struct {
+		result1 int
+		result2 error
+	}
+	getHighThroughReturnsOnCall map[int]struct {
+		result1 int
+		result2 error
 	}
 	GetProducerStub        func(string) *chaincode.Producer
 	getProducerMutex       sync.RWMutex
@@ -127,6 +155,19 @@ type CustomContex struct {
 		result1 error
 	}
 	iteratorResultsReturnsOnCall map[int]struct {
+		result1 error
+	}
+	UpdateHighThroughStub        func(string, string, int) error
+	updateHighThroughMutex       sync.RWMutex
+	updateHighThroughArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 int
+	}
+	updateHighThroughReturns struct {
+		result1 error
+	}
+	updateHighThroughReturnsOnCall map[int]struct {
 		result1 error
 	}
 	invocations      map[string][][]interface{}
@@ -261,6 +302,71 @@ func (fake *CustomContex) CreateOfferReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *CustomContex) CreateProduction(arg1 string, arg2 int, arg3 string, arg4 string, arg5 bool) error {
+	fake.createProductionMutex.Lock()
+	ret, specificReturn := fake.createProductionReturnsOnCall[len(fake.createProductionArgsForCall)]
+	fake.createProductionArgsForCall = append(fake.createProductionArgsForCall, struct {
+		arg1 string
+		arg2 int
+		arg3 string
+		arg4 string
+		arg5 bool
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.CreateProductionStub
+	fakeReturns := fake.createProductionReturns
+	fake.recordInvocation("CreateProduction", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.createProductionMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *CustomContex) CreateProductionCallCount() int {
+	fake.createProductionMutex.RLock()
+	defer fake.createProductionMutex.RUnlock()
+	return len(fake.createProductionArgsForCall)
+}
+
+func (fake *CustomContex) CreateProductionCalls(stub func(string, int, string, string, bool) error) {
+	fake.createProductionMutex.Lock()
+	defer fake.createProductionMutex.Unlock()
+	fake.CreateProductionStub = stub
+}
+
+func (fake *CustomContex) CreateProductionArgsForCall(i int) (string, int, string, string, bool) {
+	fake.createProductionMutex.RLock()
+	defer fake.createProductionMutex.RUnlock()
+	argsForCall := fake.createProductionArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *CustomContex) CreateProductionReturns(result1 error) {
+	fake.createProductionMutex.Lock()
+	defer fake.createProductionMutex.Unlock()
+	fake.CreateProductionStub = nil
+	fake.createProductionReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *CustomContex) CreateProductionReturnsOnCall(i int, result1 error) {
+	fake.createProductionMutex.Lock()
+	defer fake.createProductionMutex.Unlock()
+	fake.CreateProductionStub = nil
+	if fake.createProductionReturnsOnCall == nil {
+		fake.createProductionReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.createProductionReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *CustomContex) GetClientIdentity() cid.ClientIdentity {
 	fake.getClientIdentityMutex.Lock()
 	ret, specificReturn := fake.getClientIdentityReturnsOnCall[len(fake.getClientIdentityArgsForCall)]
@@ -312,6 +418,70 @@ func (fake *CustomContex) GetClientIdentityReturnsOnCall(i int, result1 cid.Clie
 	fake.getClientIdentityReturnsOnCall[i] = struct {
 		result1 cid.ClientIdentity
 	}{result1}
+}
+
+func (fake *CustomContex) GetHighThrough(arg1 string) (int, error) {
+	fake.getHighThroughMutex.Lock()
+	ret, specificReturn := fake.getHighThroughReturnsOnCall[len(fake.getHighThroughArgsForCall)]
+	fake.getHighThroughArgsForCall = append(fake.getHighThroughArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.GetHighThroughStub
+	fakeReturns := fake.getHighThroughReturns
+	fake.recordInvocation("GetHighThrough", []interface{}{arg1})
+	fake.getHighThroughMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *CustomContex) GetHighThroughCallCount() int {
+	fake.getHighThroughMutex.RLock()
+	defer fake.getHighThroughMutex.RUnlock()
+	return len(fake.getHighThroughArgsForCall)
+}
+
+func (fake *CustomContex) GetHighThroughCalls(stub func(string) (int, error)) {
+	fake.getHighThroughMutex.Lock()
+	defer fake.getHighThroughMutex.Unlock()
+	fake.GetHighThroughStub = stub
+}
+
+func (fake *CustomContex) GetHighThroughArgsForCall(i int) string {
+	fake.getHighThroughMutex.RLock()
+	defer fake.getHighThroughMutex.RUnlock()
+	argsForCall := fake.getHighThroughArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *CustomContex) GetHighThroughReturns(result1 int, result2 error) {
+	fake.getHighThroughMutex.Lock()
+	defer fake.getHighThroughMutex.Unlock()
+	fake.GetHighThroughStub = nil
+	fake.getHighThroughReturns = struct {
+		result1 int
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *CustomContex) GetHighThroughReturnsOnCall(i int, result1 int, result2 error) {
+	fake.getHighThroughMutex.Lock()
+	defer fake.getHighThroughMutex.Unlock()
+	fake.GetHighThroughStub = nil
+	if fake.getHighThroughReturnsOnCall == nil {
+		fake.getHighThroughReturnsOnCall = make(map[int]struct {
+			result1 int
+			result2 error
+		})
+	}
+	fake.getHighThroughReturnsOnCall[i] = struct {
+		result1 int
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *CustomContex) GetProducer(arg1 string) *chaincode.Producer {
@@ -728,6 +898,69 @@ func (fake *CustomContex) IteratorResultsReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *CustomContex) UpdateHighThrough(arg1 string, arg2 string, arg3 int) error {
+	fake.updateHighThroughMutex.Lock()
+	ret, specificReturn := fake.updateHighThroughReturnsOnCall[len(fake.updateHighThroughArgsForCall)]
+	fake.updateHighThroughArgsForCall = append(fake.updateHighThroughArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 int
+	}{arg1, arg2, arg3})
+	stub := fake.UpdateHighThroughStub
+	fakeReturns := fake.updateHighThroughReturns
+	fake.recordInvocation("UpdateHighThrough", []interface{}{arg1, arg2, arg3})
+	fake.updateHighThroughMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *CustomContex) UpdateHighThroughCallCount() int {
+	fake.updateHighThroughMutex.RLock()
+	defer fake.updateHighThroughMutex.RUnlock()
+	return len(fake.updateHighThroughArgsForCall)
+}
+
+func (fake *CustomContex) UpdateHighThroughCalls(stub func(string, string, int) error) {
+	fake.updateHighThroughMutex.Lock()
+	defer fake.updateHighThroughMutex.Unlock()
+	fake.UpdateHighThroughStub = stub
+}
+
+func (fake *CustomContex) UpdateHighThroughArgsForCall(i int) (string, string, int) {
+	fake.updateHighThroughMutex.RLock()
+	defer fake.updateHighThroughMutex.RUnlock()
+	argsForCall := fake.updateHighThroughArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *CustomContex) UpdateHighThroughReturns(result1 error) {
+	fake.updateHighThroughMutex.Lock()
+	defer fake.updateHighThroughMutex.Unlock()
+	fake.UpdateHighThroughStub = nil
+	fake.updateHighThroughReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *CustomContex) UpdateHighThroughReturnsOnCall(i int, result1 error) {
+	fake.updateHighThroughMutex.Lock()
+	defer fake.updateHighThroughMutex.Unlock()
+	fake.UpdateHighThroughStub = nil
+	if fake.updateHighThroughReturnsOnCall == nil {
+		fake.updateHighThroughReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.updateHighThroughReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *CustomContex) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -735,8 +968,12 @@ func (fake *CustomContex) Invocations() map[string][][]interface{} {
 	defer fake.checkProducerMutex.RUnlock()
 	fake.createOfferMutex.RLock()
 	defer fake.createOfferMutex.RUnlock()
+	fake.createProductionMutex.RLock()
+	defer fake.createProductionMutex.RUnlock()
 	fake.getClientIdentityMutex.RLock()
 	defer fake.getClientIdentityMutex.RUnlock()
+	fake.getHighThroughMutex.RLock()
+	defer fake.getHighThroughMutex.RUnlock()
 	fake.getProducerMutex.RLock()
 	defer fake.getProducerMutex.RUnlock()
 	fake.getResultMutex.RLock()
@@ -751,6 +988,8 @@ func (fake *CustomContex) Invocations() map[string][][]interface{} {
 	defer fake.getUserTypeMutex.RUnlock()
 	fake.iteratorResultsMutex.RLock()
 	defer fake.iteratorResultsMutex.RUnlock()
+	fake.updateHighThroughMutex.RLock()
+	defer fake.updateHighThroughMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

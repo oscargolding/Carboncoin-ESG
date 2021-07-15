@@ -8,6 +8,7 @@ import (
 
 const CHANNEL = "mychannel"
 const PRODUCER = "producer"
+const CERTIFIER = "certifier"
 
 type SmartContract struct {
 	contractapi.Contract
@@ -18,6 +19,12 @@ type PaginatedQueryResult struct {
 	Records             []*Offer `json:"records"`
 	FetchedRecordsCount int32    `json:"fetchedRecordsCount"`
 	Bookmark            string   `json:"bookmark"`
+}
+
+type PaginatedQueryResultProd struct {
+	Records             []*Production `json:"records"`
+	FetchedRecordsCount int32         `json:"fetchedRecordsCount"`
+	Bookmark            string        `json:"bookmark"`
 }
 
 // Public Functions //
@@ -45,7 +52,10 @@ func (s *SmartContract) AddProducer(ctx CustomMarketContextInterface, producerId
 		matrix = append(matrix, []byte(producerId))
 		res := ctx.GetStub().InvokeChaincode("EnergyCertifier", matrix, CHANNEL)
 		size := string(res.GetPayload())
-		produce := NewProducer(producerId, size)
+		produce, err := NewProducer(producerId, size, ctx)
+		if err != nil {
+			return err
+		}
 		return produce.ChainFlush(ctx)
 	}
 }
@@ -56,7 +66,11 @@ func (s *SmartContract) GetBalance(ctx CustomMarketContextInterface, producerId 
 	if producer == nil {
 		return 0, fmt.Errorf("unable to get producer with name: %v", producerId)
 	}
-	return producer.Tokens, nil
+	tokens, err := producer.GetTokens(ctx)
+	if err != nil {
+		return 0, err
+	}
+	return tokens, nil
 }
 
 // Add an offer for the sale of tokens on chain
@@ -118,6 +132,36 @@ func (s *SmartContract) GetOffers(ctx CustomMarketContextInterface,
 	}, nil
 }
 
+func (s *SmartContract) GetProduction(ctx CustomMarketContextInterface,
+	pageSize int32, bookmark string) (*PaginatedQueryResultProd, error) {
+	firm, err := ctx.GetUserId()
+	if err != nil {
+		return nil, err
+	}
+	queryString := fmt.Sprintf(
+		`{"selector":{"docType":"production", "producingFirm": "%s"}}`, firm)
+	stub := ctx.GetStub()
+	resultsIterator, responseMetadata, err := stub.GetQueryResultWithPagination(
+		queryString, pageSize, bookmark)
+	if err != nil {
+		return nil, fmt.Errorf("error with query: %v", err)
+	}
+	// Wait until the function finishes before closing
+	defer resultsIterator.Close()
+	production := make([]*Production, 0)
+	err = ctx.IteratorResults(resultsIterator, func(prod *Production) {
+		production = append(production, prod)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &PaginatedQueryResultProd{
+		Records:             production,
+		FetchedRecordsCount: responseMetadata.FetchedRecordsCount,
+		Bookmark:            responseMetadata.Bookmark,
+	}, nil
+}
+
 // Purchase tokens from an offer
 func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
 	purchasingOfferId string, tokenAmount int) (int, error) {
@@ -156,14 +200,14 @@ func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
 	if err = usingOffer.RemoveTokens(tokenAmount); err != nil {
 		return 0, err
 	}
-	if err = seller.DeductTokens(tokenAmount); err != nil {
+	if err = seller.DeductTokens(tokenAmount, ctx); err != nil {
 		return 0, err
 	}
 	if err = seller.IncrementSellable(tokenAmount); err != nil {
 		return 0, err
 	}
 	// Give the tokens to the requesting user
-	if err = buyer.IncrementTokens(tokenAmount); err != nil {
+	if err = buyer.IncrementTokens(tokenAmount, ctx); err != nil {
 		return 0, err
 	}
 	if usingOffer.IsStale() {
@@ -180,4 +224,39 @@ func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
 		return 0, fmt.Errorf("error flusing offer: %v", err)
 	}
 	return buyer.Tokens, nil
+}
+
+// Report the producer production - requires a certifier to call
+func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
+	firm string, carbonProduction int,
+	day string, id string) error {
+	userType, err := ctx.GetUserType()
+	if err != nil {
+		return err
+	}
+	if !(userType == CERTIFIER || userType == "admin") {
+		return fmt.Errorf("err: only certifiers/admins can report carbon production")
+	}
+	producer := ctx.GetProducer(firm)
+	if producer == nil {
+		return fmt.Errorf("err: producer does not exist")
+	}
+	if err = producer.AddCarbon(carbonProduction, ctx); err != nil {
+		return err
+	}
+	if producer.Tokens >= carbonProduction {
+		if err = producer.DeductTokens(carbonProduction, ctx); err != nil {
+			return err
+		}
+		if err = ctx.CreateProduction(id, carbonProduction, day, firm,
+			true); err != nil {
+			return err
+		}
+	} else {
+		if err = ctx.CreateProduction(id, carbonProduction, day, firm,
+			false); err != nil {
+			return err
+		}
+	}
+	return producer.ChainFlush(ctx)
 }

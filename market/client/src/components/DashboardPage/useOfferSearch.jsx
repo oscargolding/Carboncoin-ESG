@@ -1,5 +1,4 @@
 import { useEffect, useState, } from 'react';
-import API from '../../utils/API';
 
 /**
  * Component for searching offers
@@ -7,7 +6,7 @@ import API from '../../utils/API';
  * @param {*} authToken for authorisation
  * @returns loading, err, offers, hasMore, paginationToken
  */
-const useOfferSearch = (token, authToken) => {
+const useOfferSearch = (token, authToken, apiFun) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [offers, setOffers] = useState([]);
@@ -21,7 +20,7 @@ const useOfferSearch = (token, authToken) => {
       setLoading(true);
       setError('');
       try {
-        const response = await API.getOffers(authToken, signal, token);
+        const response = await apiFun(authToken, signal, token);
         setOffers((prev) => {
           return [...new Set([...prev, ...response.records])];
         });

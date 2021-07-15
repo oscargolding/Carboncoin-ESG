@@ -4,12 +4,15 @@ import AppBar from '@material-ui/core/AppBar';
 import styled from 'styled-components';
 import Toolbar from '@material-ui/core/Toolbar';
 import { storeContext, } from '../utils/store';
-import { Link, } from 'react-router-dom';
+import { Link, useHistory, } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Balance from './Balance';
 import CoinLogo from '../images/svg.svg';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 // header div
 const HeaderDiv = styled.div`
@@ -34,6 +37,16 @@ const Logo = styled.img`
 const NavBar = () => {
   // Get the store context
   const { authToken: [authToken], } = storeContext();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const history = useHistory();
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <HeaderDiv>
       <AppBar position='static'>
@@ -52,6 +65,7 @@ const NavBar = () => {
               </Button>
             </>
             : <>
+              <Balance />
               <IconButton
                 aria-label="home"
                 component={Link}
@@ -60,7 +74,37 @@ const NavBar = () => {
               >
                 <HomeIcon />
               </IconButton>
-              <Balance />
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={() => history.push('/production')}>
+                  Carbon Production
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  Logout
+                </MenuItem>
+              </Menu>
             </>}
         </Toolbar>
       </AppBar>

@@ -49,6 +49,7 @@ const ProductionList = () => {
               date={production.date}
               paid={production.paid}
               usingRef={lastElementRef}
+              id={production.productionID}
             />
           );
         } else {
@@ -58,6 +59,7 @@ const ProductionList = () => {
               produced={production.produced}
               date={production.date}
               paid={production.paid}
+              id={production.productionID}
             />
           );
         }

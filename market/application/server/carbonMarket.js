@@ -106,4 +106,11 @@ carbonMarketRouter.get('/production/list',
     return res.json(queryResult);
   })));
 
+carbonMarketRouter.get('/production/pay',
+  catchErrors(authed(async (req, res, email) => {
+    const prodId = req.query.production;
+    const balance = await utils.payProduction(email, prodId);
+    return res.json({ balance });
+  })));
+
 export default carbonMarketRouter;

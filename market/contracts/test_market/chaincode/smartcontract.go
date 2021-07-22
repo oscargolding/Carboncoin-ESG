@@ -260,3 +260,45 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	}
 	return producer.ChainFlush(ctx)
 }
+
+// Pay for the production emitted by a producer
+func (s *SmartContract) PayForProduction(ctx CustomMarketContextInterface,
+	id string) (int, error) {
+	// Make sure only the producer can pay for production
+	userType, err := ctx.GetUserType()
+	if err != nil {
+		return 0, err
+	}
+	if userType != PRODUCER {
+		return 0, fmt.Errorf("err: only producer can pay for production")
+	}
+	var production *Production
+	err = ctx.GetResult(id, func(offer *Production) {
+		production = offer
+	})
+	if err != nil {
+		return 0, fmt.Errorf("err: could not get production with id: %s %v", id, err)
+	}
+	userId, err := ctx.GetUserId()
+	if err != nil {
+		return 0, err
+	}
+	if userId != production.Firm {
+		return 0, fmt.Errorf("err: do not own carbon debt with id: %s", id)
+	}
+	producer := ctx.GetProducer(production.Firm)
+	if producer == nil {
+		return 0, fmt.Errorf("err: could not find the required producer")
+	}
+	if err = producer.DeductTokens(production.Produced, ctx); err != nil {
+		return 0, err
+	}
+	if production.Paid {
+		return 0, fmt.Errorf("err: already paid for production")
+	}
+	production.Paid = true
+	if err = production.ChainFlush(ctx); err != nil {
+		return 0, err
+	}
+	return producer.Tokens, producer.ChainFlush(ctx)
+}

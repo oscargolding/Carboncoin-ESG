@@ -1,0 +1,74 @@
+@startuml ChaincodeClass
+abstract class Contract
+interface TransactionContextInterface
+class MarketSmartContract {
+    .. Public Interface Callable on Blockchain ..
+    + AddProducer(CustomMarketContextInterface, string)
+    + GetBalance(CustomMarketContextInterface, string): int
+    + AddOffer(CustomMarketContextInterface, string, int, int, string)
+    + GetOffers(CustomMarketContextInterface, int, string): PaginatedQueryResultOffer
+    + GetProduction(CustomMarketContextInterface, int, string): PaginatedQueryResultProduction
+    + PurchaseOfferTokens(CustomMarketContextInterface, string, int): int
+    + ProducerProduction(CustomMarketContextInterface, string, int, string, string)
+    + PayForProduction(CustomMarketContextInterface, string): int
+}
+interface CustomMarketContextInterface {
+    .. Customisable Blockchain Context for CarbonMarket ..
+    + CheckProducer(string): bool
+    + GetProducer(string): *Producer
+    + GetUserId(): string
+    + GetUserType(): string
+    + CreateOffer(string, int, int, string)
+    + CreateProduction(string, int, string, string, bool)
+    + GetSellable(string): int
+    + IteratorResults(StateQueryIteratorInterface, interface)
+    + GetResults(string, interface)
+    + UpdateHighThrough(string, string, int)
+    + GetHighThrough(string): int
+}
+class Producer {
+    .. Represents an energy producer ..
+    - ID string
+    - Tokens int 
+    - Sellable int
+    - Carbon int
+    + NewProducer(string, string) *Producer
+    + GetTokens(CustomMarketContextInterface): int
+    + AddCarbon(int, CustomMarketContextInterface)
+    + DeductSellable(int)
+    + IncrementSellable(int)
+    + DeductTokens(int, CustomMarketContextInterface)
+    + IncrementTokens(int, CustomMarketContextInterface)
+    + ChainFlush(CustomMarketContextInterface)
+}
+class Offer {
+    .. Represents an Offer for Token Sale ..
+    - Producer string
+    - Amount int 
+    - Tokens int 
+    - Active bool
+    - OfferID string
+    + RemoveTokens(int)
+    + MakeOfferStale()
+    + IsStale(): bool
+    + ChainFlush(CustomMarketContextInterface)
+}
+class Production {
+    .. Class Representing Carbon Production .. 
+    - ProductionID string 
+    - Produced int 
+    - Date string 
+    - Firm string 
+    - Paid bool
+    + ChainFlush(CustomMarketContextInterface)
+}
+Contract <|-- MarketSmartContract
+TransactionContextInterface <|-- CustomMarketContextInterface
+MarketSmartContract "1" <-- "1" CustomMarketContextInterface
+MarketSmartContract "1" <-- "many" Producer
+MarketSmartContract "1" <-- "many" Offer
+MarketSmartContract "1" <-- "many" Production
+Producer -- CustomMarketContextInterface
+Offer -- CustomMarketContextInterface
+Production -- CustomMarketContextInterface
+@enduml

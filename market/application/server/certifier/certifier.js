@@ -25,13 +25,13 @@ const main = async () => {
       },
       {
         firm: 'oscarIndustry',
-        carbonProduction: '10',
+        carbonProduction: '305',
         date: moment().format('MMMM Do YYYY, h:mm:ss a'),
         id: uuid4(),
       },
       {
         firm: 'oscarIndustry',
-        carbonProduction: '15',
+        carbonProduction: '310',
         date: moment().format('MMMM Do YYYY, h:mm:ss a'),
         id: uuid4(),
       },

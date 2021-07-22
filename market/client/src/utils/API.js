@@ -155,4 +155,26 @@ API.acceptOffer = async (userAuthToken, offerId, quantity) => {
   return jsonResponse;
 };
 
+/**
+ * Pay for the carbon production used.
+ * @param {token} userAuthToken the user auth token
+ * @param {*} prodId the production id of the user
+ * @returns the amount of balance left
+ */
+API.payProduction = async (userAuthToken, prodId) => {
+  const queryParam = `${access}/api/production/pay?production=${prodId}`;
+  console.log(prodId);
+  const response = await fetch(queryParam, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+    },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
 export default API;

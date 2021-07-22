@@ -335,4 +335,17 @@ utils.getProduction = async (userId, paginationToken, number) => {
   return jsonResult;
 };
 
+utils.payProduction = async (userId, prodId) => {
+  console.log('>>> Paying for user production');
+  console.log(`${userId} ${prodId}`);
+  const { contract, gateway } = await utils.getContract(userId);
+
+  // Submit the transaction and do the payment
+  const balance = await contract.submitTransaction('PayForProduction', prodId);
+  // Return and disconnect
+  gateway.disconnect();
+  console.log('>>> Paid for production');
+  return balance.toString();
+};
+
 export default utils;

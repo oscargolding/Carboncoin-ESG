@@ -61,7 +61,9 @@ const userLock = (callback) => new Promise((resolve, reject) => {
  */
 export const getEmailFromAuthorization = (authorization) => {
   try {
+    console.log(`>>> Token->${authorization}`);
     const token = authorization.replace('Bearer ', '');
+    console.log(`>>> Token->${token}`);
     const { email } = jwt.verify(token, JWT_SECRET);
     if (!(email in admins)) {
       throw new AccessError('Invalid Token');

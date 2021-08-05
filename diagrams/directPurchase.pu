@@ -1,0 +1,51 @@
+@startuml directOffer
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+skinparam sequenceParticipant underline
+title Carboncoin Direct Coin Purchase (Offer)
+
+actor "Hydrogen Producer" as Producer
+participant "Carbon Market Website" as Website
+participant "HTTPS API" as API
+database "Cryptographic Wallet" as Wallet
+box "Carbon Market Blockchain Channel" #LightBlue
+participant "Carbon Market Smart Contract" as CMSC 
+database "Carbon Market On Chain Database" as CMJD
+
+Producer -> Website: Direct Token Purchase
+activate Website
+
+Website -> API: Create Direct Token Purchase
+activate API
+
+API -> Wallet: Gather Credentials
+activate Wallet
+
+Wallet -> API: Retrun Credentials
+deactivate Wallet
+
+API -> CMSC: Get Offer
+activate CMSC
+
+CMSC -> CMJD: Perform Index Query (warmed block cut)
+activate CMJD
+
+CMJD -> CMSC: Open Market Offer Results
+deactivate CMJD
+
+CMSC -> CMSC: Calculate Offer Based on Max Open Market
+note right
+Max Open Market Offer with Margin Added
+end note
+
+CMSC -> API: Return Chip for Offer
+deactivate CMSC
+
+API -> API: Close Gateway with User Certificate
+API -> Website: Return Offer
+deactivate API
+Website -> Producer: Observe Direct Purchase Offer
+deactivate Website
+
+@enduml

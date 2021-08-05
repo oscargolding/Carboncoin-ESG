@@ -16,9 +16,9 @@ type SmartContract struct {
 
 // The result from a query
 type PaginatedQueryResult struct {
-	Records             []*Offer `json:"records"`
-	FetchedRecordsCount int32    `json:"fetchedRecordsCount"`
-	Bookmark            string   `json:"bookmark"`
+	Records             []*OfferModel `json:"records"`
+	FetchedRecordsCount int32         `json:"fetchedRecordsCount"`
+	Bookmark            string        `json:"bookmark"`
 }
 
 type PaginatedQueryResultProd struct {
@@ -66,7 +66,7 @@ func (s *SmartContract) GetBalance(ctx CustomMarketContextInterface, producerId 
 	if producer == nil {
 		return 0, fmt.Errorf("unable to get producer with name: %v", producerId)
 	}
-	tokens, err := producer.GetTokens(ctx)
+	tokens, err := producer.GetTokens()
 	if err != nil {
 		return 0, err
 	}
@@ -96,18 +96,103 @@ func (s *SmartContract) AddOffer(ctx CustomMarketContextInterface,
 		if err != nil {
 			return fmt.Errorf("error deducting: %v", err)
 		}
-		err = exists.ChainFlush(ctx)
+		carbon, err := exists.GetCarbon()
 		if err != nil {
-			return err
+			return fmt.Errorf("err: getting carbon %v", err)
 		}
-		return ctx.CreateOffer(producerId, amountGiven, tokensGiven, offerID)
+		return ctx.CreateOffer(producerId, amountGiven, tokensGiven, offerID,
+			carbon)
 	}
+}
+
+// Get the direct price the market should be offering for a carboncoin - price dollar
+func (s *SmartContract) GetDirectPrice(ctx CustomMarketContextInterface) (int,
+	error) {
+	queryString := `{"selector":{"docType":"offer", "active": true}}`
+	stub := ctx.GetStub()
+	resultsIterator, err := stub.GetQueryResult(queryString)
+	if err != nil {
+		return 0, fmt.Errorf("error with query: %v", err)
+	}
+	userType, err := ctx.GetUserType()
+	if err != nil {
+		return 0, err
+	}
+	userId, err := ctx.GetUserId()
+	if err != nil {
+		return 0, err
+	}
+	if userType != PRODUCER {
+		return 0, fmt.Errorf("err: only producers can get a price")
+	}
+	// Wait until the function terminates before doing the actual close
+	defer resultsIterator.Close()
+
+	// Simple max function
+	current := 0
+	err = ctx.IteratorResults(resultsIterator, func(offer *Offer) {
+		if offer.Amount > current {
+			current = offer.Amount
+		}
+	})
+	if err != nil {
+		return 0, err
+	}
+	// Return whatever is the max offer + an additional offer of 50 bonus
+	val := current + 50
+	if err = ctx.CreateChip(userId, val); err != nil {
+		return 0, fmt.Errorf("err: cannot create chip %v", err)
+	}
+	return val, nil
+}
+
+func (s *SmartContract) RedeemChip(ctx CustomMarketContextInterface,
+	amount int) (int, error) {
+	userType, err := ctx.GetUserType()
+	if err != nil {
+		return 0, err
+	}
+	if userType != PRODUCER {
+		return 0, fmt.Errorf("err: only producers can redeem offer chips")
+	}
+	userId, err := ctx.GetUserId()
+	if err != nil {
+		return 0, err
+	}
+	buyer := ctx.GetProducer(userId)
+	var offerChip *AmountChip
+	err = ctx.GetResult(fmt.Sprintf(CHIP, userId), func(chip *AmountChip) {
+		offerChip = chip
+		offerChip.InsertContext(ctx)
+	})
+	if err != nil {
+		return 0, fmt.Errorf("err: error getting offerchip %v", err)
+	}
+	if !offerChip.Valid {
+		return 0, fmt.Errorf("err: the offer chip is no longer valid")
+	}
+	if err = buyer.IncrementSellable(amount); err != nil {
+		return 0, err
+	}
+	if err = buyer.IncrementTokens(amount); err != nil {
+		return 0, err
+	}
+	// Want to mark the chip is invalid for now
+	if err := offerChip.MarkInvalid(); err != nil {
+		return 0, err
+	}
+	tokens, err := buyer.GetTokens()
+	if err != nil {
+		return 0, err
+	}
+	return tokens + amount, nil
 }
 
 // Get all the offers with the following bookmark, pageSize and string
 func (s *SmartContract) GetOffers(ctx CustomMarketContextInterface,
-	pageSize int32, bookmark string) (*PaginatedQueryResult, error) {
-	queryString := `{"selector":{"docType":"offer", "active": true}}`
+	pageSize int32, bookmark string, field string,
+	direction bool) (*PaginatedQueryResult, error) {
+	queryString := ctx.OfferStringGenerator(field, direction)
 	stub := ctx.GetStub()
 	resultsIterator, responseMetadata, err := stub.GetQueryResultWithPagination(
 		queryString, pageSize, bookmark)
@@ -117,10 +202,19 @@ func (s *SmartContract) GetOffers(ctx CustomMarketContextInterface,
 	// Wait until the function finishes before closing
 	defer resultsIterator.Close()
 
-	offers := make([]*Offer, 0)
+	offers := make([]*OfferModel, 0)
+	var errorFound error = nil
 	err = ctx.IteratorResults(resultsIterator, func(offer *Offer) {
-		offers = append(offers, offer)
+		offer.InsertContext(ctx)
+		model, err := offer.ReturnModel()
+		if err != nil {
+			errorFound = err
+		}
+		offers = append(offers, model)
 	})
+	if errorFound != nil {
+		return nil, errorFound
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -184,6 +278,7 @@ func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
 	var usingOffer *Offer
 	err = ctx.GetResult(purchasingOfferId, func(offer *Offer) {
 		usingOffer = offer
+		usingOffer.InsertContext(ctx)
 	})
 	if err != nil {
 		return 0, fmt.Errorf("error getting offer: %v", err)
@@ -200,30 +295,32 @@ func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
 	if err = usingOffer.RemoveTokens(tokenAmount); err != nil {
 		return 0, err
 	}
-	if err = seller.DeductTokens(tokenAmount, ctx); err != nil {
+	if err = seller.DeductTokens(tokenAmount); err != nil {
 		return 0, err
 	}
-	if err = seller.IncrementSellable(tokenAmount); err != nil {
+	if err = buyer.IncrementSellable(tokenAmount); err != nil {
 		return 0, err
 	}
 	// Give the tokens to the requesting user
-	if err = buyer.IncrementTokens(tokenAmount, ctx); err != nil {
+	if err = buyer.IncrementTokens(tokenAmount); err != nil {
 		return 0, err
 	}
-	if usingOffer.IsStale() {
+	stale, err := usingOffer.IsStale()
+	if err != nil {
+		return 0, err
+	}
+	if stale {
 		usingOffer.MakeOfferStale()
+		// Last entry point for the offer - no more high throughput
+		if err = usingOffer.ChainFlush(ctx); err != nil {
+			return 0, fmt.Errorf("error flusing offer: %v", err)
+		}
 	}
-	// Now flush
-	if err = buyer.ChainFlush(ctx); err != nil {
-		return 0, fmt.Errorf("error flushing buyer: %v", err)
+	tokens, err := buyer.GetTokens()
+	if err != nil {
+		return 0, err
 	}
-	if err = seller.ChainFlush(ctx); err != nil {
-		return 0, fmt.Errorf("error flushing seller: %v", err)
-	}
-	if err = usingOffer.ChainFlush(ctx); err != nil {
-		return 0, fmt.Errorf("error flusing offer: %v", err)
-	}
-	return buyer.Tokens, nil
+	return tokens + tokenAmount, nil
 }
 
 // Report the producer production - requires a certifier to call
@@ -241,11 +338,15 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	if producer == nil {
 		return fmt.Errorf("err: producer does not exist")
 	}
-	if err = producer.AddCarbon(carbonProduction, ctx); err != nil {
+	if err = producer.AddCarbon(carbonProduction); err != nil {
 		return err
 	}
-	if producer.Tokens >= carbonProduction {
-		if err = producer.DeductTokens(carbonProduction, ctx); err != nil {
+	tokens, err := producer.GetTokens()
+	if err != nil {
+		return err
+	}
+	if tokens >= carbonProduction {
+		if err = producer.DeductTokens(carbonProduction); err != nil {
 			return err
 		}
 		if err = ctx.CreateProduction(id, carbonProduction, day, firm,
@@ -258,7 +359,7 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 			return err
 		}
 	}
-	return producer.ChainFlush(ctx)
+	return nil
 }
 
 // Pay for the production emitted by a producer
@@ -290,7 +391,7 @@ func (s *SmartContract) PayForProduction(ctx CustomMarketContextInterface,
 	if producer == nil {
 		return 0, fmt.Errorf("err: could not find the required producer")
 	}
-	if err = producer.DeductTokens(production.Produced, ctx); err != nil {
+	if err = producer.DeductTokens(production.Produced); err != nil {
 		return 0, err
 	}
 	if production.Paid {
@@ -300,5 +401,9 @@ func (s *SmartContract) PayForProduction(ctx CustomMarketContextInterface,
 	if err = production.ChainFlush(ctx); err != nil {
 		return 0, err
 	}
-	return producer.Tokens, producer.ChainFlush(ctx)
+	tokens, err := producer.GetTokens()
+	if err != nil {
+		return 0, err
+	}
+	return tokens - production.Produced, nil
 }

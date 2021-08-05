@@ -28,16 +28,24 @@ deactivate Wallet
 API -> CMSC: Request observation of offers
 activate CMSC
 
-CMSC -> CMJD: Perform Index Query (warmed on block cut)
-activate CMJD
+alt Carbon Reputation Filter Present
+    CMSC -> CMJD: Perform Index Query Sorting (warmed)
+    activate CMJD
+    CMJD -> CMSC: Offer Results Sorted with Reputation
+    deactivate CMJD
+else Normal Offer Retrieval
+    CMSC -> CMJD: Perform Index Query No Sorting (warmed)
+    activate CMJD
+    CMJD -> CMSC: Offer Results
+    deactivate CMJD
+end
+
 note right
 Whenever Hyperledger cuts a new block, an offer index is warmed to 
 reflect the latest information on the blockchain. 
 Such a feature strikes the perfect trade-off between the most accurate 
 financial information with on chain smart contract performance.
 end note
-CMJD -> CMSC: Offer Results
-deactivate CMJD
 
 CMSC -> API: Return offers
 deactivate CMSC

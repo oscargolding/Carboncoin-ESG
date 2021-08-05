@@ -1,26 +1,31 @@
-import React, { useState, useRef, useCallback, } from 'react';
+import React, { useState, useRef, useCallback, useEffect, } from 'react';
 import OfferCard from './OfferCard';
 import { CentralLoading, } from './styles/DashboardStyles';
 import { CircularProgress, } from '@material-ui/core';
 import { storeContext, } from '../../utils/store';
 import { Alert, } from '@material-ui/lab';
 import useOfferSearch from './useOfferSearch';
+import PropTypes from 'prop-types';
 import API from '../../utils/API';
 
 /**
  * Represent an offer list being provided.
  * @returns the offerlist
  */
-const OfferList = () => {
+const OfferList = (props) => {
   const { authToken: [authToken], } = storeContext();
+  const { sortTerm, direction, } = props;
   const [pageToken, setPageToken] = useState('');
+  useEffect(() => {
+    setPageToken('');
+  }, [sortTerm, direction]);
   const {
     loading,
     error,
     offers,
     hasMore,
     paginationToken,
-  } = useOfferSearch(pageToken, authToken, API.getOffers);
+  } = useOfferSearch(pageToken, authToken, API.getOffers, sortTerm, direction);
   const observer = useRef();
   const lastElementRef = useCallback(node => {
     if (loading === true) {
@@ -50,6 +55,7 @@ const OfferList = () => {
               quantity={offer.tokens}
               active={offer.active}
               offerid={offer.offerId}
+              reputation={offer.reputation}
               usingRef={lastElementRef}
             />
           );
@@ -61,6 +67,7 @@ const OfferList = () => {
               price={offer.amount}
               quantity={offer.tokens}
               active={offer.active}
+              reputation={offer.reputation}
               offerid={offer.offerId}
             />
           );
@@ -77,3 +84,8 @@ const OfferList = () => {
 };
 
 export default OfferList;
+
+OfferList.propTypes = {
+  sortTerm: PropTypes.string.isRequired,
+  direction: PropTypes.bool.isRequired,
+};

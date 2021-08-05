@@ -303,14 +303,15 @@ utils.acceptOffer = async (userId, amount, offerId) => {
  * @param {token} paginationToken the pagination token
  * @param {number} number the number of results
  */
-utils.getOffers = async (paginationToken, number) => {
+utils.getOffers = async (paginationToken, number, field, direction) => {
   console.log('>>> Getting offers for a user');
   console.log(`${paginationToken} ${number}`);
+  console.log(`${field} and dir -> ${direction}`);
   const { contract, gateway } = await utils.getContract(adminUserId);
 
   // Submit the offer
   const result = await contract.submitTransaction('GetOffers',
-    number, paginationToken);
+    number, paginationToken, field, direction);
 
   const jsonResult = JSON.parse(result);
   // Return and disconnect
@@ -345,6 +346,38 @@ utils.payProduction = async (userId, prodId) => {
   // Return and disconnect
   gateway.disconnect();
   console.log('>>> Paid for production');
+  return balance.toString();
+};
+
+utils.getDirectPrice = async (userId) => {
+  console.log('>>> Determining the direct purchase price');
+  console.log(`${userId}`);
+  const { contract, gateway } = await utils.getContract(userId);
+
+  // Submit the transaction and then wait
+  const directPrice = await contract.submitTransaction('GetDirectPrice');
+  // Return and disconnect
+  gateway.disconnect();
+  console.log(`Got the price >>> ${directPrice}`);
+  return directPrice.toString();
+};
+
+/**
+ * Redeeming the chip for a user - chips represent a direct offer on blockchain
+ * @param {*} userId user wanting to redeem the chip
+ * @returns the balance available to the user
+ */
+utils.redeemChip = async (userId, amount) => {
+  console.log('>>> Allowing a user to redeem a chip');
+  console.log(`${userId}`);
+  console.log(`${amount}`);
+  const { contract, gateway } = await utils.getContract(userId);
+
+  // Submit the transaction and then wait
+  const balance = await contract.submitTransaction('RedeemChip', amount);
+  // Return and disconnect
+  gateway.disconnect();
+  console.log(`Got the following balance >>> ${balance}`);
   return balance.toString();
 };
 

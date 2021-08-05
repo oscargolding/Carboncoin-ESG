@@ -93,8 +93,10 @@ API.createOffer = async (token, amount, quantity) => {
   return jsonResponse;
 };
 
-API.getOffers = async (userAuthToken, signal, paginationToken) => {
-  const queryParam = `${access}/api/offers/list?token=${paginationToken}`;
+API.getOffers = async (userAuthToken, signal, paginationToken, sortTerm, direction) => {
+  const orderTerm = sortTerm !== '' ? `&field=${sortTerm}` : '';
+  const directionTerm = direction !== false ? '&direction=1' : '';
+  const queryParam = `${access}/api/offers/list?token=${paginationToken}${orderTerm}${directionTerm}`;
   const response = await fetch(queryParam, {
     method: 'GET',
     signal: signal,
@@ -169,6 +171,50 @@ API.payProduction = async (userAuthToken, prodId) => {
     headers: {
       Authorization: `Bearer ${userAuthToken}`,
     },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
+/**
+ * Get the direct price from the market currently offered.
+ * @param {token} userAuthToken auth token
+ * @returns a json blob with price
+ */
+API.getDirectPrice = async (userAuthToken) => {
+  const queryParam = `${access}/api/direct/price`;
+  const response = await fetch(queryParam, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+    },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
+/**
+ * Accept the direct price on the market.
+ * @param {token} userAuthToken auth token in the market
+ * @returns the json object representing the tokens
+ */
+API.acceptDirectPrice = async (userAuthToken, quantity) => {
+  const queryParam = `${access}/api/direct/redeem`;
+  const response = await fetch(queryParam, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      amount: quantity,
+    }),
   });
   const jsonResponse = await response.json();
   if (!response.ok) {

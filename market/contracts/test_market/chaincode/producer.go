@@ -12,13 +12,13 @@ const LARGE = "large"
 
 // Represents a producer being used
 type Producer struct {
-	ID       string `json:"ID"`
-	Tokens   int    `json:"tokens"`
-	Sellable int    `json:"sellable"`
-	Carbon   int    `json:"carbonProduced"`
+	ID  string                       `json:"ID"`
+	Ctx CustomMarketContextInterface `json:"-"`
 }
 
 const TOKEN = "%s-tokens"
+const SELLABLE = "%s-sellable"
+const CARBON = "%s-carbon"
 
 // Create a new producer
 func NewProducer(identification string, size string,
@@ -33,82 +33,150 @@ func NewProducer(identification string, size string,
 		tokens = 100
 	}
 	highthrough := fmt.Sprintf(TOKEN, identification)
+	highSell := fmt.Sprintf(SELLABLE, identification)
+	highcarbon := fmt.Sprintf(CARBON, identification)
 	if err := ctx.UpdateHighThrough(highthrough, "+", tokens); err != nil {
 		return nil, err
 	}
-	return &Producer{ID: identification, Tokens: tokens, Sellable: tokens,
-		Carbon: 0}, nil
+	if err := ctx.UpdateHighThrough(highSell, "+", tokens); err != nil {
+		return nil, err
+	}
+	// Producer starts on a clean slate
+	if err := ctx.UpdateHighThrough(highcarbon, "+", 0); err != nil {
+		return nil, err
+	}
+	return &Producer{ID: identification, Ctx: ctx}, nil
 }
 
-func (pro *Producer) GetTokens(ctx CustomMarketContextInterface) (int, error) {
+func (pro *Producer) EnforceCtx() error {
+	if pro.Ctx == nil {
+		return fmt.Errorf("err: the blockchain context not set for producer")
+	}
+	return nil
+}
+
+func (pro *Producer) InsertContext(ctx CustomMarketContextInterface) {
+	pro.Ctx = ctx
+}
+
+func (pro *Producer) GetTokens() (int, error) {
+	// As a start - want to enforce the connection to the blockchain
+	if err := pro.EnforceCtx(); err != nil {
+		return 0, err
+	}
 	highthrough := fmt.Sprintf(TOKEN, pro.ID)
-	tokens, err := ctx.GetHighThrough(highthrough)
+	tokens, err := pro.Ctx.GetHighThrough(highthrough)
 	if err != nil {
 		return 0, err
 	}
 	return tokens, nil
 }
 
-func (pro *Producer) AddCarbon(amount int,
-	ctx CustomMarketContextInterface) error {
+// Get the carbon associated with a user
+func (pro *Producer) GetCarbon() (int, error) {
+	if err := pro.EnforceCtx(); err != nil {
+		return 0, err
+	}
+	highthrough := fmt.Sprintf(CARBON, pro.ID)
+	carbon, err := pro.Ctx.GetHighThrough(highthrough)
+	if err != nil {
+		return 0, err
+	}
+	return carbon, nil
+}
+
+// Add carbon production to the blockchain
+func (pro *Producer) AddCarbon(amount int) error {
+	if err := pro.EnforceCtx(); err != nil {
+		return err
+	}
 	if amount < 0 {
 		return fmt.Errorf("err negative amount of carbon")
 	}
-	pro.Carbon += amount
-	highthrough := fmt.Sprintf("%s-carbon", pro.ID)
-	if err := ctx.UpdateHighThrough(highthrough, "+", amount); err != nil {
+	highthrough := fmt.Sprintf(CARBON, pro.ID)
+	if err := pro.Ctx.UpdateHighThrough(highthrough, "+", amount); err != nil {
 		return err
 	}
 	return nil
 }
 
+// Get the sellable tokens associated with a user
+func (pro *Producer) GetSellable() (int, error) {
+	if err := pro.EnforceCtx(); err != nil {
+		return 0, err
+	}
+	sellableTokens, err := pro.Ctx.GetHighThrough(fmt.Sprintf(SELLABLE, pro.ID))
+	if err != nil {
+		return 0, nil
+	}
+	return sellableTokens, nil
+}
+
 // Deduct the amount of sellable for a producer
 func (pro *Producer) DeductSellable(tokenDeduction int) error {
+	if err := pro.EnforceCtx(); err != nil {
+		return err
+	}
 	if tokenDeduction < 0 {
 		return fmt.Errorf("err negative sellable")
 	}
-	if pro.Sellable-tokenDeduction < 0 {
+	sellableTokens, err := pro.Ctx.GetHighThrough(fmt.Sprintf(SELLABLE, pro.ID))
+	if err != nil {
+		return err
+	}
+	if sellableTokens-tokenDeduction < 0 {
 		return fmt.Errorf("err producer does not have enough sellable tokens")
 	}
-	pro.Sellable -= tokenDeduction
+	err = pro.Ctx.UpdateHighThrough(fmt.Sprintf(SELLABLE, pro.ID), "-",
+		tokenDeduction)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 // Increment the amount of sellable tokens
 func (pro *Producer) IncrementSellable(tokenIncrease int) error {
+	if err := pro.EnforceCtx(); err != nil {
+		return err
+	}
 	if tokenIncrease < 0 {
 		return fmt.Errorf("err: cannot increase by negative amount")
 	}
-	pro.Sellable += tokenIncrease
+	err := pro.Ctx.UpdateHighThrough(fmt.Sprintf(SELLABLE, pro.ID), "+",
+		tokenIncrease)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 // Deduct the amount of tokens offered
-func (pro *Producer) DeductTokens(tokenDeduction int,
-	ctx CustomMarketContextInterface) error {
+func (pro *Producer) DeductTokens(tokenDeduction int) error {
 	if tokenDeduction < 0 {
 		return fmt.Errorf("err: cannot deduct negative tokens")
 	}
-	if pro.Tokens-tokenDeduction < 0 {
+	tokens, err := pro.GetTokens()
+	if err != nil {
+		return nil
+	}
+	if tokens-tokenDeduction < 0 {
 		return fmt.Errorf("err producer does not have enough tokens")
 	}
 	highthrough := fmt.Sprintf(TOKEN, pro.ID)
-	if err := ctx.UpdateHighThrough(highthrough, "-", tokenDeduction); err != nil {
+	if err := pro.Ctx.UpdateHighThrough(highthrough, "-", tokenDeduction); err != nil {
 		return err
 	}
-	pro.Tokens -= tokenDeduction
 	return nil
 }
 
 // Increment the amount of tokens
-func (pro *Producer) IncrementTokens(tokenIncrease int,
-	ctx CustomMarketContextInterface) error {
+func (pro *Producer) IncrementTokens(tokenIncrease int) error {
 	if tokenIncrease < 0 {
 		return fmt.Errorf("err: cannot increase tokens by negative amount")
 	}
-	pro.Tokens += tokenIncrease
 	highthrough := fmt.Sprintf(TOKEN, pro.ID)
-	if err := ctx.UpdateHighThrough(highthrough, "+", tokenIncrease); err != nil {
+	if err := pro.Ctx.UpdateHighThrough(highthrough, "+", tokenIncrease); err != nil {
 		return err
 	}
 	return nil

@@ -6,12 +6,16 @@ import { useEffect, useState, } from 'react';
  * @param {*} authToken for authorisation
  * @returns loading, err, offers, hasMore, paginationToken
  */
-const useOfferSearch = (token, authToken, apiFun) => {
+const useOfferSearch = (token, authToken, apiFun, sortTerm, direction) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [offers, setOffers] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [paginationToken, setPaginationToken] = useState(token);
+
+  useEffect(() => {
+    setOffers([]);
+  }, [sortTerm, direction]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -20,7 +24,7 @@ const useOfferSearch = (token, authToken, apiFun) => {
       setLoading(true);
       setError('');
       try {
-        const response = await apiFun(authToken, signal, token);
+        const response = await apiFun(authToken, signal, token, sortTerm, direction);
         setOffers((prev) => {
           return [...new Set([...prev, ...response.records])];
         });
@@ -35,7 +39,7 @@ const useOfferSearch = (token, authToken, apiFun) => {
     };
     offerRetrieval();
     return () => controller.abort();
-  }, [token]);
+  }, [token, sortTerm, direction]);
   return { loading, error, offers, hasMore, paginationToken, };
 };
 

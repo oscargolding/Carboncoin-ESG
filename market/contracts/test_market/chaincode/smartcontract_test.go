@@ -104,7 +104,8 @@ func Test_WHEN_adminAddsFailedChain_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_getBalance_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	_, ctx, contract := GetTestStubs()
-	expectedFirm := &chaincode.Producer{Tokens: 500}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
 	ctx.GetProducerReturns(expectedFirm)
 	ctx.GetHighThroughReturns(500, nil)
 
@@ -132,11 +133,13 @@ func Test_WHEN_getBalanceNotValid_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_addOfferValid_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
-	expectedFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 500}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
 	ctx.GetProducerReturns(expectedFirm)
 	ctx.GetUserTypeReturns("producer", nil)
 	ctx.GetUserIdReturns("oscar", nil)
 	ctx.CreateOfferReturns(nil)
+	ctx.GetHighThroughReturns(400, nil)
 	stub.PutStateReturns(nil)
 
 	// WHEN
@@ -160,10 +163,9 @@ func Test_WHEN_addOfferNoProducer_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_addOfferNotProducer_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	_, ctx, contract := GetTestStubs()
-	expectedFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 500}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
 	ctx.GetProducerReturns(expectedFirm)
 	ctx.GetUserTypeReturns("", nil)
-	ctx.GetSellableReturns(500, nil)
 
 	// WHEN
 	err := contract.AddOffer(ctx, "oscar", 200, 200, "1")
@@ -175,7 +177,8 @@ func Test_WHEN_addOfferNotProducer_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_addOfferNotEnoughTokens_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	_, ctx, contract := GetTestStubs()
-	expectedFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 100}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
 	ctx.GetProducerReturns(expectedFirm)
 	ctx.GetUserTypeReturns("producer", nil)
 	ctx.GetUserIdReturns("oscar", nil)
@@ -188,13 +191,32 @@ func Test_WHEN_addOfferNotEnoughTokens_THEN_FAILURE(t *testing.T) {
 		"error deducting: err producer does not have enough sellable tokens")
 }
 
+func Test_WHEN_addOfferCarbonFailure_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.CreateOfferReturns(nil)
+	ctx.GetHighThroughReturnsOnCall(0, 400, nil)
+	ctx.GetHighThroughReturnsOnCall(1, 0, fmt.Errorf("err"))
+
+	// WHEN
+	err := contract.AddOffer(ctx, "oscar", 200, 300, "1")
+
+	// THEN
+	require.EqualError(t, err, "err: getting carbon err")
+}
+
 func mock_function_offer(call interface{}, name string) (*reflect.Value,
 	*reflect.Value) {
 	funcType := reflect.TypeOf(call)
 	docType := funcType.In(0).Elem()
 	callBackFunc := reflect.ValueOf(call)
 	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: name,
-		Amount: 30, Tokens: 30, Active: true, OfferID: "1"}
+		Amount: 30, Active: true, OfferID: "1", CarbonReputation: 10}
 	bytes, _ := json.Marshal(expectedOffer)
 	doc := reflect.New(docType)
 	docInterface := doc.Interface()
@@ -202,13 +224,26 @@ func mock_function_offer(call interface{}, name string) (*reflect.Value,
 	return &callBackFunc, &doc
 }
 
-func mock_function_production(call interface{}, id string) (*reflect.Value,
+func mock_function_production(call interface{}, id string, paid bool) (*reflect.Value,
 	*reflect.Value) {
 	funcType := reflect.TypeOf(call)
 	docType := funcType.In(0).Elem()
 	callBackFunc := reflect.ValueOf(call)
 	expectedProd := &chaincode.Production{ProductionID: id, DocType: "production",
-		Paid: false, Produced: 4}
+		Paid: paid, Produced: 4, Firm: id}
+	bytes, _ := json.Marshal(expectedProd)
+	doc := reflect.New(docType)
+	docInterface := doc.Interface()
+	json.Unmarshal(bytes, &docInterface)
+	return &callBackFunc, &doc
+}
+
+func mock_amount_chip(call interface{}, id string, valid bool) (*reflect.Value,
+	*reflect.Value) {
+	funcType := reflect.TypeOf(call)
+	docType := funcType.In(0).Elem()
+	callBackFunc := reflect.ValueOf(call)
+	expectedProd := &chaincode.AmountChip{Amount: 80, Owner: id, Valid: valid}
 	bytes, _ := json.Marshal(expectedProd)
 	doc := reflect.New(docType)
 	docInterface := doc.Interface()
@@ -222,7 +257,7 @@ func Test_WHEN_getProduction_THEN_SUCCESS(t *testing.T) {
 	ctx.GetUserIdReturns("oscar", nil)
 	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
 		call interface{}) error {
-		callBackFunc, doc := mock_function_production(call, "oscar")
+		callBackFunc, doc := mock_function_production(call, "oscar", false)
 		callBackFunc.Call([]reflect.Value{*doc})
 		return nil
 	}
@@ -277,6 +312,84 @@ func Test_WHEN_getProductionErrors_THEN_FAILURE(t *testing.T) {
 	require.Nil(t, result)
 }
 
+func Test_WHEN_getDirectPrice_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_offer(call, "oscar")
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.CreateChipReturns(nil)
+	queryResultsIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultsIterator, nil)
+
+	// WHEN
+	result, err := contract.GetDirectPrice(ctx)
+
+	// THEN
+	require.Nil(t, err)
+	require.EqualValues(t, 80, result)
+}
+
+func Test_WHEN_getDirectPriceEmpty_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		_ interface{}) error {
+		return nil
+	}
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.CreateChipReturns(nil)
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultIterator, nil)
+
+	// WHEN
+	result, err := contract.GetDirectPrice(ctx)
+
+	// THEN
+	require.Nil(t, err)
+	require.EqualValues(t, 50, result)
+}
+
+func Test_WHEN_getDirectPriceFailure_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	stub.GetQueryResultReturns(nil, fmt.Errorf("error"))
+
+	// WHEN
+	result, err := contract.GetDirectPrice(ctx)
+
+	// THEN
+	require.EqualValues(t, 0, result)
+	require.EqualError(t, err, "error with query: error")
+}
+
+func Test_WHEN_getDirectPriceNotProducer_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		_ interface{}) error {
+		return nil
+	}
+	ctx.GetUserTypeReturns("regulator", nil)
+	ctx.GetUserIdReturns("asic", nil)
+	ctx.CreateChipReturns(nil)
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultIterator, nil)
+
+	// WHEN
+	result, err := contract.GetDirectPrice(ctx)
+
+	// THEN
+	require.EqualValues(t, 0, result)
+	require.EqualError(t, err, "err: only producers can get a price")
+}
+
 func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
@@ -286,13 +399,14 @@ func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 		callBackFunc.Call([]reflect.Value{*doc})
 		return nil
 	}
+	ctx.GetHighThroughReturns(300, nil)
 	queryResultIterator := &chaincodefakes.QueryIterator{}
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 1,
 		Bookmark: ""}
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
 
 	// WHEN
-	result, err := contract.GetOffers(ctx, 5, "")
+	result, err := contract.GetOffers(ctx, 5, "", "", false)
 
 	// THEN
 	require.NoError(t, err)
@@ -300,8 +414,9 @@ func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 	require.Equal(t, int32(1), result.FetchedRecordsCount)
 	offers := result.Records[0]
 	require.Equal(t, "oscar", offers.Producer)
-	require.Equal(t, 30, offers.Tokens)
+	require.Equal(t, 300, offers.Tokens)
 	require.Equal(t, 1, len(result.Records))
+	require.Equal(t, 10, offers.Reputation)
 }
 
 func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
@@ -317,7 +432,7 @@ func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
 
 	// WHEN
-	result, err := contract.GetOffers(ctx, 5, "")
+	result, err := contract.GetOffers(ctx, 5, "", "", false)
 
 	// THEN
 	require.NoError(t, err)
@@ -331,7 +446,7 @@ func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(nil, nil, fmt.Errorf("failure"))
 
 	// WHEN
-	result, err := contract.GetOffers(ctx, 5, "")
+	result, err := contract.GetOffers(ctx, 5, "", "", false)
 
 	// THEN
 	require.EqualError(t, err, "error with query: failure")
@@ -342,8 +457,10 @@ func IdealPurchaseStub(stub *chaincodefakes.ChaincodeStub,
 	ctx *chaincodefakes.CustomContex) {
 	ctx.GetUserIdReturns("oscar", nil)
 	ctx.GetUserTypeReturns("producer", nil)
-	buyingFirm := &chaincode.Producer{ID: "oscar", Tokens: 500, Sellable: 100}
-	sellingFirm := &chaincode.Producer{ID: "john", Tokens: 300, Sellable: 300}
+	buyingFirm := &chaincode.Producer{ID: "oscar"}
+	sellingFirm := &chaincode.Producer{ID: "john"}
+	buyingFirm.InsertContext(ctx)
+	sellingFirm.InsertContext(ctx)
 	ctx.GetProducerReturnsOnCall(0, buyingFirm)
 	ctx.GetProducerReturnsOnCall(1, sellingFirm)
 	ctx.GetResultStub = func(s string, i interface{}) error {
@@ -357,6 +474,7 @@ func Test_WHEN_purchaseTokens_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	IdealPurchaseStub(stub, ctx)
+	ctx.GetHighThroughReturns(500, nil)
 	// WHEN
 	amount, err := contract.PurchaseOfferTokens(ctx, "1", 5)
 
@@ -369,6 +487,7 @@ func Test_WHEN_purchaseTokensTooMuch_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	IdealPurchaseStub(stub, ctx)
+	ctx.GetHighThroughReturns(500, nil)
 
 	// WHEN
 	_, err := contract.PurchaseOfferTokens(ctx, "1", 1000)
@@ -394,8 +513,8 @@ func Test_WHEN_producerNotEnoughTokens_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	IdealPurchaseStub(stub, ctx)
-	sellingFirm := &chaincode.Producer{ID: "john", Tokens: 5, Sellable: 300}
-	ctx.GetProducerReturnsOnCall(1, sellingFirm)
+	ctx.GetHighThroughReturnsOnCall(0, 10, nil)
+	ctx.GetHighThroughReturnsOnCall(1, 5, nil)
 
 	// WHEN
 	_, err := contract.PurchaseOfferTokens(ctx, "1", 10)
@@ -408,7 +527,7 @@ func Test_WHEN_sellerIsSelf_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	IdealPurchaseStub(stub, ctx)
-	sellingFirm := &chaincode.Producer{ID: "oscar", Tokens: 5, Sellable: 300}
+	sellingFirm := &chaincode.Producer{ID: "oscar"}
 	ctx.GetProducerReturnsOnCall(1, sellingFirm)
 
 	// WHEN
@@ -422,8 +541,8 @@ func Test_WHEN_producerProduction_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	ctx.GetUserTypeReturns("certifier", nil)
-	sellingFirm := &chaincode.Producer{ID: "oscar", Tokens: 5, Sellable: 300,
-		Carbon: 0}
+	sellingFirm := &chaincode.Producer{ID: "oscar"}
+	sellingFirm.InsertContext(ctx)
 	ctx.GetProducerReturns(sellingFirm)
 	ctx.CreateProductionReturns(nil)
 	ctx.UpdateHighThroughReturns(nil)
@@ -466,8 +585,8 @@ func Test_WHEN_producerProductionErrorCreating_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	ctx.GetUserTypeReturns("certifier", nil)
-	sellingFirm := &chaincode.Producer{ID: "oscar", Tokens: 5, Sellable: 300,
-		Carbon: 0}
+	sellingFirm := &chaincode.Producer{ID: "oscar"}
+	sellingFirm.InsertContext(ctx)
 	ctx.GetProducerReturns(sellingFirm)
 	ctx.CreateProductionReturns(fmt.Errorf("failed adding production"))
 	stub.PutStateReturns(nil)
@@ -477,4 +596,138 @@ func Test_WHEN_producerProductionErrorCreating_FAILURE(t *testing.T) {
 
 	// THEN
 	require.EqualError(t, err, "failed adding production")
+}
+
+func Test_WHEN_payingProduction_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_function_production(i, "oscar", false)
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	producingFirm := &chaincode.Producer{ID: "oscar"}
+	producingFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(producingFirm)
+	ctx.GetHighThroughReturns(200, nil)
+
+	// WHEN
+	amount, err := contract.PayForProduction(ctx, "oscar")
+
+	// THEN
+	require.Nil(t, err)
+	require.EqualValues(t, 196, amount)
+}
+
+func Test_WHEN_notProducer_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("certifier", nil)
+
+	// WHEN
+	_, err := contract.PayForProduction(ctx, "oscar")
+
+	// THEN
+	require.EqualError(t, err, "err: only producer can pay for production")
+}
+
+func Test_WHEN_notOwnedDebt_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("john", nil)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_function_production(i, "oscar", false)
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+
+	// WHEN
+	_, err := contract.PayForProduction(ctx, "oscar")
+
+	// THEN
+	require.EqualError(t, err, "err: do not own carbon debt with id: oscar")
+}
+
+func Test_WHEN_alreadyPaid_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_function_production(i, "oscar", true)
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	producingFirm := &chaincode.Producer{ID: "oscar"}
+	producingFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(producingFirm)
+	ctx.GetHighThroughReturns(200, nil)
+
+	// WHEN
+	_, err := contract.PayForProduction(ctx, "oscar")
+
+	// THEN
+	require.EqualError(t, err, "err: already paid for production")
+}
+
+func Test_WHEN_redeemChip_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	producingFirm := &chaincode.Producer{ID: "oscar"}
+	producingFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(producingFirm)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_amount_chip(i, "oscar", true)
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	ctx.GetHighThroughReturns(200, nil)
+
+	// WHEN
+	amount, err := contract.RedeemChip(ctx, 15)
+
+	// THEN
+	require.Nil(t, err)
+	require.EqualValues(t, amount, 215)
+}
+
+func Test_WHEN_redeemChipNotProducer_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("certifier", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+
+	// WHEN
+	amount, err := contract.RedeemChip(ctx, 15)
+
+	// THEN
+	require.EqualError(t, err, "err: only producers can redeem offer chips")
+	require.EqualValues(t, 0, amount)
+}
+
+func Test_WHEN_redeemChipNotValid_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx, contract := GetTestStubs()
+	ctx.GetUserTypeReturns("producer", nil)
+	ctx.GetUserIdReturns("oscar", nil)
+	producingFirm := &chaincode.Producer{ID: "oscar"}
+	producingFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(producingFirm)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_amount_chip(i, "oscar", false)
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	ctx.GetHighThroughReturns(200, nil)
+
+	// WHEN
+	_, err := contract.RedeemChip(ctx, 15)
+
+	// THEN
+	require.EqualError(t, err, "err: the offer chip is no longer valid")
 }

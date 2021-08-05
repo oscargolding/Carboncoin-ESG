@@ -3,7 +3,7 @@
         "fields": [
             "docType",
             "active",
-            "offerId"
+            "carbonReputation"
         ]
     },
     "ddoc": "indexActiveDoc",

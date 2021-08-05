@@ -82,6 +82,23 @@ carbonMarketRouter.post('/offer/buy',
   })));
 
 /**
+ * Get request to determine the direct price of a token on the blockchain
+ * NB the direct price will always be more than the normal price on the market
+ */
+carbonMarketRouter.get('/direct/price',
+  catchErrors(authed(async (_, res, email) => {
+    const directPrice = await utils.getDirectPrice(email);
+    return res.json({ price: directPrice });
+  })));
+
+carbonMarketRouter.post('/direct/redeem',
+  catchErrors(authed(async (req, res, email) => {
+    const { amount } = req.body;
+    const getBalance = await utils.redeemChip(email, amount);
+    return res.json({ balance: getBalance });
+  })));
+
+/**
  * For retrieving the balance of a particular user
  */
 carbonMarketRouter.get('/token/balance',
@@ -94,7 +111,9 @@ carbonMarketRouter.get('/offers/list',
   catchErrors(authed(async (req, res) => {
     const token = req.query.token ? req.query.token : '';
     const size = req.query.amount ? req.query.amount : 10;
-    const queryResult = await utils.getOffers(token, size);
+    const field = req.query.field ? req.query.field : '';
+    const ascending = !!req.query.direction;
+    const queryResult = await utils.getOffers(token, size, field, ascending);
     return res.json(queryResult);
   })));
 

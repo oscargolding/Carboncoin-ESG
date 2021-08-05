@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { CardActions, Button, } from '@material-ui/core';
-import { SpacedCard, OfferStatus, } from './styles/DashboardStyles';
+import { SpacedCard, OfferStatus, HeaderCard, } from './styles/DashboardStyles';
 import { useHistory, } from 'react-router-dom';
 import DoneIcon from '@material-ui/icons/Done';
 import BlockIcon from '@material-ui/icons/Block';
+import ReputationElement from './ReputationElement';
 
 /**
  * The offer card being used for the sale of carbon coin.
@@ -14,14 +15,17 @@ import BlockIcon from '@material-ui/icons/Block';
  * @returns the card being offered
  */
 const OfferCard = (props) => {
-  const { producer, price, quantity, active, offerid, usingRef, } = props;
+  const { producer, price, quantity, active, offerid, reputation, usingRef, } = props;
   const history = useHistory();
   return (
     <SpacedCard innerRef={usingRef}>
       <CardContent>
-        <Typography variant='h5' component='h2'>
-          Carboncoin Sale by {producer}
-        </Typography>
+        <HeaderCard>
+          <Typography variant='h5' component='h2'>
+            Carboncoin Sale by {producer}
+          </Typography>
+          <ReputationElement repScore={reputation} />
+        </HeaderCard>
         <Typography variant="body2" component="p">
           Price Per Token: <b>${price}</b>
           <br />
@@ -64,5 +68,6 @@ OfferCard.propTypes = {
   quantity: PropTypes.number.isRequired,
   active: PropTypes.bool.isRequired,
   offerid: PropTypes.string.isRequired,
+  reputation: PropTypes.number.isRequired,
   usingRef: PropTypes.func,
 };

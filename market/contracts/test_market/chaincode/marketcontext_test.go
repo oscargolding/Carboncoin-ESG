@@ -106,7 +106,7 @@ func Test_WHEN_attributeNotFound_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_getProducerFound_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	ctx, _, stub := PerformTestStub()
-	expectedFirm := &chaincode.Producer{Tokens: 500}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
 	bytes, err := json.Marshal(expectedFirm)
 	require.NoError(t, err)
 	stub.GetStateReturns(bytes, nil)
@@ -134,7 +134,7 @@ func Test_WHEN_getProducerNotFound_THEN_FAILURE(t *testing.T) {
 func Test_WHEN_getProducer_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	ctx, _, stub := PerformTestStub()
-	expectedFirm := &chaincode.Producer{Tokens: 500}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
 	bytes, err := json.Marshal(expectedFirm)
 	require.NoError(t, err)
 	stub.GetStateReturns(bytes, nil)
@@ -144,7 +144,8 @@ func Test_WHEN_getProducer_THEN_SUCCESS(t *testing.T) {
 
 	// THEN
 	require.NotNil(t, producer)
-	require.Equal(t, 500, producer.Tokens)
+	require.NotNil(t, producer.Ctx)
+	require.Equal(t, "oscar", producer.ID)
 }
 
 func Test_WHEN_getProducerFailed_THEN_FAILURE(t *testing.T) {
@@ -159,43 +160,15 @@ func Test_WHEN_getProducerFailed_THEN_FAILURE(t *testing.T) {
 	require.Nil(t, producer)
 }
 
-func Test_WHEN_getSellable_THEN_SUCCESS(t *testing.T) {
-	// GIVEN
-	ctx, _, stub := PerformTestStub()
-	expectedFirm := &chaincode.Producer{Tokens: 500, Sellable: 500}
-	bytes, err := json.Marshal(expectedFirm)
-	require.NoError(t, err)
-	stub.GetStateReturns(bytes, nil)
-
-	// WHEN
-	sellable, err := ctx.GetSellable("oscar")
-
-	// THEN
-	require.NoError(t, err)
-	require.Equal(t, 500, sellable)
-}
-
-func Test_WHEN_getSellableNoProducer_THEN_FAILURE(t *testing.T) {
-	// GIVEN
-	ctx, _, stub := PerformTestStub()
-	stub.GetStateReturns(nil, nil)
-
-	// WHEN
-	sellable, err := ctx.GetSellable("oscar")
-
-	// THEN
-	require.Equal(t, 0, sellable)
-	require.EqualError(t, err, "unable to get sellable with name: oscar")
-}
-
 func Test_WHEN_createOffer_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	ctx, _, stub := PerformTestStub()
 	stub.PutStateReturns(nil)
 	stub.GetStateReturns(nil, nil)
+	stub.GetTxIDReturns("1")
 
 	// WHEN
-	err := ctx.CreateOffer("oscar", 5, 5, "1")
+	err := ctx.CreateOffer("oscar", 5, 5, "1", 5)
 
 	// THEN
 	require.NoError(t, err)
@@ -208,7 +181,7 @@ func Test_WHEN_createOfferFailure_THEN_FAILURE(t *testing.T) {
 	stub.PutStateReturns(fmt.Errorf("error"))
 
 	// WHEN
-	err := ctx.CreateOffer("oscar", 5, 5, "oscar")
+	err := ctx.CreateOffer("oscar", 5, 5, "oscar", 5)
 
 	// THEN
 	require.EqualError(t, err, "error")
@@ -223,7 +196,7 @@ func Test_WHEN_createOfferDuplicateId_THEN_FAILURE(t *testing.T) {
 	stub.GetStateReturns(bytes, nil)
 
 	// WHEN
-	err = ctx.CreateOffer("oscar", 5, 5, "oscar")
+	err = ctx.CreateOffer("oscar", 5, 5, "oscar", 0)
 
 	// THEN
 	require.EqualError(t, err, "offer with id already exists on the market")
@@ -236,7 +209,7 @@ func Test_WHEN_queryIterator_THEN_SUCCESS(t *testing.T) {
 	queryResultIterator.HasNextReturnsOnCall(0, true)
 	queryResultIterator.HasNextReturnsOnCall(1, false)
 	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: "oscar",
-		Amount: 30, Tokens: 30, Active: true}
+		Amount: 30, Active: true}
 	bytes, err := json.Marshal(expectedOffer)
 	require.NoError(t, err)
 	queryResultIterator.NextReturns(&queryresult.KV{Value: bytes}, nil)
@@ -306,7 +279,7 @@ func Test_WHEN_getResult_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	ctx, _, stub := PerformTestStub()
 	offer := &chaincode.Offer{DocType: "offer", Producer: "oscar",
-		Amount: 30, Tokens: 30, Active: true}
+		Amount: 30, Active: true}
 	bytes, err := json.Marshal(offer)
 	require.NoError(t, err)
 	stub.GetStateReturns(bytes, nil)
@@ -395,4 +368,66 @@ func Test_WHEN_updateHighThroughputMinus_THEN_FAILURE(t *testing.T) {
 
 	// THEN
 	require.EqualError(t, err, "operator / op is not supported")
+}
+
+func Test_WHEN_generateOfferString_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, _ := PerformTestStub()
+
+	// WHEN
+	str := ctx.OfferStringGenerator("reputation", true)
+
+	// THEN
+	expected := `{"selector":{"docType":"offer", "active": true},` +
+		`"sort":[{"carbonReputation":"asc"}]}`
+	require.EqualValues(t, expected, str)
+}
+
+func Test_WHEN_generateNone_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, _ := PerformTestStub()
+
+	// WHEN
+	str := ctx.OfferStringGenerator("", false)
+
+	// THEN
+	expected := `{"selector":{"docType":"offer", "active": true}}`
+	require.EqualValues(t, expected, str)
+}
+
+func Test_WHEN_generateOfferStringDesc_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, _ := PerformTestStub()
+
+	// WHEN
+	str := ctx.OfferStringGenerator("reputation", false)
+
+	// THEN
+	expected := `{"selector":{"docType":"offer", "active": true},` +
+		`"sort":[{"carbonReputation":"desc"}]}`
+	require.EqualValues(t, expected, str)
+}
+
+func Test_WHEN_createChip_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.PutStateReturns(nil)
+
+	// WHEN
+	err := ctx.CreateChip("oscar", 50)
+
+	// THEN
+	require.Nil(t, err)
+}
+
+func Test_WHEN_createChip_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	ctx, _, stub := PerformTestStub()
+	stub.PutStateReturns(fmt.Errorf("error"))
+
+	// WHEN
+	err := ctx.CreateChip("oscar", 30)
+
+	// THEN
+	require.EqualError(t, err, "error")
 }

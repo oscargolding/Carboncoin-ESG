@@ -6,13 +6,32 @@ import (
 	"fmt"
 )
 
+type OfferModel struct {
+	Producer   string `json:"producer"`
+	Amount     int    `json:"amount"`
+	Active     bool   `json:"active"`
+	OfferID    string `json:"offerId"`
+	Tokens     int    `json:"tokens"`
+	Reputation int    `json:"reputation"`
+}
+
 type Offer struct {
-	DocType  string `json:"docType"`
-	Producer string `json:"producer"`
-	Amount   int    `json:"amount"`
-	Tokens   int    `json:"tokens"`
-	Active   bool   `json:"active"`
-	OfferID  string `json:"offerId"`
+	DocType          string                       `json:"docType"`
+	Producer         string                       `json:"producer"`
+	Amount           int                          `json:"amount"`
+	Active           bool                         `json:"active"`
+	OfferID          string                       `json:"offerId"`
+	CarbonReputation int                          `json:"carbonReputation"`
+	Ctx              CustomMarketContextInterface `json:"-"`
+}
+
+const PROD_OFFER = "%s-offer"
+
+func (off *Offer) EnforceCtx() error {
+	if off.Ctx == nil {
+		return fmt.Errorf("err: the blockchain context is not set on offer")
+	}
+	return nil
 }
 
 // Remove tokens from the offer
@@ -20,13 +39,51 @@ func (off *Offer) RemoveTokens(tokenDecrease int) error {
 	if !off.Active {
 		return fmt.Errorf("offer not active")
 	}
-	if tokenDecrease < 0 {
+	if err := off.EnforceCtx(); err != nil {
+		return err
+	}
+	balance, err := off.Ctx.GetHighThrough(fmt.Sprintf(PROD_OFFER, off.OfferID))
+	if err != nil {
+		return err
+	}
+	if balance < 0 {
 		return fmt.Errorf("err: cannot decrease tokens by negative amount")
 	}
-	if off.Tokens-tokenDecrease < 0 {
+	if balance-tokenDecrease < 0 {
 		return fmt.Errorf("cannot purchase more tokens than offered")
 	}
-	off.Tokens -= tokenDecrease
+	err = off.Ctx.UpdateHighThrough(PROD_OFFER, "-", tokenDecrease)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Get a cleaner representation from the blockchain of an offer
+func (off *Offer) ReturnModel() (*OfferModel, error) {
+	if err := off.EnforceCtx(); err != nil {
+		return nil, err
+	}
+	balance, err := off.Ctx.GetHighThrough(fmt.Sprintf(PROD_OFFER, off.OfferID))
+	if err != nil {
+		return nil, err
+	}
+	return &OfferModel{Producer: off.Producer, Amount: off.Amount,
+		Active: off.Active, OfferID: off.OfferID, Tokens: balance,
+		Reputation: off.CarbonReputation}, nil
+}
+
+// Set the tokens available on offer
+func (off *Offer) SetTokens(tokenAmount int) error {
+	// Have to add some amount of tokens
+	if err := off.EnforceCtx(); err != nil {
+		return err
+	}
+	err := off.Ctx.UpdateHighThrough(fmt.Sprintf(PROD_OFFER, off.OfferID),
+		"+", tokenAmount)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -36,8 +93,19 @@ func (off *Offer) MakeOfferStale() {
 }
 
 // Check if an offer is stale
-func (off *Offer) IsStale() bool {
-	return off.Tokens == 0
+func (off *Offer) IsStale() (bool, error) {
+	if err := off.EnforceCtx(); err != nil {
+		return false, err
+	}
+	balance, err := off.Ctx.GetHighThrough(fmt.Sprintf(PROD_OFFER, off.OfferID))
+	if err != nil {
+		return false, err
+	}
+	return balance == 0, nil
+}
+
+func (off *Offer) InsertContext(ctx CustomMarketContextInterface) {
+	off.Ctx = ctx
 }
 
 // Flush to the blockchain

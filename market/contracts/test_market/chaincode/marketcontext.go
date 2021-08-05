@@ -23,18 +23,25 @@ type CustomMarketContextInterface interface {
 	GetProducer(string) *Producer
 	GetUserId() (string, error)
 	GetUserType() (string, error)
-	CreateOffer(string, int, int, string) error
+	CreateOffer(string, int, int, string, int) error
+	CreateChip(string, int) error
 	CreateProduction(string, int, string, string, bool) error
-	GetSellable(string) (int, error)
 	IteratorResults(shim.StateQueryIteratorInterface, interface{}) error
 	GetResult(string, interface{}) error
 	UpdateHighThrough(string, string, int) error
 	GetHighThrough(string) (int, error)
+	OfferStringGenerator(string, bool) string
+}
+
+type MarketObject interface {
+	InsertContext(CustomMarketContextInterface)
 }
 
 type CustomMarketContext struct {
 	contractapi.TransactionContext
 }
+
+const CHIP = "%s-chip"
 
 // Check if the producer exists or not
 func (s *CustomMarketContext) CheckProducer(producerId string) (bool, error) {
@@ -100,6 +107,8 @@ func (s *CustomMarketContext) GetProducer(producerId string) *Producer {
 	if err != nil {
 		return nil
 	}
+	// Insert the context
+	usingProducer.InsertContext(s)
 	return &usingProducer
 }
 
@@ -109,19 +118,38 @@ func (s *CustomMarketContext) GetSellable(producerId string) (int, error) {
 	if producer == nil {
 		return 0, fmt.Errorf("unable to get sellable with name: %v", producerId)
 	}
-	return producer.Sellable, nil
+	sellable, err := producer.GetSellable()
+	if err != nil {
+		return 0, err
+	}
+	return sellable, nil
+}
+
+// Create a chip to store the direct price offered to a user
+func (s *CustomMarketContext) CreateChip(producerId string, amount int) error {
+	chip := AmountChip{Amount: amount, Valid: true, Owner: producerId}
+	chipJSON, err := json.Marshal(chip)
+	if err != nil {
+		return fmt.Errorf("unable to format a chip %v", err)
+	}
+	return s.GetStub().PutState(fmt.Sprintf(CHIP, producerId), chipJSON)
 }
 
 // Create the offer on the blockchain for a user
 func (s *CustomMarketContext) CreateOffer(producerId string, amount int,
-	tokens int, offerID string) error {
+	tokens int, offerID string, carbon int) error {
 	duplicateOfferJSON, err := s.GetStub().GetState(offerID)
 	if err != nil || duplicateOfferJSON != nil {
 		return fmt.Errorf("offer with id already exists on the market")
 	}
 	// Create the offer so that it is always active
 	offer := Offer{DocType: OFFER_TYPE, Producer: producerId, Amount: amount,
-		Tokens: tokens, Active: true, OfferID: offerID}
+		Active: true, OfferID: offerID, CarbonReputation: carbon}
+	offer.InsertContext(s)
+	err = offer.SetTokens(tokens)
+	if err != nil {
+		return err
+	}
 	offerJSON, err := json.Marshal(offer)
 	if err != nil {
 		return fmt.Errorf("unable to format offer conversion %v", err)
@@ -253,4 +281,22 @@ func (s *CustomMarketContext) GetHighThrough(name string) (int, error) {
 		}
 	}
 	return finalVal, nil
+}
+
+func (s *CustomMarketContext) OfferStringGenerator(field string,
+	direction bool) string {
+	var sorting string
+	if direction {
+		sorting = `asc`
+	} else {
+		sorting = `desc`
+	}
+	queryString := `{"selector":{"docType":"offer", "active": true}%s}`
+	if field != "reputation" {
+		return fmt.Sprintf(queryString, "")
+	} else {
+		parameter := `,"sort":[{"docType": "%s"},{"active": "%s"},{"carbonReputation":"%s"}]`
+		final := fmt.Sprintf(parameter, sorting, sorting, sorting)
+		return fmt.Sprintf(queryString, final)
+	}
 }

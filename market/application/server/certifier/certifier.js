@@ -35,6 +35,12 @@ const main = async () => {
         date: moment().format('MMMM Do YYYY, h:mm:ss a'),
         id: uuid4(),
       },
+      {
+        firm: 'BHPPetrol',
+        carbonProduction: '150',
+        date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+        id: uuid4(),
+      },
     ];
     const { contract, gateway } = await utils.getContract('admin');
     try {
@@ -51,6 +57,7 @@ const main = async () => {
     }
     gateway.disconnect();
     console.log(chalk.green('Finished calling the chaincode'));
+    process.exit(1);
   } catch (err) {
     console.log(
       chalk.red(`*** Failed to run the main application and report: ${err.message}`),

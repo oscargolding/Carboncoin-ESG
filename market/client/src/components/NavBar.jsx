@@ -101,6 +101,9 @@ const NavBar = () => {
                 <MenuItem onClick={() => history.push('/production')}>
                   Carbon Production
                 </MenuItem>
+                <MenuItem onClick={() => history.push('/direct/purchase')}>
+                  Directly Purchase CarbonCoin
+                </MenuItem>
                 <MenuItem onClick={handleClose}>
                   Logout
                 </MenuItem>

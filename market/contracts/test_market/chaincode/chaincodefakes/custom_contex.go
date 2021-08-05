@@ -23,13 +23,26 @@ type CustomContex struct {
 		result1 bool
 		result2 error
 	}
-	CreateOfferStub        func(string, int, int, string) error
+	CreateChipStub        func(string, int) error
+	createChipMutex       sync.RWMutex
+	createChipArgsForCall []struct {
+		arg1 string
+		arg2 int
+	}
+	createChipReturns struct {
+		result1 error
+	}
+	createChipReturnsOnCall map[int]struct {
+		result1 error
+	}
+	CreateOfferStub        func(string, int, int, string, int) error
 	createOfferMutex       sync.RWMutex
 	createOfferArgsForCall []struct {
 		arg1 string
 		arg2 int
 		arg3 int
 		arg4 string
+		arg5 int
 	}
 	createOfferReturns struct {
 		result1 error
@@ -98,19 +111,6 @@ type CustomContex struct {
 	getResultReturnsOnCall map[int]struct {
 		result1 error
 	}
-	GetSellableStub        func(string) (int, error)
-	getSellableMutex       sync.RWMutex
-	getSellableArgsForCall []struct {
-		arg1 string
-	}
-	getSellableReturns struct {
-		result1 int
-		result2 error
-	}
-	getSellableReturnsOnCall map[int]struct {
-		result1 int
-		result2 error
-	}
 	GetStubStub        func() shim.ChaincodeStubInterface
 	getStubMutex       sync.RWMutex
 	getStubArgsForCall []struct {
@@ -156,6 +156,18 @@ type CustomContex struct {
 	}
 	iteratorResultsReturnsOnCall map[int]struct {
 		result1 error
+	}
+	OfferStringGeneratorStub        func(string, bool) string
+	offerStringGeneratorMutex       sync.RWMutex
+	offerStringGeneratorArgsForCall []struct {
+		arg1 string
+		arg2 bool
+	}
+	offerStringGeneratorReturns struct {
+		result1 string
+	}
+	offerStringGeneratorReturnsOnCall map[int]struct {
+		result1 string
 	}
 	UpdateHighThroughStub        func(string, string, int) error
 	updateHighThroughMutex       sync.RWMutex
@@ -238,7 +250,69 @@ func (fake *CustomContex) CheckProducerReturnsOnCall(i int, result1 bool, result
 	}{result1, result2}
 }
 
-func (fake *CustomContex) CreateOffer(arg1 string, arg2 int, arg3 int, arg4 string) error {
+func (fake *CustomContex) CreateChip(arg1 string, arg2 int) error {
+	fake.createChipMutex.Lock()
+	ret, specificReturn := fake.createChipReturnsOnCall[len(fake.createChipArgsForCall)]
+	fake.createChipArgsForCall = append(fake.createChipArgsForCall, struct {
+		arg1 string
+		arg2 int
+	}{arg1, arg2})
+	stub := fake.CreateChipStub
+	fakeReturns := fake.createChipReturns
+	fake.recordInvocation("CreateChip", []interface{}{arg1, arg2})
+	fake.createChipMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *CustomContex) CreateChipCallCount() int {
+	fake.createChipMutex.RLock()
+	defer fake.createChipMutex.RUnlock()
+	return len(fake.createChipArgsForCall)
+}
+
+func (fake *CustomContex) CreateChipCalls(stub func(string, int) error) {
+	fake.createChipMutex.Lock()
+	defer fake.createChipMutex.Unlock()
+	fake.CreateChipStub = stub
+}
+
+func (fake *CustomContex) CreateChipArgsForCall(i int) (string, int) {
+	fake.createChipMutex.RLock()
+	defer fake.createChipMutex.RUnlock()
+	argsForCall := fake.createChipArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *CustomContex) CreateChipReturns(result1 error) {
+	fake.createChipMutex.Lock()
+	defer fake.createChipMutex.Unlock()
+	fake.CreateChipStub = nil
+	fake.createChipReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *CustomContex) CreateChipReturnsOnCall(i int, result1 error) {
+	fake.createChipMutex.Lock()
+	defer fake.createChipMutex.Unlock()
+	fake.CreateChipStub = nil
+	if fake.createChipReturnsOnCall == nil {
+		fake.createChipReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.createChipReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *CustomContex) CreateOffer(arg1 string, arg2 int, arg3 int, arg4 string, arg5 int) error {
 	fake.createOfferMutex.Lock()
 	ret, specificReturn := fake.createOfferReturnsOnCall[len(fake.createOfferArgsForCall)]
 	fake.createOfferArgsForCall = append(fake.createOfferArgsForCall, struct {
@@ -246,13 +320,14 @@ func (fake *CustomContex) CreateOffer(arg1 string, arg2 int, arg3 int, arg4 stri
 		arg2 int
 		arg3 int
 		arg4 string
-	}{arg1, arg2, arg3, arg4})
+		arg5 int
+	}{arg1, arg2, arg3, arg4, arg5})
 	stub := fake.CreateOfferStub
 	fakeReturns := fake.createOfferReturns
-	fake.recordInvocation("CreateOffer", []interface{}{arg1, arg2, arg3, arg4})
+	fake.recordInvocation("CreateOffer", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.createOfferMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2, arg3, arg4)
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
@@ -266,17 +341,17 @@ func (fake *CustomContex) CreateOfferCallCount() int {
 	return len(fake.createOfferArgsForCall)
 }
 
-func (fake *CustomContex) CreateOfferCalls(stub func(string, int, int, string) error) {
+func (fake *CustomContex) CreateOfferCalls(stub func(string, int, int, string, int) error) {
 	fake.createOfferMutex.Lock()
 	defer fake.createOfferMutex.Unlock()
 	fake.CreateOfferStub = stub
 }
 
-func (fake *CustomContex) CreateOfferArgsForCall(i int) (string, int, int, string) {
+func (fake *CustomContex) CreateOfferArgsForCall(i int) (string, int, int, string, int) {
 	fake.createOfferMutex.RLock()
 	defer fake.createOfferMutex.RUnlock()
 	argsForCall := fake.createOfferArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
 func (fake *CustomContex) CreateOfferReturns(result1 error) {
@@ -607,70 +682,6 @@ func (fake *CustomContex) GetResultReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *CustomContex) GetSellable(arg1 string) (int, error) {
-	fake.getSellableMutex.Lock()
-	ret, specificReturn := fake.getSellableReturnsOnCall[len(fake.getSellableArgsForCall)]
-	fake.getSellableArgsForCall = append(fake.getSellableArgsForCall, struct {
-		arg1 string
-	}{arg1})
-	stub := fake.GetSellableStub
-	fakeReturns := fake.getSellableReturns
-	fake.recordInvocation("GetSellable", []interface{}{arg1})
-	fake.getSellableMutex.Unlock()
-	if stub != nil {
-		return stub(arg1)
-	}
-	if specificReturn {
-		return ret.result1, ret.result2
-	}
-	return fakeReturns.result1, fakeReturns.result2
-}
-
-func (fake *CustomContex) GetSellableCallCount() int {
-	fake.getSellableMutex.RLock()
-	defer fake.getSellableMutex.RUnlock()
-	return len(fake.getSellableArgsForCall)
-}
-
-func (fake *CustomContex) GetSellableCalls(stub func(string) (int, error)) {
-	fake.getSellableMutex.Lock()
-	defer fake.getSellableMutex.Unlock()
-	fake.GetSellableStub = stub
-}
-
-func (fake *CustomContex) GetSellableArgsForCall(i int) string {
-	fake.getSellableMutex.RLock()
-	defer fake.getSellableMutex.RUnlock()
-	argsForCall := fake.getSellableArgsForCall[i]
-	return argsForCall.arg1
-}
-
-func (fake *CustomContex) GetSellableReturns(result1 int, result2 error) {
-	fake.getSellableMutex.Lock()
-	defer fake.getSellableMutex.Unlock()
-	fake.GetSellableStub = nil
-	fake.getSellableReturns = struct {
-		result1 int
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *CustomContex) GetSellableReturnsOnCall(i int, result1 int, result2 error) {
-	fake.getSellableMutex.Lock()
-	defer fake.getSellableMutex.Unlock()
-	fake.GetSellableStub = nil
-	if fake.getSellableReturnsOnCall == nil {
-		fake.getSellableReturnsOnCall = make(map[int]struct {
-			result1 int
-			result2 error
-		})
-	}
-	fake.getSellableReturnsOnCall[i] = struct {
-		result1 int
-		result2 error
-	}{result1, result2}
-}
-
 func (fake *CustomContex) GetStub() shim.ChaincodeStubInterface {
 	fake.getStubMutex.Lock()
 	ret, specificReturn := fake.getStubReturnsOnCall[len(fake.getStubArgsForCall)]
@@ -898,6 +909,68 @@ func (fake *CustomContex) IteratorResultsReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *CustomContex) OfferStringGenerator(arg1 string, arg2 bool) string {
+	fake.offerStringGeneratorMutex.Lock()
+	ret, specificReturn := fake.offerStringGeneratorReturnsOnCall[len(fake.offerStringGeneratorArgsForCall)]
+	fake.offerStringGeneratorArgsForCall = append(fake.offerStringGeneratorArgsForCall, struct {
+		arg1 string
+		arg2 bool
+	}{arg1, arg2})
+	stub := fake.OfferStringGeneratorStub
+	fakeReturns := fake.offerStringGeneratorReturns
+	fake.recordInvocation("OfferStringGenerator", []interface{}{arg1, arg2})
+	fake.offerStringGeneratorMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *CustomContex) OfferStringGeneratorCallCount() int {
+	fake.offerStringGeneratorMutex.RLock()
+	defer fake.offerStringGeneratorMutex.RUnlock()
+	return len(fake.offerStringGeneratorArgsForCall)
+}
+
+func (fake *CustomContex) OfferStringGeneratorCalls(stub func(string, bool) string) {
+	fake.offerStringGeneratorMutex.Lock()
+	defer fake.offerStringGeneratorMutex.Unlock()
+	fake.OfferStringGeneratorStub = stub
+}
+
+func (fake *CustomContex) OfferStringGeneratorArgsForCall(i int) (string, bool) {
+	fake.offerStringGeneratorMutex.RLock()
+	defer fake.offerStringGeneratorMutex.RUnlock()
+	argsForCall := fake.offerStringGeneratorArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *CustomContex) OfferStringGeneratorReturns(result1 string) {
+	fake.offerStringGeneratorMutex.Lock()
+	defer fake.offerStringGeneratorMutex.Unlock()
+	fake.OfferStringGeneratorStub = nil
+	fake.offerStringGeneratorReturns = struct {
+		result1 string
+	}{result1}
+}
+
+func (fake *CustomContex) OfferStringGeneratorReturnsOnCall(i int, result1 string) {
+	fake.offerStringGeneratorMutex.Lock()
+	defer fake.offerStringGeneratorMutex.Unlock()
+	fake.OfferStringGeneratorStub = nil
+	if fake.offerStringGeneratorReturnsOnCall == nil {
+		fake.offerStringGeneratorReturnsOnCall = make(map[int]struct {
+			result1 string
+		})
+	}
+	fake.offerStringGeneratorReturnsOnCall[i] = struct {
+		result1 string
+	}{result1}
+}
+
 func (fake *CustomContex) UpdateHighThrough(arg1 string, arg2 string, arg3 int) error {
 	fake.updateHighThroughMutex.Lock()
 	ret, specificReturn := fake.updateHighThroughReturnsOnCall[len(fake.updateHighThroughArgsForCall)]
@@ -966,6 +1039,8 @@ func (fake *CustomContex) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.checkProducerMutex.RLock()
 	defer fake.checkProducerMutex.RUnlock()
+	fake.createChipMutex.RLock()
+	defer fake.createChipMutex.RUnlock()
 	fake.createOfferMutex.RLock()
 	defer fake.createOfferMutex.RUnlock()
 	fake.createProductionMutex.RLock()
@@ -978,8 +1053,6 @@ func (fake *CustomContex) Invocations() map[string][][]interface{} {
 	defer fake.getProducerMutex.RUnlock()
 	fake.getResultMutex.RLock()
 	defer fake.getResultMutex.RUnlock()
-	fake.getSellableMutex.RLock()
-	defer fake.getSellableMutex.RUnlock()
 	fake.getStubMutex.RLock()
 	defer fake.getStubMutex.RUnlock()
 	fake.getUserIdMutex.RLock()
@@ -988,6 +1061,8 @@ func (fake *CustomContex) Invocations() map[string][][]interface{} {
 	defer fake.getUserTypeMutex.RUnlock()
 	fake.iteratorResultsMutex.RLock()
 	defer fake.iteratorResultsMutex.RUnlock()
+	fake.offerStringGeneratorMutex.RLock()
+	defer fake.offerStringGeneratorMutex.RUnlock()
 	fake.updateHighThroughMutex.RLock()
 	defer fake.updateHighThroughMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

@@ -1,14 +1,16 @@
-\documentclass{beamer}
+\documentclass[xcolor=table]{beamer}
 
 % Inputs required
 \usepackage{tikz}
 \usepackage{svg}
 \usepackage{color}
 \usepackage{adjustbox}
+\usetikzlibrary{timeline}
 
 % Settings for the presentation
 \usetheme{Hannover}
 \setbeamerfont{footnote}{size=\tiny}
+\setbeamerfont{subsection in toc}{size=\tiny}
 
 % Title information
 \title{Blockchain-based Payment for Carbon Trading}
@@ -16,7 +18,7 @@
 {\textbf{Oscar Golding (z5160173)
 \texorpdfstring{\\} 
 \footnotesize Supervised by: Dr.~Sherry Xu, Dr.~Qinghua Lu}} 
-\institute[UNSW]{Thesis A: UNSW}
+\institute[UNSW]{Thesis B: UNSW}
 \date{\today}
 
 \begin{document}
@@ -33,6 +35,14 @@
 
 % Sections to cover in the report
 \include{sections/recap}
+
+\include{sections/architecture}
+
+\include{sections/patterns}
+
+\include{sections/performance}
+
+\include{sections/plan}
 
 \include{sections/bibliography}
 

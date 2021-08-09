@@ -1,0 +1,119 @@
+\section{Thesis B Plan}
+\begin{frame}{Original Research Timeline}
+    \begin{adjustbox}{max totalsize={.9\textwidth}{.7\textheight},center}
+        \begin{tikzpicture}[timespan={}]
+
+            \timeline[custom interval=true]{Thesis A, Thesis B, Thesis C}
+
+            % Phases for the project
+            \begin{phases}
+                \initialphase{involvement degree=1.75cm,phase color=black}
+                \phase{between week=1 and 3 in 0.01,involvement degree=2cm}
+                \phase{between week=1 and 2 in 0.4,involvement degree=3cm}
+                \phase{between week=1 and 2 in 1.1,involvement degree=5cm}
+                \phase{between week=2 and 3 in 1.1, involvement degree=6cm}
+            \end{phases}
+
+            % Project milestones 0-360 on the individual phase
+            \addmilestone{at=phase-0.90,direction=90:1cm,
+                text={Initial meeting},
+                text options={above}}
+            \addmilestone{at=phase-0.270,direction=270:1cm,
+                text={Blockchain Patterns},text options={below}}
+            \addmilestone{at=phase-1.240,direction=240:1cm,
+                text={Domain Analysis},text options={below}}
+            \addmilestone{at=phase-2.110,direction=120:1.5cm,
+                text={Investigate Technical Details},text options={above}}
+            \addmilestone{at=phase-2.250,direction=240:1.5cm,
+                text={Literature Review},text options={below}}
+            \addmilestone{at=phase-3.250,direction=240:1.5cm,
+                text={Create Architecture},text options={below}}
+            \addmilestone{at=phase-4.250,direction=240:1.5cm,
+                text={Create User Interface},text options={below}}
+            \addmilestone{at=phase-3.75,direction=120:1.5cm,
+                text={Develop Chaincode},text options={above}}
+            \addmilestone{at=phase-4.0035,direction=45:2.5cm,
+                text={Improvements},text options={above}}
+            \addmilestone{at=phase-4.125,direction=45:2.5cm,
+                text={Chain Authorities},text options={above}}
+        \end{tikzpicture}
+    \end{adjustbox}
+\end{frame}
+\begin{frame}{Updated Research Timeline}
+    \begin{adjustbox}{max totalsize={.9\textwidth}{.7\textheight},center}
+        \begin{tikzpicture}[timespan={}]
+
+            \timeline[custom interval=true]{Thesis A, Thesis B, Thesis C}
+
+            % Phases for the project
+            \begin{phases}
+                \initialphase{involvement degree=1.75cm,phase color=black}
+                \phase{between week=1 and 3 in 0.01,involvement degree=2cm}
+                \phase{between week=1 and 2 in 0.4,involvement degree=3cm}
+                \phase{between week=1 and 2 in 1.1,involvement degree=5cm}
+                \phase{between week=2 and 3 in 1.1, involvement degree=6cm}
+            \end{phases}
+
+            % Project milestones 0-360 on the individual phase
+            \addmilestone{at=phase-0.90,direction=90:1cm,
+                text={Initial meeting},
+                text options={above}}
+            \addmilestone{at=phase-0.270,direction=270:1cm,
+                text={Blockchain Patterns},text options={below}}
+            \addmilestone{at=phase-1.240,direction=240:1cm,
+                text={Domain Analysis},text options={below}}
+            \addmilestone{at=phase-2.110,direction=120:1.5cm,
+                text={Investigate Technical Details},text options={above}}
+            \addmilestone{at=phase-2.250,direction=240:1.5cm,
+                text={Literature Review},text options={below}}
+            \addmilestone{at=phase-3.250,direction=240:1.5cm,
+                text={Create Architecture},text options={below}}
+            \addmilestone{at=phase-3.275,direction=290:2.0cm,
+                text={Create User Interface},text options={below}}
+            \addmilestone{at=phase-3.120,direction=120:1.5cm,
+                text={Develop Chaincode},text options={above}}
+            \addmilestone{at=phase-4.090,direction=45:2.5cm,
+                text={Improvements},text options={above}}
+            \addmilestone{at=phase-3.090,direction=45:2.5cm,
+                text={Chain Authorities},text options={above}}
+        \end{tikzpicture}
+    \end{adjustbox}
+\end{frame}
+\begin{frame}{Table Representation}
+    \begin{itemize}
+        \item Original plan for Thesis B. Green records the task being completed.
+    \end{itemize}
+    \begin{table}[]
+        \caption{Plan for Thesis B}
+        \label{tab:my-table}
+        \begin{tabular}{|l|l|}
+            \hline
+            Week & Plan                                                                   \\ \hline
+            1    & \cellcolor[HTML]{32CB00}Hyperledger Documentation                      \\ \hline
+            2    & \cellcolor[HTML]{32CB00}Hyperledger Documentation                      \\ \hline
+            3    & \cellcolor[HTML]{32CB00}Hyperledger Documentation                      \\ \hline
+            4    & \cellcolor[HTML]{32CB00}Smart Contract Programming - Producer Register \\ \hline
+            5    & \cellcolor[HTML]{32CB00}Smart Contract Programming - Offer Lifecycle   \\ \hline
+            6    & \cellcolor[HTML]{32CB00}Smart Contract Programming - Carbon Reputation \\ \hline
+            7    & \cellcolor[HTML]{32CB00}Smart Contract Programming - Direct Purchase   \\ \hline
+            8    & \cellcolor[HTML]{32CB00}API Construction - Account Creation            \\ \hline
+            9    & \cellcolor[HTML]{32CB00}API Construction - Wiring Requests to Offers   \\ \hline
+            10   & \cellcolor[HTML]{32CB00}API Construction - UI Functionality            \\ \hline
+        \end{tabular}
+    \end{table}
+\end{frame}
+\begin{frame}{Plan Update}
+    \begin{itemize}
+        \item Ahead of schedule - working prototype with chaincode, implemented
+              architecture and a user interface.
+        \item Plan for Thesis C:
+              \begin{itemize}
+                  \item Exploration of blockchain performance (TPS).
+                  \item Generalisation of blockchain patterns to sources of
+                        energy outside of hydrogen - for example water.
+                  \item The auctioning of \textit{Carboncoin} to hydrogen
+                        producers.
+                  \item Payment channel for recording off-chain transactions.
+              \end{itemize}
+    \end{itemize}
+\end{frame}

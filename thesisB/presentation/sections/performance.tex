@@ -1,0 +1,45 @@
+\section{Blockchain Performance}
+\begin{frame}{System Performance}
+    \begin{itemize}
+        \item Although the aim of the thesis is not to produce the most
+              high throughput carbon market - the performance of the
+              system is still worth exploring.
+        \item The performance of \textit{Fabric} has a tendency to
+              suffer in the \textit{Validation Phase} of the transaction lifecycle.
+        \item An observed tendency of Hyperledger is that as the transactions
+              per second (TPS) increases, so do
+              errors~\cite{10.1145/3448016.3452823}.
+    \end{itemize}
+\end{frame}
+\subsection{Bottlenecks}
+\begin{frame}{Common Bottlenecks}
+    \begin{itemize}
+        \item Multi-Version Concurrency Control (MVCC) - transactions in the
+              same block updating the same key (transaction dependency).
+        \item Phantom Read Conflicts - performing a read on a key range
+              which has been updated.
+              \begin{itemize}
+                  \item For some reading range $i$ to $j$,
+                        if a key has recently
+                        been inserted then read a phantom read happens.
+              \end{itemize}
+    \end{itemize}
+\end{frame}
+\subsection{TPS Enhancements}
+\begin{frame}{Enhancements to TPS}
+    \begin{itemize}
+        \item Represent assets on the blockchain as a sum of deltas to avoid
+              MVCC errors.
+        \item Example: CarbonCoin is the sum of deltas in Equation~\ref{eq:2}.
+              \begin{itemize}
+                  \item Each $\delta_i$ contains a unique combination of owner,
+                        transaction identifier and sign.
+                  \item Each $x_i$ represents the asset value (for example 500).
+              \end{itemize}
+        \item Localise the phantom read conflicts into `low TPS' domains.
+    \end{itemize}
+    \begin{equation}
+        \text{Asset Value} = \delta_1 x_1 + \delta_2 x_2 + \dots + \delta_n x_n
+        \label{eq:2}
+    \end{equation}
+\end{frame}

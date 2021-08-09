@@ -1,7 +1,7 @@
-@startuml GetOffers
+@startuml GetOffersNo
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 20
-skinparam maxmessagesize 60
+skinparam maxmessagesize 100
 skinparam sequenceParticipant underline
 title Carboncoin Offer Retrieval
 
@@ -29,7 +29,7 @@ API -> CMSC: Request observation of offers
 activate CMSC
 
 alt Carbon Reputation Filter Present
-    CMSC -> CMJD: Perform Index Query Sorting (warmed)
+    CMSC -> CMJD : Perform Index Query Sorting (warmed)
     activate CMJD
     CMJD -> CMSC: Offer Results Sorted with Reputation
     deactivate CMJD
@@ -39,13 +39,6 @@ else Normal Offer Retrieval
     CMJD -> CMSC: Offer Results
     deactivate CMJD
 end
-
-note left
-Whenever Hyperledger cuts a new block, an offer index is warmed to 
-reflect the latest information on the blockchain. 
-Such a feature strikes the perfect trade-off between the most accurate 
-financial information with on chain smart contract performance.
-end note
 
 CMSC -> API: Return offers
 deactivate CMSC

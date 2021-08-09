@@ -1,7 +1,7 @@
 @startuml directOffer
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 20
-skinparam maxmessagesize 60
+skinparam maxmessagesize 100
 skinparam sequenceParticipant underline
 title Carboncoin Direct Coin Purchase (Offer)
 

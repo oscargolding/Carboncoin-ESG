@@ -1,4 +1,4 @@
-@startuml AccontCreation
+@startuml AccountCreation
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 20
 skinparam maxmessagesize 60
@@ -10,6 +10,7 @@ participant "HTTP API" as B
 participant "Hyperledger Certificate Authority" as C
 database "Cryptographic Wallet" as D
 database "noSQL Database" as E
+box "Carbon Market Blockchain Channel" #LightBlue
 participant "Market Smart Contract" as F
 participant "Registrar Smart Contract" as G
 

@@ -1,34 +1,69 @@
-@article{scikit-learn,
-  title   = {Scikit-learn: Machine Learning in {P}ython},
-  author  = {Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
-         and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
-         and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
-         Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
-  journal = {Journal of Machine Learning Research},
-  volume  = {12},
-  pages   = {2825--2830},
-  year    = {2011}
+@inproceedings{10.1145/3448016.3452823,
+  author    = {Chacko, Jeeta Ann and Mayer, Ruben and Jacobsen, Hans-Arno},
+  title     = {Why Do My Blockchain Transactions Fail? A Study of Hyperledger Fabric},
+  year      = {2021},
+  isbn      = {9781450383431},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3448016.3452823},
+  doi       = {10.1145/3448016.3452823},
+  abstract  = {Permissioned blockchain systems promise to provide both decentralized trust and privacy.
+Hyperledger Fabric is currently one of the most wide-spread permissioned blockchain
+systems and is heavily promoted both in industry and academia. Due to its optimistic
+concurrency model, the transaction failure rates in Fabric can become a bottleneck.
+While there is active research to reduce failures, there is a lack of understanding
+on their root cause and, consequently, a lack of guidelines on how to configure Fabric
+optimally for different scenarios. To close this gap, in this paper, we first introduce
+a formal definition of the different types of transaction failures in Fabric. Then,
+we develop a comprehensive testbed and benchmarking system, HyperLedgerLab, along
+with four different chaincodes that represent realistic use cases and a chaincode/workload
+generator. Using HyperLedgerLab, we conduct exhaustive experiments to analyze the
+impact of different parameters of Fabric such as block size, endorsement policies,
+and others, on transaction failures. We further analyze three recently proposed optimizations
+from the literature, Fabric++, Streamchain and FabricSharp, and evaluate under which
+conditions they reduce the failure rates. Finally, based on our results, we provide
+recommendations for Fabric practitioners on how to configure the system and also propose
+new research directions.},
+  booktitle = {Proceedings of the 2021 International Conference on Management of Data},
+  pages     = {221–234},
+  numpages  = {14},
+  keywords  = {transaction failures, concurrency, blockchains},
+  location  = {Virtual Event, China},
+  series    = {SIGMOD/PODS '21}
 }
 
-@article{JMLR:v18:16-558,
-  author  = {Lisha Li and Kevin Jamieson and Giulia DeSalvo and Afshin Rostamizadeh and Ameet Talwalkar},
-  title   = {Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization},
-  journal = {Journal of Machine Learning Research},
-  year    = {2018},
-  volume  = {18},
-  number  = {185},
-  pages   = {1-52},
-  url     = {http://jmlr.org/papers/v18/16-558.html}
+@inproceedings{10.1145/3190508.3190538,
+  author    = {Androulaki, Elli and Barger, Artem and Bortnikov, Vita and Cachin, Christian and Christidis, Konstantinos and De Caro, Angelo and Enyeart, David and Ferris, Christopher and Laventman, Gennady and Manevich, Yacov and Muralidharan, Srinivasan and Murthy, Chet and Nguyen, Binh and Sethi, Manish and Singh, Gari and Smith, Keith and Sorniotti, Alessandro and Stathakopoulou, Chrysoula and Vukoli\'{c}, Marko and Cocco, Sharon Weed and Yellick, Jason},
+  title     = {Hyperledger Fabric: A Distributed Operating System for Permissioned Blockchains},
+  year      = {2018},
+  isbn      = {9781450355841},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3190508.3190538},
+  doi       = {10.1145/3190508.3190538},
+  abstract  = {Fabric is a modular and extensible open-source system for deploying and operating
+permissioned blockchains and one of the Hyperledger projects hosted by the Linux Foundation
+(www.hyperledger.org).Fabric is the first truly extensible blockchain system for running
+distributed applications. It supports modular consensus protocols, which allows the
+system to be tailored to particular use cases and trust models. Fabric is also the
+first blockchain system that runs distributed applications written in standard, general-purpose
+programming languages, without systemic dependency on a native cryptocurrency. This
+stands in sharp contrast to existing block-chain platforms that require "smart-contracts"
+to be written in domain-specific languages or rely on a cryptocurrency. Fabric realizes
+the permissioned model using a portable notion of membership, which may be integrated
+with industry-standard identity management. To support such flexibility, Fabric introduces
+an entirely novel blockchain design and revamps the way blockchains cope with non-determinism,
+resource exhaustion, and performance attacks.This paper describes Fabric, its architecture,
+the rationale behind various design decisions, its most prominent implementation aspects,
+as well as its distributed application programming model. We further evaluate Fabric
+by implementing and benchmarking a Bitcoin-inspired digital currency. We show that
+Fabric achieves end-to-end throughput of more than 3500 transactions per second in
+certain popular deployment configurations, with sub-second latency, scaling well to
+over 100 peers.},
+  booktitle = {Proceedings of the Thirteenth EuroSys Conference},
+  articleno = {30},
+  numpages  = {15},
+  location  = {Porto, Portugal},
+  series    = {EuroSys '18}
 }
 
-@article{Chen_2016,
-  title     = {XGBoost},
-  isbn      = {9781450342322},
-  url       = {http://dx.doi.org/10.1145/2939672.2939785},
-  doi       = {10.1145/2939672.2939785},
-  journal   = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
-  publisher = {ACM},
-  author    = {Chen, Tianqi and Guestrin, Carlos},
-  year      = {2016},
-  month     = {Aug}
-}

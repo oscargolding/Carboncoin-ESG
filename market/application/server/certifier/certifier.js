@@ -3,6 +3,42 @@ import { v4 as uuid4 } from 'uuid';
 import moment from 'moment';
 import utils from '../utils.js';
 
+const productionList = [
+  {
+    firm: 'oscarIndustry',
+    carbonProduction: '5',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+  {
+    firm: 'oscarIndustry',
+    carbonProduction: '305',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+  {
+    firm: 'oscarIndustry',
+    carbonProduction: '310',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+  {
+    firm: 'BHPPetrol',
+    carbonProduction: '150',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+];
+
+const simpleList = [
+  {
+    firm: 'riotinto@gmail.com',
+    carbonProduction: '50',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+];
+
 const blockchainCall = async (production, contract) => {
   await contract.submitTransaction('ReportProduction', production.firm,
     production.carbonProduction, production.date, production.id);
@@ -16,32 +52,7 @@ const main = async () => {
     await utils.connectGateway('org2', 'Org2MSP', 'certifier');
     console.log(chalk.green('Enrolled org2 with a certifier'));
     utils.setChaincode('EnergyCertifier');
-    const production = [
-      {
-        firm: 'oscarIndustry',
-        carbonProduction: '5',
-        date: moment().format('MMMM Do YYYY, h:mm:ss a'),
-        id: uuid4(),
-      },
-      {
-        firm: 'oscarIndustry',
-        carbonProduction: '305',
-        date: moment().format('MMMM Do YYYY, h:mm:ss a'),
-        id: uuid4(),
-      },
-      {
-        firm: 'oscarIndustry',
-        carbonProduction: '310',
-        date: moment().format('MMMM Do YYYY, h:mm:ss a'),
-        id: uuid4(),
-      },
-      {
-        firm: 'BHPPetrol',
-        carbonProduction: '150',
-        date: moment().format('MMMM Do YYYY, h:mm:ss a'),
-        id: uuid4(),
-      },
-    ];
+    const production = process.argv.length > 2 ? simpleList : productionList;
     const { contract, gateway } = await utils.getContract('admin');
     try {
       console.log('>>> Making calls to blockchain');

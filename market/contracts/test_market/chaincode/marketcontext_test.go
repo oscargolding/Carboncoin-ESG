@@ -311,7 +311,7 @@ func Test_WHEN_createProduction_THEN_SUCCESS(t *testing.T) {
 	stub.PutStateReturns(nil)
 
 	// WHEN
-	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true)
+	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false)
 
 	// THEN
 	require.Nil(t, err)
@@ -326,7 +326,7 @@ func Test_WHEN_createProductionExists_THEN_FAILURE(t *testing.T) {
 	stub.GetStateReturns(bytes, nil)
 
 	// WHEN
-	err = ctx.CreateProduction("1", 2, "12/2", "oscar", true)
+	err = ctx.CreateProduction("1", 2, "12/2", "oscar", true, false)
 
 	// THEN
 	require.EqualError(t, err, "production with id already exists on the market")
@@ -339,7 +339,7 @@ func Test_WHEN_createProductionBlcokError_THEN_FAILURE(t *testing.T) {
 	stub.PutStateReturns(fmt.Errorf("error"))
 
 	// WHEN
-	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true)
+	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false)
 
 	// THEN
 	require.EqualError(t, err, "error")

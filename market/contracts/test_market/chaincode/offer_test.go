@@ -66,6 +66,7 @@ func Test_WHEN_getModel_THEN_SUCCESS(t *testing.T) {
 	ctx, _ := PerformTestStubs()
 	ctx.UpdateHighThroughReturns(nil)
 	ctx.GetHighThroughReturns(50, nil)
+	ctx.GetUserIdReturns("admin", nil)
 	offer.InsertContext(ctx)
 
 	// WHEN
@@ -78,6 +79,23 @@ func Test_WHEN_getModel_THEN_SUCCESS(t *testing.T) {
 	require.EqualValues(t, "1", model.OfferID)
 	require.EqualValues(t, "oscar", model.Producer)
 	require.EqualValues(t, 500, model.Amount)
+	require.EqualValues(t, false, model.Owned)
+}
+
+func Test_WHEN_getModelUser_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	offer := chaincode.Offer{DocType: "offer", Producer: "oscar", Amount: 500,
+		Active: true, OfferID: "1"}
+	ctx, _ := PerformTestStubs()
+	ctx.UpdateHighThroughReturns(nil)
+	ctx.GetHighThroughReturns(50, nil)
+	offer.InsertContext(ctx)
+	ctx.GetUserIdReturns("oscar", nil)
+
+	// WHEN
+	model, err := offer.ReturnModel()
+	require.Nil(t, err)
+	require.EqualValues(t, true, model.Owned)
 }
 
 func Test_WHEN_blockchainCtxFailed_THEN_FAILURE(t *testing.T) {

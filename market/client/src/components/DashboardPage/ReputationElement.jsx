@@ -49,15 +49,15 @@ const ReputationElement = (props) => {
         }}
       >
         <PopoverText>
-          {repScore >= 1000
+          {repScore <= -500
             ? starterString +
             '\nWarning: bad carbon reputation.'
             : ''}
-          {repScore < 1000 && repScore >= 500
+          {repScore < -250 && repScore >= -500
             ? starterString +
             '\nAverage carbon reputation.'
             : ''}
-          {repScore < 500 ? starterString + '\nGreat carbon reputation.' : ''}
+          {repScore > -250 ? starterString + '\nGreat carbon reputation.' : ''}
         </PopoverText>
       </Popover>
     </div>

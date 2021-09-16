@@ -48,6 +48,7 @@ const ProductionList = () => {
               produced={production.produced}
               date={production.date}
               paid={production.paid}
+              ethical={production.ethical}
               usingRef={lastElementRef}
               id={production.productionID}
             />
@@ -59,6 +60,7 @@ const ProductionList = () => {
               produced={production.produced}
               date={production.date}
               paid={production.paid}
+              ethical={production.ethical}
               id={production.productionID}
             />
           );

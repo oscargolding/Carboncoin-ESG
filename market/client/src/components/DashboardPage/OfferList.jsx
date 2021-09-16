@@ -25,8 +25,15 @@ const OfferList = (props) => {
     offers,
     hasMore,
     paginationToken,
+    setOffers,
   } = useOfferSearch(pageToken, authToken, API.getOffers, sortTerm, direction);
   const observer = useRef();
+  const deleteOffer = offerId => {
+    const copyArray = JSON.parse(JSON.stringify(offers));
+    const index = copyArray.findIndex((offer) => offer.offerId === offerId);
+    copyArray.splice(index, 1);
+    setOffers(copyArray);
+  };
   const lastElementRef = useCallback(node => {
     if (loading === true) {
       return;
@@ -56,6 +63,8 @@ const OfferList = (props) => {
               active={offer.active}
               offerid={offer.offerId}
               reputation={offer.reputation}
+              owned={offer.owned}
+              deleteOfferFn={deleteOffer}
               usingRef={lastElementRef}
             />
           );
@@ -68,7 +77,9 @@ const OfferList = (props) => {
               quantity={offer.tokens}
               active={offer.active}
               reputation={offer.reputation}
+              owned={offer.owned}
               offerid={offer.offerId}
+              deleteOfferFn={deleteOffer}
             />
           );
         }

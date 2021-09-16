@@ -40,7 +40,7 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction) => {
     offerRetrieval();
     return () => controller.abort();
   }, [token, sortTerm, direction]);
-  return { loading, error, offers, hasMore, paginationToken, };
+  return { loading, error, offers, hasMore, paginationToken, setOffers, };
 };
 
 export default useOfferSearch;

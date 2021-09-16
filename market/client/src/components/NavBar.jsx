@@ -36,7 +36,10 @@ const Logo = styled.img`
  */
 const NavBar = () => {
   // Get the store context
-  const { authToken: [authToken], } = storeContext();
+  const {
+    authToken: [authToken, setAuthToken],
+    balance: [, setBalance],
+  } = storeContext();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const history = useHistory();
@@ -99,12 +102,17 @@ const NavBar = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={() => history.push('/production')}>
-                  Carbon Production
+                  Carbon Reporting
                 </MenuItem>
                 <MenuItem onClick={() => history.push('/direct/purchase')}>
                   Directly Purchase CarbonCoin
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => {
+                  setAuthToken('');
+                  setBalance('');
+                  handleClose();
+                  history.push('/');
+                }}>
                   Logout
                 </MenuItem>
               </Menu>

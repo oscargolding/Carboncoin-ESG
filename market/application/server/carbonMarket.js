@@ -69,6 +69,12 @@ carbonMarketRouter.post('/offer/create',
     return res.json({ message: 'success' });
   })));
 
+carbonMarketRouter.delete('/offer/delete',
+  catchErrors(authed(async (req, res, email) => {
+    const offerId = req.query.id;
+    await utils.deleteOffer(email, offerId);
+    return res.json({ message: 'success' });
+  })));
 /**
  * POST to get tokens to purchase from the market
  */
@@ -108,12 +114,19 @@ carbonMarketRouter.get('/token/balance',
   })));
 
 carbonMarketRouter.get('/offers/list',
-  catchErrors(authed(async (req, res) => {
+  catchErrors(authed(async (req, res, email) => {
     const token = req.query.token ? req.query.token : '';
     const size = req.query.amount ? req.query.amount : 10;
     const field = req.query.field ? req.query.field : '';
     const ascending = !!req.query.direction;
-    const queryResult = await utils.getOffers(token, size, field, ascending);
+    const queryResult = await utils.getOffers(token, size, field, ascending, email);
+    return res.json(queryResult);
+  })));
+
+carbonMarketRouter.get('/offers/target',
+  catchErrors(authed(async (req, res, email) => {
+    const { target, reputation } = req.query;
+    const queryResult = await utils.targetOffers(email, reputation, target);
     return res.json(queryResult);
   })));
 

@@ -2,6 +2,7 @@ package chaincode
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -19,6 +20,10 @@ type PaginatedQueryResult struct {
 	Records             []*OfferModel `json:"records"`
 	FetchedRecordsCount int32         `json:"fetchedRecordsCount"`
 	Bookmark            string        `json:"bookmark"`
+}
+
+type NormalQueryResult struct {
+	Records []*OfferModel `json:"records"`
 }
 
 type PaginatedQueryResultProd struct {
@@ -102,6 +107,69 @@ func (s *SmartContract) AddOffer(ctx CustomMarketContextInterface,
 		}
 		return ctx.CreateOffer(producerId, amountGiven, tokensGiven, offerID,
 			carbon)
+	}
+}
+
+// Get the offers contained within a given budget
+func (s *SmartContract) GetBudgetOffer(ctx CustomMarketContextInterface,
+	reputationMatch bool, target int) (*NormalQueryResult, error) {
+	queryString := `{"selector":{"docType":"offer", "active": true}}`
+	userId, err := ctx.GetUserId()
+	if err != nil {
+		return nil, err
+	}
+	stub := ctx.GetStub()
+	resultsIterator, err := stub.GetQueryResult(queryString)
+	if err != nil {
+		return nil, fmt.Errorf("err: error calling blockchain %v", err)
+	}
+	defer resultsIterator.Close()
+
+	offers := make([]*Offer, 0)
+	err = ctx.IteratorResults(resultsIterator, func(offer *Offer) {
+		if userId != offer.Producer {
+			offers = append(offers, offer)
+		}
+	})
+	if err != nil {
+		return nil, fmt.Errorf("err: error with iterator %v", err)
+	}
+	// Pick an option for sorting
+	if reputationMatch {
+		sort.Slice(offers[:], func(i, j int) bool {
+			return offers[i].CarbonReputation > offers[j].CarbonReputation
+		})
+	} else {
+		sort.Slice(offers[:], func(i, j int) bool {
+			return offers[i].Amount < offers[j].Amount
+		})
+	}
+	// Iterate over and greedily pick offers
+	runningFound := 0
+	foundTarget := false
+	returningOffers := make([]*OfferModel, 0)
+	for _, offer := range offers {
+		offer.InsertContext(ctx)
+		model, err := offer.ReturnModel()
+		if err != nil {
+			return nil, err
+		}
+		runningFound += model.Tokens
+		returningOffers = append(returningOffers, model)
+		if runningFound >= target {
+			foundTarget = true
+			break
+		}
+	}
+	if foundTarget {
+		return &NormalQueryResult{
+			Records: returningOffers,
+		}, nil
+	} else {
+		emptyOffers := make([]*OfferModel, 0)
+		return &NormalQueryResult{
+			Records: emptyOffers,
+		}, nil
 	}
 }
 
@@ -323,6 +391,50 @@ func (s *SmartContract) PurchaseOfferTokens(ctx CustomMarketContextInterface,
 	return tokens + tokenAmount, nil
 }
 
+// Make an offer stale - no longer active on the blockchain
+func (s *SmartContract) MakeOfferStale(ctx CustomMarketContextInterface,
+	offerId string) error {
+	userId, err := ctx.GetUserId()
+	if err != nil {
+		return err
+	}
+	userType, err := ctx.GetUserType()
+	if err != nil {
+		return err
+	}
+	if userType != PRODUCER {
+		return fmt.Errorf("err: the user must be a producer")
+	}
+	var usingOffer *Offer
+	err = ctx.GetResult(offerId, func(offer *Offer) {
+		usingOffer = offer
+		usingOffer.InsertContext(ctx)
+	})
+	if err != nil {
+		return fmt.Errorf("err: getting offer %v", err)
+	}
+	if userId != usingOffer.Producer {
+		return fmt.Errorf("err: user does not own the offer and cannot cancel it")
+	}
+	seller := ctx.GetProducer(userId)
+	if seller == nil {
+		return fmt.Errorf("err: getting offer seller")
+	}
+	tokens, err := seller.GetTokens()
+	if err != nil {
+		return fmt.Errorf("err: getting user tokens %v", err)
+	}
+	if err = seller.IncrementSellable(tokens); err != nil {
+		return err
+	}
+	usingOffer.MakeOfferStale()
+	// Last entry point for the offer - no more high throughput
+	if err = usingOffer.ChainFlush(ctx); err != nil {
+		return fmt.Errorf("error flusing offer: %v", err)
+	}
+	return nil
+}
+
 // Report the producer production - requires a certifier to call
 func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	firm string, carbonProduction int,
@@ -345,17 +457,21 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	if err != nil {
 		return err
 	}
-	if tokens >= carbonProduction {
-		if err = producer.DeductTokens(carbonProduction); err != nil {
+	totalCarbonProduction := carbonProduction
+	if carbonProduction < 0 {
+		totalCarbonProduction = -carbonProduction
+	}
+	if tokens >= totalCarbonProduction && carbonProduction < 0 {
+		if err = producer.DeductTokens(totalCarbonProduction); err != nil {
 			return err
 		}
-		if err = ctx.CreateProduction(id, carbonProduction, day, firm,
-			true); err != nil {
+		if err = ctx.CreateProduction(id, totalCarbonProduction, day, firm,
+			true, false); err != nil {
 			return err
 		}
 	} else {
-		if err = ctx.CreateProduction(id, carbonProduction, day, firm,
-			false); err != nil {
+		if err = ctx.CreateProduction(id, totalCarbonProduction, day, firm,
+			carbonProduction > 0, carbonProduction > 0); err != nil {
 			return err
 		}
 	}

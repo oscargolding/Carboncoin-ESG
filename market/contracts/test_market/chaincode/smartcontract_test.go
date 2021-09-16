@@ -210,18 +210,30 @@ func Test_WHEN_addOfferCarbonFailure_THEN_FAILURE(t *testing.T) {
 	require.EqualError(t, err, "err: getting carbon err")
 }
 
-func mock_function_offer(call interface{}, name string) (*reflect.Value,
+func setup_mock_offer(call interface{}, offer *chaincode.Offer) (*reflect.Value,
 	*reflect.Value) {
 	funcType := reflect.TypeOf(call)
 	docType := funcType.In(0).Elem()
 	callBackFunc := reflect.ValueOf(call)
-	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: name,
-		Amount: 30, Active: true, OfferID: "1", CarbonReputation: 10}
-	bytes, _ := json.Marshal(expectedOffer)
+	bytes, _ := json.Marshal(offer)
 	doc := reflect.New(docType)
 	docInterface := doc.Interface()
 	json.Unmarshal(bytes, &docInterface)
 	return &callBackFunc, &doc
+}
+
+func mock_function_offer(call interface{}, name string) (*reflect.Value,
+	*reflect.Value) {
+	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: name,
+		Amount: 30, Active: true, OfferID: "1", CarbonReputation: 10}
+	return setup_mock_offer(call, expectedOffer)
+}
+
+func mock_function_offer_detailed(call interface{}, name string, rep int,
+	amount int) (*reflect.Value, *reflect.Value) {
+	expectedOffer := &chaincode.Offer{DocType: "offer", Producer: name,
+		Amount: amount, Active: true, OfferID: "1", CarbonReputation: rep}
+	return setup_mock_offer(call, expectedOffer)
 }
 
 func mock_function_production(call interface{}, id string, paid bool) (*reflect.Value,
@@ -453,6 +465,118 @@ func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
 	require.Nil(t, result)
 }
 
+func Test_WHEN_getBudgetOffer_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("john", nil)
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_offer(call, "oscar")
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	ctx.GetHighThroughReturns(300, nil)
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultIterator, nil)
+
+	// WHEN
+	results, err := contract.GetBudgetOffer(ctx, false, 250)
+
+	// THEN
+	require.NoError(t, err)
+	require.Equal(t, 1, len(results.Records))
+}
+
+func Test_WHEN_getBudgetOfferMany_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("john", nil)
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_offer_detailed(call, "oscar", 10, 12)
+		callBackFunc.Call([]reflect.Value{*doc})
+		secondCall, secondDoc := mock_function_offer_detailed(call, "james", 10, 12)
+		secondCall.Call([]reflect.Value{*secondDoc})
+		return nil
+	}
+	ctx.GetHighThroughReturns(300, nil)
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultIterator, nil)
+
+	// WHEN
+	results, err := contract.GetBudgetOffer(ctx, false, 250)
+
+	// THEN
+	require.NoError(t, err)
+	require.Equal(t, 1, len(results.Records))
+}
+
+func Test_WHEN_getBudgetOfferManyReputation_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("john", nil)
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_offer_detailed(call, "oscar", 12, 12)
+		callBackFunc.Call([]reflect.Value{*doc})
+		secondCall, secondDoc := mock_function_offer_detailed(call, "james", 8, 12)
+		secondCall.Call([]reflect.Value{*secondDoc})
+		return nil
+	}
+	ctx.GetHighThroughReturns(300, nil)
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultIterator, nil)
+
+	// WHEN
+	results, err := contract.GetBudgetOffer(ctx, true, 5)
+
+	// THEN
+	require.NoError(t, err)
+	require.Equal(t, 1, len(results.Records))
+	require.Equal(t, "oscar", results.Records[0].Producer)
+}
+
+func Test_WHEN_getBudgetOfferWithDollar_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("john", nil)
+	ctx.IteratorResultsStub = func(_ shim.StateQueryIteratorInterface,
+		call interface{}) error {
+		callBackFunc, doc := mock_function_offer_detailed(call, "oscar", 12, 15)
+		callBackFunc.Call([]reflect.Value{*doc})
+		secondCall, secondDoc := mock_function_offer_detailed(call, "james", 8, 10)
+		secondCall.Call([]reflect.Value{*secondDoc})
+		return nil
+	}
+	ctx.GetHighThroughReturns(300, nil)
+	queryResultIterator := &chaincodefakes.QueryIterator{}
+	stub.GetQueryResultReturns(queryResultIterator, nil)
+
+	// WHEN
+	results, err := contract.GetBudgetOffer(ctx, false, 600)
+
+	// THEN
+	require.NoError(t, err)
+	require.Equal(t, 2, len(results.Records))
+	require.Equal(t, "james", results.Records[0].Producer)
+	require.Equal(t, "oscar", results.Records[1].Producer)
+
+}
+
+func Test_WHEN_getBudgetError_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	ctx.GetUserIdReturns("oscar", nil)
+	stub.GetQueryResultReturns(nil, fmt.Errorf("error"))
+
+	// WHEN
+	results, err := contract.GetBudgetOffer(ctx, false, 50)
+
+	// THEN
+	require.EqualError(t, err, "err: error calling blockchain error")
+	require.Nil(t, results)
+}
+
 func IdealPurchaseStub(stub *chaincodefakes.ChaincodeStub,
 	ctx *chaincodefakes.CustomContex) {
 	ctx.GetUserIdReturns("oscar", nil)
@@ -469,6 +593,50 @@ func IdealPurchaseStub(stub *chaincodefakes.ChaincodeStub,
 		return nil
 	}
 	stub.PutStateReturns(nil)
+}
+
+func StaleStub(stub *chaincodefakes.ChaincodeStub,
+	ctx *chaincodefakes.CustomContex, name string) {
+	ctx.GetUserIdReturns(name, nil)
+	ctx.GetUserTypeReturns("producer", nil)
+	buyingFirm := &chaincode.Producer{ID: name}
+	buyingFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(buyingFirm)
+	ctx.GetResultStub = func(s string, i interface{}) error {
+		callBackFunc, doc := mock_function_offer(i, name)
+		callBackFunc.Call([]reflect.Value{*doc})
+		return nil
+	}
+	stub.PutStateReturns(nil)
+}
+
+func Test_WHEN_makeOfferStaleUser_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	StaleStub(stub, ctx, "oscar")
+	ctx.GetHighThroughReturns(500, nil)
+
+	// WHEN
+	err := contract.MakeOfferStale(ctx, "1")
+
+	// THEN
+	require.Nil(t, err)
+}
+
+func Test_WHEN_makeOfferStaleNotMatch_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	stub, ctx, contract := GetTestStubs()
+	StaleStub(stub, ctx, "oscar")
+	ctx.GetHighThroughReturns(500, nil)
+	ctx.GetUserIdReturns("james", nil)
+
+	// WHEN
+	err := contract.MakeOfferStale(ctx, "1")
+
+	// THEN
+	require.EqualError(t, err,
+		"err: user does not own the offer and cannot cancel it")
+
 }
 func Test_WHEN_purchaseTokens_THEN_SUCCESS(t *testing.T) {
 	// GIVEN

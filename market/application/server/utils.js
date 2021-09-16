@@ -303,11 +303,11 @@ utils.acceptOffer = async (userId, amount, offerId) => {
  * @param {token} paginationToken the pagination token
  * @param {number} number the number of results
  */
-utils.getOffers = async (paginationToken, number, field, direction) => {
+utils.getOffers = async (paginationToken, number, field, direction, email) => {
   console.log('>>> Getting offers for a user');
   console.log(`${paginationToken} ${number}`);
   console.log(`${field} and dir -> ${direction}`);
-  const { contract, gateway } = await utils.getContract(adminUserId);
+  const { contract, gateway } = await utils.getContract(email);
 
   // Submit the offer
   const result = await contract.submitTransaction('GetOffers',
@@ -379,6 +379,41 @@ utils.redeemChip = async (userId, amount) => {
   gateway.disconnect();
   console.log(`Got the following balance >>> ${balance}`);
   return balance.toString();
+};
+
+/**
+ * Helper to query target offers within a given range
+ * @param {*} reputationSort sorting on reputation or not
+ * @param {*} target the target value to use
+ * @returns the balance available to the user
+ */
+utils.targetOffers = async (userId, reputationSort, target) => {
+  console.log('>>> Allowing a user to do a target offer search');
+  console.log(`Sort present -> ${reputationSort}`);
+  console.log(`Target present -> ${target}`);
+
+  const { contract, gateway } = await utils.getContract(userId);
+
+  // Submit the transaction
+  const result = await contract.submitTransaction('GetBudgetOffer',
+    reputationSort, target);
+  const jsonResult = JSON.parse(result);
+  // Return and disconnect
+  gateway.disconnect();
+  return jsonResult;
+};
+
+utils.deleteOffer = async (userId, offerId) => {
+  console.log('>>> Allowing a user to delete an offer');
+  console.log(`The username ${userId} and offer Id ${offerId}`);
+
+  const { contract, gateway } = await utils.getContract(userId);
+
+  // Submit the transaction
+  await contract.submitTransaction('MakeOfferStale', offerId);
+
+  gateway.disconnect();
+  console.log('>>> Deleted the offer on chain');
 };
 
 export default utils;

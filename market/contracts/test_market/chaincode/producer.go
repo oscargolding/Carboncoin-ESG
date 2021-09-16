@@ -90,11 +90,13 @@ func (pro *Producer) AddCarbon(amount int) error {
 	if err := pro.EnforceCtx(); err != nil {
 		return err
 	}
+	sign := "+"
 	if amount < 0 {
-		return fmt.Errorf("err negative amount of carbon")
+		sign = "-"
+		amount = -amount
 	}
 	highthrough := fmt.Sprintf(CARBON, pro.ID)
-	if err := pro.Ctx.UpdateHighThrough(highthrough, "+", amount); err != nil {
+	if err := pro.Ctx.UpdateHighThrough(highthrough, sign, amount); err != nil {
 		return err
 	}
 	return nil

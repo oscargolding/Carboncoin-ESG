@@ -6,25 +6,31 @@ import utils from '../utils.js';
 const productionList = [
   {
     firm: 'oscarIndustry',
-    carbonProduction: '5',
+    carbonProduction: '-5',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
   },
   {
     firm: 'oscarIndustry',
-    carbonProduction: '305',
+    carbonProduction: '-305',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
   },
   {
     firm: 'oscarIndustry',
-    carbonProduction: '310',
+    carbonProduction: '-310',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
   },
   {
     firm: 'BHPPetrol',
-    carbonProduction: '150',
+    carbonProduction: '-150',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+  {
+    firm: 'BHPPetrol',
+    carbonProduction: '10',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
   },

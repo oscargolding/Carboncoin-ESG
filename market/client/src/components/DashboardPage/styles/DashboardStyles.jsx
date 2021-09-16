@@ -8,10 +8,17 @@ export const CreateOfferButton = styled(Button)`
 
 export const SpacedCard = styled(Card)`
   margin: 15px;
+  &:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
 `;
 
 export const OfferStatus = styled(Chip)`
-  margin-top: 10px;
+  margin: 5px;
+  ${props => props.ethical &&
+    css`
+      background-color: green;
+  `}
 `;
 
 export const CentralLoading = styled.div`
@@ -23,9 +30,20 @@ export const CentralLoading = styled.div`
   width: 100%;
 `;
 
+export const OfferRow = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 export const ButtonForm = styled(FormControl)`
   min-width: 120px;
-  margin-top: 10px;
+`;
+
+export const RightStamp = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 export const HeaderCard = styled.div`
@@ -37,19 +55,19 @@ export const HeaderCard = styled.div`
 export const ButtonScore = styled(Button)`
   min-width: 200px;
   ${props =>
-    props.score < 500 &&
+    props.score >= -250 &&
     css`
       background: green;
       color: white;
   `};
   ${props =>
-    props.score >= 500 && props.score < 1000 &&
+    props.score >= -500 && props.score < -250 &&
     css`
       background: palevioletred;
       color: white;
   `};
   ${props =>
-    props.score >= 1000 &&
+    props.score <= -500 &&
     css`
       background: red;
       color: white;

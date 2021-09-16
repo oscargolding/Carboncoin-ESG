@@ -13,6 +13,7 @@ type OfferModel struct {
 	OfferID    string `json:"offerId"`
 	Tokens     int    `json:"tokens"`
 	Reputation int    `json:"reputation"`
+	Owned      bool   `json:"owned"`
 }
 
 type Offer struct {
@@ -64,13 +65,30 @@ func (off *Offer) ReturnModel() (*OfferModel, error) {
 	if err := off.EnforceCtx(); err != nil {
 		return nil, err
 	}
+	userId, err := off.Ctx.GetUserId()
+	if err != nil {
+		return nil, err
+	}
+	owned := false
+	if userId == off.Producer {
+		owned = true
+	}
 	balance, err := off.Ctx.GetHighThrough(fmt.Sprintf(PROD_OFFER, off.OfferID))
 	if err != nil {
 		return nil, err
 	}
 	return &OfferModel{Producer: off.Producer, Amount: off.Amount,
 		Active: off.Active, OfferID: off.OfferID, Tokens: balance,
-		Reputation: off.CarbonReputation}, nil
+		Reputation: off.CarbonReputation, Owned: owned}, nil
+}
+
+// Get the balance on the offer
+func (off *Offer) GetTokens() (int, error) {
+	balance, err := off.Ctx.GetHighThrough(fmt.Sprintf(PROD_OFFER, off.OfferID))
+	if err != nil {
+		return 0, err
+	}
+	return balance, nil
 }
 
 // Set the tokens available on offer

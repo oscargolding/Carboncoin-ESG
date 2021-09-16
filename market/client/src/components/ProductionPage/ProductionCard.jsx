@@ -11,6 +11,7 @@ import {
 import { storeContext, } from '../../utils/store';
 import API from '../../utils/API';
 import { Alert, } from '@material-ui/lab';
+import { PaperList, } from './styles/ProductionStyles';
 
 /**
  * A card to show the type of production performed
@@ -37,28 +38,44 @@ const ProductionCard = (props) => {
       setError(err.message);
     }
   };
+  const title = props.ethical ? 'Enivronmental Contribution' : 'Carbon Production';
   return (
     <SpacedCard innerRef={usingRef}>
       <CardContent>
         <Typography variant='h5' component='h2'>
-          <EvStationIcon /> Carbon Production on {date}
+          <EvStationIcon /> {title} on {date}
         </Typography>
         <Typography varaint="body2" component="p">
-          Amount of Carbon produced: <b>{produced}</b>
+          Amount of Carbon {props.ethical ? 'Saved' : 'Produced'}
+          : <b>{produced}</b>
         </Typography>
-        {hasPaid
-          ? <OfferStatus
-            icon={<DoneIcon />}
-            label='Paid For'
-            clickable={false}
-            color='primary'
-          />
-          : <OfferStatus
-            icons={<BlockIcon />}
-            label='Requires Payment with Carboncoin'
-            clickable={false}
-            color='secondary'
-          />}
+        <PaperList >
+          {hasPaid
+            ? <OfferStatus
+              icon={<DoneIcon />}
+              label='Paid For'
+              clickable={false}
+              color='primary'
+              ethical={false}
+            />
+            : <OfferStatus
+              icons={<BlockIcon />}
+              label='Requires Payment with Carboncoin'
+              clickable={false}
+              color='secondary'
+              ethical={false}
+            />}
+          {props.ethical
+            ? <OfferStatus
+              icons={<BlockIcon />}
+              label='Environmental Contribution'
+              clickable={false}
+              color='secondary'
+              ethical={true}
+            />
+            : <></>
+          }
+        </PaperList>
       </CardContent>
       <CardActions>
         {!hasPaid
@@ -69,7 +86,7 @@ const ProductionCard = (props) => {
         {error !== '' ? <Alert severity='error'>{error}</Alert> : <></>}
       </CardActions>
       {loading ? <LinearProgress /> : <></>}
-    </SpacedCard>
+    </SpacedCard >
   );
 };
 
@@ -81,4 +98,5 @@ ProductionCard.propTypes = {
   date: PropTypes.string.isRequired,
   paid: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
+  ethical: PropTypes.bool.isRequired,
 };

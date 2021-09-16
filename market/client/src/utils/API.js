@@ -223,4 +223,47 @@ API.acceptDirectPrice = async (userAuthToken, quantity) => {
   return jsonResponse;
 };
 
+/**
+ * Get the given offers as found.
+ * @param {*} userAuthToken token for authentication
+ * @param {*} target the target amount to get
+ * @param {*} reputation the reputation being used
+ * @returns the json object representing the offers
+ */
+API.getFoundOffers = async (userAuthToken, target, reputation) => {
+  const queryParam = `${access}/api/offers/target?` +
+    `target=${target}&reputation=${reputation}`;
+  const response = await fetch(queryParam, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+    },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
+/**
+ * Delete the given offer from the entire chain.
+ * @param {*} userAuthToken token to use
+ * @param {*} offerId offerId
+ */
+API.deleteOffer = async (userAuthToken, offerId) => {
+  const queryParam = `${access}/api/offer/delete?id=${offerId}`;
+  const response = await fetch(queryParam, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${userAuthToken}`,
+    },
+  });
+  const jsonResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(jsonResponse.error);
+  }
+  return jsonResponse;
+};
+
 export default API;

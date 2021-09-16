@@ -183,8 +183,7 @@ func Test_WHEN_addCarbon_THEN_SUCCESS(t *testing.T) {
 	// GIVEN
 	_, ctx := GetStubProd()
 	producer, _ := chaincode.NewProducer("oscar", chaincode.LARGE, ctx)
-	transactionContext := &chaincodefakes.CustomContex{}
-	transactionContext.UpdateHighThroughReturns(nil)
+	ctx.UpdateHighThroughReturns(nil)
 
 	// WHEN
 	err := producer.AddCarbon(50)
@@ -197,14 +196,29 @@ func Test_WHEN_addCarbonExtreme_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	_, ctx := GetStubProd()
 	producer, _ := chaincode.NewProducer("oscar", chaincode.LARGE, ctx)
-	transactionContext := &chaincodefakes.CustomContex{}
-	transactionContext.UpdateHighThroughReturns(nil)
+	ctx.UpdateHighThroughReturns(nil)
 
 	// WHEN
 	err := producer.AddCarbon(-50)
+	_, sign, amount := ctx.UpdateHighThroughArgsForCall(3)
 
 	// THEN
-	require.EqualError(t, err, "err negative amount of carbon")
+	require.Nil(t, err)
+	require.Equal(t, 50, amount)
+	require.Equal(t, "-", sign)
+}
+
+func Test_WHEN_addCarbonFailure_THEN_FAILURE(t *testing.T) {
+	// GIVEN
+	_, ctx := GetStubProd()
+	producer, _ := chaincode.NewProducer("oscar", chaincode.MEDIUM, ctx)
+	ctx.UpdateHighThroughReturns(fmt.Errorf("error"))
+
+	// WHEN
+	err := producer.AddCarbon(50)
+
+	// THEN
+	require.EqualError(t, err, "error")
 }
 
 func Test_WHEN_getTokens_THEN_SUCCESS(t *testing.T) {

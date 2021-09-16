@@ -50,7 +50,7 @@ type CustomContex struct {
 	createOfferReturnsOnCall map[int]struct {
 		result1 error
 	}
-	CreateProductionStub        func(string, int, string, string, bool) error
+	CreateProductionStub        func(string, int, string, string, bool, bool) error
 	createProductionMutex       sync.RWMutex
 	createProductionArgsForCall []struct {
 		arg1 string
@@ -58,6 +58,7 @@ type CustomContex struct {
 		arg3 string
 		arg4 string
 		arg5 bool
+		arg6 bool
 	}
 	createProductionReturns struct {
 		result1 error
@@ -377,7 +378,7 @@ func (fake *CustomContex) CreateOfferReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *CustomContex) CreateProduction(arg1 string, arg2 int, arg3 string, arg4 string, arg5 bool) error {
+func (fake *CustomContex) CreateProduction(arg1 string, arg2 int, arg3 string, arg4 string, arg5 bool, arg6 bool) error {
 	fake.createProductionMutex.Lock()
 	ret, specificReturn := fake.createProductionReturnsOnCall[len(fake.createProductionArgsForCall)]
 	fake.createProductionArgsForCall = append(fake.createProductionArgsForCall, struct {
@@ -386,13 +387,14 @@ func (fake *CustomContex) CreateProduction(arg1 string, arg2 int, arg3 string, a
 		arg3 string
 		arg4 string
 		arg5 bool
-	}{arg1, arg2, arg3, arg4, arg5})
+		arg6 bool
+	}{arg1, arg2, arg3, arg4, arg5, arg6})
 	stub := fake.CreateProductionStub
 	fakeReturns := fake.createProductionReturns
-	fake.recordInvocation("CreateProduction", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.recordInvocation("CreateProduction", []interface{}{arg1, arg2, arg3, arg4, arg5, arg6})
 	fake.createProductionMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2, arg3, arg4, arg5)
+		return stub(arg1, arg2, arg3, arg4, arg5, arg6)
 	}
 	if specificReturn {
 		return ret.result1
@@ -406,17 +408,17 @@ func (fake *CustomContex) CreateProductionCallCount() int {
 	return len(fake.createProductionArgsForCall)
 }
 
-func (fake *CustomContex) CreateProductionCalls(stub func(string, int, string, string, bool) error) {
+func (fake *CustomContex) CreateProductionCalls(stub func(string, int, string, string, bool, bool) error) {
 	fake.createProductionMutex.Lock()
 	defer fake.createProductionMutex.Unlock()
 	fake.CreateProductionStub = stub
 }
 
-func (fake *CustomContex) CreateProductionArgsForCall(i int) (string, int, string, string, bool) {
+func (fake *CustomContex) CreateProductionArgsForCall(i int) (string, int, string, string, bool, bool) {
 	fake.createProductionMutex.RLock()
 	defer fake.createProductionMutex.RUnlock()
 	argsForCall := fake.createProductionArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5, argsForCall.arg6
 }
 
 func (fake *CustomContex) CreateProductionReturns(result1 error) {

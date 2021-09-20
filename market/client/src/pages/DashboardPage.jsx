@@ -7,7 +7,7 @@ import Dashboard from '../components/DashboardPage/Dashboard';
  */
 const DashboardPage = () => {
   return (
-    <Dashboard />
+    <Dashboard main={true} />
   );
 };
 

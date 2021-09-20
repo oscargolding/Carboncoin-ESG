@@ -1,9 +1,14 @@
-import { CardContent, Typography, CardActions, Button, LinearProgress, } from '@material-ui/core';
+import {
+  CardContent, Typography, CardActions, Button,
+  LinearProgress,
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React, { useState, } from 'react';
 import DoneIcon from '@material-ui/icons/Done';
 import BlockIcon from '@material-ui/icons/Block';
 import EvStationIcon from '@material-ui/icons/EvStation';
+import BusinessIcon from '@material-ui/icons/Business';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import {
   SpacedCard,
   OfferStatus,
@@ -19,11 +24,19 @@ import { PaperList, } from './styles/ProductionStyles';
  * @returns the produciton card
  */
 const ProductionCard = (props) => {
-  const { produced, date, paid, usingRef, id, } = props;
+  const { produced, date, paid, usingRef, id, category, description, } = props;
   const { authToken: [authToken], balance: [, setBalance], } = storeContext();
   const [hasPaid, setHasPaid] = useState(paid);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  let icon;
+  if (category === 'Environmental') {
+    icon = <EvStationIcon />;
+  } else if (category === 'Governance') {
+    icon = <BusinessIcon />;
+  } else {
+    icon = <VolunteerActivismIcon />;
+  }
   const payDebt = async () => {
     setLoading(true);
     setError('');
@@ -38,15 +51,14 @@ const ProductionCard = (props) => {
       setError(err.message);
     }
   };
-  const title = props.ethical ? 'Enivronmental Contribution' : 'Carbon Production';
   return (
     <SpacedCard innerRef={usingRef}>
       <CardContent>
         <Typography variant='h5' component='h2'>
-          <EvStationIcon /> {title} on {date}
+          {icon} {description} on {date}
         </Typography>
         <Typography varaint="body2" component="p">
-          Amount of Carbon {props.ethical ? 'Saved' : 'Produced'}
+          Amount of Reputation {props.ethical ? 'Gained' : 'Expensed'}
           : <b>{produced}</b>
         </Typography>
         <PaperList >
@@ -65,16 +77,12 @@ const ProductionCard = (props) => {
               color='secondary'
               ethical={false}
             />}
-          {props.ethical
-            ? <OfferStatus
-              icons={<BlockIcon />}
-              label='Environmental Contribution'
-              clickable={false}
-              color='secondary'
-              ethical={true}
-            />
-            : <></>
-          }
+          <OfferStatus
+            icons={<BlockIcon />}
+            label={category}
+            clickable={false}
+            color='secondary'
+            ethical={true} />
         </PaperList>
       </CardContent>
       <CardActions>
@@ -99,4 +107,6 @@ ProductionCard.propTypes = {
   paid: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   ethical: PropTypes.bool.isRequired,
+  category: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
 };

@@ -36,6 +36,8 @@ echo "Finished the requests for user creation"
 echo "Reporting production of hydrogen"
 rm -rf wallet
 node certifier.js
+rm -rf wallet
+node register.js
 echo "Finishing production of hydrogen"
 
 echo "Create the offers on the market"

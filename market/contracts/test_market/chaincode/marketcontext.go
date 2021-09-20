@@ -25,12 +25,13 @@ type CustomMarketContextInterface interface {
 	GetUserType() (string, error)
 	CreateOffer(string, int, int, string, int) error
 	CreateChip(string, int) error
-	CreateProduction(string, int, string, string, bool, bool) error
+	CreateProduction(string, int, string, string, bool, bool, string,
+		string) error
 	IteratorResults(shim.StateQueryIteratorInterface, interface{}) error
 	GetResult(string, interface{}) error
 	UpdateHighThrough(string, string, int) error
 	GetHighThrough(string) (int, error)
-	OfferStringGenerator(string, bool) string
+	OfferStringGenerator(string, bool, string) string
 }
 
 type MarketObject interface {
@@ -159,14 +160,16 @@ func (s *CustomMarketContext) CreateOffer(producerId string, amount int,
 
 // Create production on the blockchain
 func (s *CustomMarketContext) CreateProduction(productionId string, carbon int,
-	date string, firm string, paid bool, ethical bool) error {
+	date string, firm string, paid bool, ethical bool, category string,
+	description string) error {
 	duplicateProductionJSON, err := s.GetStub().GetState(productionId)
 	if err != nil || duplicateProductionJSON != nil {
 		return fmt.Errorf("production with id already exists on the market")
 	}
 	// Create the production
 	production := Production{DocType: PRODUCTION_TYPE, ProductionID: productionId,
-		Produced: carbon, Date: date, Firm: firm, Paid: paid, Ethical: ethical}
+		Produced: carbon, Date: date, Firm: firm, Paid: paid, Ethical: ethical,
+		Category: category, Description: description}
 	productionJSON, err := json.Marshal(production)
 	if err != nil {
 		return fmt.Errorf("unable to format production: %v", err)
@@ -284,19 +287,30 @@ func (s *CustomMarketContext) GetHighThrough(name string) (int, error) {
 }
 
 func (s *CustomMarketContext) OfferStringGenerator(field string,
-	direction bool) string {
+	direction bool, username string) string {
 	var sorting string
 	if direction {
 		sorting = `asc`
 	} else {
 		sorting = `desc`
 	}
-	queryString := `{"selector":{"docType":"offer", "active": true}%s}`
-	if field != "reputation" {
-		return fmt.Sprintf(queryString, "")
+	var starterString string
+	if username != "" {
+		starterString = `{"selector":{"docType":"offer", "active": true, "producer": "%s"}`
+		starterString = fmt.Sprintf(starterString, username)
 	} else {
-		parameter := `,"sort":[{"docType": "%s"},{"active": "%s"},{"carbonReputation":"%s"}]`
-		final := fmt.Sprintf(parameter, sorting, sorting, sorting)
+		starterString = `{"selector":{"docType":"offer", "active": true}`
+	}
+	queryString := starterString + "%s}"
+	if field == "price" {
+		parameter := `,"sort":[{"docType": "%s"},{"active": "%s"},{"amount":"%s"},{"producer":"%s"}]`
+		final := fmt.Sprintf(parameter, sorting, sorting, sorting, sorting)
 		return fmt.Sprintf(queryString, final)
+	} else if field == "reputation" {
+		parameter := `,"sort":[{"docType": "%s"},{"active": "%s"},{"carbonReputation":"%s"},{"producer":"%s"}]`
+		final := fmt.Sprintf(parameter, sorting, sorting, sorting, sorting)
+		return fmt.Sprintf(queryString, final)
+	} else {
+		return fmt.Sprintf(queryString, "")
 	}
 }

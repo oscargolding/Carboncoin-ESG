@@ -51,6 +51,8 @@ const ProductionList = () => {
               ethical={production.ethical}
               usingRef={lastElementRef}
               id={production.productionID}
+              category={production.category}
+              description={production.description}
             />
           );
         } else {
@@ -62,6 +64,8 @@ const ProductionList = () => {
               paid={production.paid}
               ethical={production.ethical}
               id={production.productionID}
+              category={production.category}
+              description={production.description}
             />
           );
         }

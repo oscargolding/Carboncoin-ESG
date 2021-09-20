@@ -10,6 +10,8 @@ type Production struct {
 	Firm         string `json:"producingFirm"`
 	Paid         bool   `json:"paid"`
 	Ethical      bool   `json:"ethical"`
+	Category     string `json:"category"`
+	Description  string `json:"description"`
 }
 
 // Flush the production to the blockchain

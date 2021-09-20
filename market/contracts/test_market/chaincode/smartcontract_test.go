@@ -418,7 +418,7 @@ func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
 
 	// WHEN
-	result, err := contract.GetOffers(ctx, 5, "", "", false)
+	result, err := contract.GetOffers(ctx, 5, "", "", false, "")
 
 	// THEN
 	require.NoError(t, err)
@@ -444,7 +444,7 @@ func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
 
 	// WHEN
-	result, err := contract.GetOffers(ctx, 5, "", "", false)
+	result, err := contract.GetOffers(ctx, 5, "", "", false, "")
 
 	// THEN
 	require.NoError(t, err)
@@ -458,7 +458,7 @@ func Test_WHEN_getOffersFailure_THEN_FAILURE(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(nil, nil, fmt.Errorf("failure"))
 
 	// WHEN
-	result, err := contract.GetOffers(ctx, 5, "", "", false)
+	result, err := contract.GetOffers(ctx, 5, "", "", false, "")
 
 	// THEN
 	require.EqualError(t, err, "error with query: failure")
@@ -717,7 +717,8 @@ func Test_WHEN_producerProduction_THEN_SUCCESS(t *testing.T) {
 	stub.PutStateReturns(nil)
 
 	// WHEN
-	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1")
+	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1",
+		"energy", "greenhouse")
 
 	// THEN
 	require.Nil(t, err)
@@ -729,7 +730,8 @@ func Test_WHEN_producerProductionNotCertifier_THEN_FAILURE(t *testing.T) {
 	ctx.GetUserTypeReturns("producer", nil)
 
 	// WHEN
-	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1")
+	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1", "energy",
+		"greenhouse")
 
 	// THEN
 	require.EqualError(t, err,
@@ -743,7 +745,8 @@ func Test_WHEN_producerProductionDNE_THEN_FAILURE(t *testing.T) {
 	ctx.GetUserTypeReturns("certifier", nil)
 
 	// WHEN
-	err := contract.ProducerProduction(ctx, "oscar", 15, "1/1", "1")
+	err := contract.ProducerProduction(ctx, "oscar", 15, "1/1", "1", "energy",
+		"greenhouse")
 
 	// THEN
 	require.EqualError(t, err, "err: producer does not exist")
@@ -760,7 +763,8 @@ func Test_WHEN_producerProductionErrorCreating_FAILURE(t *testing.T) {
 	stub.PutStateReturns(nil)
 
 	// WHEN
-	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1")
+	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1", "energy",
+		"greenhouse")
 
 	// THEN
 	require.EqualError(t, err, "failed adding production")

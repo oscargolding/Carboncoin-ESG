@@ -10,6 +10,7 @@ import (
 const CHANNEL = "mychannel"
 const PRODUCER = "producer"
 const CERTIFIER = "certifier"
+const REGISTER = "register"
 
 type SmartContract struct {
 	contractapi.Contract
@@ -259,8 +260,8 @@ func (s *SmartContract) RedeemChip(ctx CustomMarketContextInterface,
 // Get all the offers with the following bookmark, pageSize and string
 func (s *SmartContract) GetOffers(ctx CustomMarketContextInterface,
 	pageSize int32, bookmark string, field string,
-	direction bool) (*PaginatedQueryResult, error) {
-	queryString := ctx.OfferStringGenerator(field, direction)
+	direction bool, username string) (*PaginatedQueryResult, error) {
+	queryString := ctx.OfferStringGenerator(field, direction, username)
 	stub := ctx.GetStub()
 	resultsIterator, responseMetadata, err := stub.GetQueryResultWithPagination(
 		queryString, pageSize, bookmark)
@@ -438,12 +439,12 @@ func (s *SmartContract) MakeOfferStale(ctx CustomMarketContextInterface,
 // Report the producer production - requires a certifier to call
 func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	firm string, carbonProduction int,
-	day string, id string) error {
+	day string, id string, prodCategory string, description string) error {
 	userType, err := ctx.GetUserType()
 	if err != nil {
 		return err
 	}
-	if !(userType == CERTIFIER || userType == "admin") {
+	if !(userType == CERTIFIER || userType == "admin" || userType == REGISTER) {
 		return fmt.Errorf("err: only certifiers/admins can report carbon production")
 	}
 	producer := ctx.GetProducer(firm)
@@ -466,12 +467,13 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 			return err
 		}
 		if err = ctx.CreateProduction(id, totalCarbonProduction, day, firm,
-			true, false); err != nil {
+			true, false, prodCategory, description); err != nil {
 			return err
 		}
 	} else {
 		if err = ctx.CreateProduction(id, totalCarbonProduction, day, firm,
-			carbonProduction > 0, carbonProduction > 0); err != nil {
+			carbonProduction > 0, carbonProduction > 0, prodCategory,
+			description); err != nil {
 			return err
 		}
 	}

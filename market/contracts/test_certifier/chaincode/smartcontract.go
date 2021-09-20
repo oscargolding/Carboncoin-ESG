@@ -74,6 +74,8 @@ func (s *SmartContract) ReportProduction(
 	matrix = append(matrix, []byte(fmt.Sprintf("%d", carbonProduction)))
 	matrix = append(matrix, []byte(day))
 	matrix = append(matrix, []byte(id))
+	matrix = append(matrix, []byte("Environmental"))
+	matrix = append(matrix, []byte("Carbon Dioxide From Hydrogen Production"))
 	res := ctx.GetStub().InvokeChaincode("basic", matrix, "mychannel")
 	fmt.Printf("status code ->> %d", res.Status)
 	if res.Status != 200 {

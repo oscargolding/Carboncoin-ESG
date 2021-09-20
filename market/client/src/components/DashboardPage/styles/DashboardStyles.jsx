@@ -15,9 +15,17 @@ export const SpacedCard = styled(Card)`
 
 export const OfferStatus = styled(Chip)`
   margin: 5px;
-  ${props => props.ethical &&
+  ${props => props.ethical && props.label === 'Environmental' &&
     css`
       background-color: green;
+  `}
+  ${props => props.ethical && props.label === 'Social' &&
+    css`
+      background-color: pink;
+  `}
+  ${props => props.ethical && props.label === 'Governance' &&
+    css`
+      background-color: grey;
   `}
 `;
 

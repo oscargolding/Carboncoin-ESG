@@ -20,13 +20,17 @@ const Login = (props) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrormessage] = useState('');
   const [loading, isLoading] = useState(false);
-  const { authToken: [, setAuthToken], } = storeContext();
+  const {
+    authToken: [, setAuthToken],
+    username: [, setUsername],
+  } = storeContext();
   const history = useHistory();
   const handleSubmit = async () => {
     isLoading(true);
     try {
       const response = await loginUser(email, password);
       setAuthToken(response.token);
+      setUsername(email);
       isLoading(false);
       history.push('/dashboard');
     } catch (err) {

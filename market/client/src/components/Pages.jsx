@@ -10,6 +10,7 @@ import PurchaseOfferPage from '../pages/PurchaseOfferPage';
 import ProductionPage from '../pages/ProductionPage';
 import DirectPurchasePage from '../pages/DirectPurchasePage';
 import OfferFinderPage from '../pages/OfferFinderPage';
+import OfferViewPage from '../pages/OfferViewPage';
 
 // the dimensions of the page
 const BodyPage = styled.div`
@@ -41,6 +42,9 @@ const Pages = () => {
         </Route>
         <Route path='/offer/purchase'>
           <PurchaseOfferPage />
+        </Route>
+        <Route path='/offer/user'>
+          <OfferViewPage />
         </Route>
         <Route path='/direct/purchase'>
           <DirectPurchasePage />

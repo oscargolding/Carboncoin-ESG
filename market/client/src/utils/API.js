@@ -93,10 +93,12 @@ API.createOffer = async (token, amount, quantity) => {
   return jsonResponse;
 };
 
-API.getOffers = async (userAuthToken, signal, paginationToken, sortTerm, direction) => {
+API.getOffers = async (userAuthToken, signal, paginationToken, sortTerm,
+  direction, username) => {
   const orderTerm = sortTerm !== '' ? `&field=${sortTerm}` : '';
   const directionTerm = direction !== false ? '&direction=1' : '';
-  const queryParam = `${access}/api/offers/list?token=${paginationToken}${orderTerm}${directionTerm}`;
+  const usernameTerm = username !== '' ? `&username=${username}` : '';
+  const queryParam = `${access}/api/offers/list?token=${paginationToken}${orderTerm}${directionTerm}${usernameTerm}`;
   const response = await fetch(queryParam, {
     method: 'GET',
     signal: signal,

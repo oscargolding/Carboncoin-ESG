@@ -8,7 +8,7 @@ import ProductionList from '../components/ProductionPage/ProductionList';
 const ProductionPage = () => {
   return (
     <>
-      <h1> Carbon Reporting </h1>
+      <h1> Reputation Breakdown </h1>
       <ProductionList />
     </>
   );

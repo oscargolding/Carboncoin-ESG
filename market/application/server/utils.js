@@ -303,15 +303,17 @@ utils.acceptOffer = async (userId, amount, offerId) => {
  * @param {token} paginationToken the pagination token
  * @param {number} number the number of results
  */
-utils.getOffers = async (paginationToken, number, field, direction, email) => {
+utils.getOffers = async (paginationToken, number, field, direction, email,
+  username) => {
   console.log('>>> Getting offers for a user');
   console.log(`${paginationToken} ${number}`);
   console.log(`${field} and dir -> ${direction}`);
+  console.log(`Username present -> ${username}`);
   const { contract, gateway } = await utils.getContract(email);
 
   // Submit the offer
   const result = await contract.submitTransaction('GetOffers',
-    number, paginationToken, field, direction);
+    number, paginationToken, field, direction, username);
 
   const jsonResult = JSON.parse(result);
   // Return and disconnect

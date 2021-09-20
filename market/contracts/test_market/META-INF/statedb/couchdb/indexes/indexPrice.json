@@ -3,11 +3,11 @@
         "fields": [
             "docType",
             "active",
-            "carbonReputation",
+            "amount",
             "producer"
         ]
     },
-    "ddoc": "indexActiveDoc",
-    "name": "indexActive",
+    "ddoc": "indexPriceDoc",
+    "name": "indexPrice",
     "type": "json"
 }

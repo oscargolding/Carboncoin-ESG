@@ -14,7 +14,7 @@ import API from '../../utils/API';
  */
 const OfferList = (props) => {
   const { authToken: [authToken], } = storeContext();
-  const { sortTerm, direction, } = props;
+  const { sortTerm, direction, username, } = props;
   const [pageToken, setPageToken] = useState('');
   useEffect(() => {
     setPageToken('');
@@ -26,7 +26,8 @@ const OfferList = (props) => {
     hasMore,
     paginationToken,
     setOffers,
-  } = useOfferSearch(pageToken, authToken, API.getOffers, sortTerm, direction);
+  } = useOfferSearch(pageToken, authToken, API.getOffers, sortTerm, direction,
+    username);
   const observer = useRef();
   const deleteOffer = offerId => {
     const copyArray = JSON.parse(JSON.stringify(offers));
@@ -99,4 +100,5 @@ export default OfferList;
 OfferList.propTypes = {
   sortTerm: PropTypes.string.isRequired,
   direction: PropTypes.bool.isRequired,
+  username: PropTypes.string.isRequired,
 };

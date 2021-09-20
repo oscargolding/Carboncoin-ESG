@@ -6,7 +6,7 @@ import { useEffect, useState, } from 'react';
  * @param {*} authToken for authorisation
  * @returns loading, err, offers, hasMore, paginationToken
  */
-const useOfferSearch = (token, authToken, apiFun, sortTerm, direction) => {
+const useOfferSearch = (token, authToken, apiFun, sortTerm, direction, username) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [offers, setOffers] = useState([]);
@@ -24,7 +24,7 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction) => {
       setLoading(true);
       setError('');
       try {
-        const response = await apiFun(authToken, signal, token, sortTerm, direction);
+        const response = await apiFun(authToken, signal, token, sortTerm, direction, username);
         setOffers((prev) => {
           return [...new Set([...prev, ...response.records])];
         });

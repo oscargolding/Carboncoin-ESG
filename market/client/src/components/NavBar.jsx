@@ -39,6 +39,7 @@ const NavBar = () => {
   const {
     authToken: [authToken, setAuthToken],
     balance: [, setBalance],
+    username: [username],
   } = storeContext();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -46,7 +47,6 @@ const NavBar = () => {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -102,10 +102,14 @@ const NavBar = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={() => history.push('/production')}>
-                  Carbon Reporting
+                  Reputation Breakdown
                 </MenuItem>
                 <MenuItem onClick={() => history.push('/direct/purchase')}>
                   Directly Purchase CarbonCoin
+                </MenuItem>
+                <MenuItem onClick={() => history.push('/offer/user',
+                  { name: username, })}>
+                  View Your Offers
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setAuthToken('');

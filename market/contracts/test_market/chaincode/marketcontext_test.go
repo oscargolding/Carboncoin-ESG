@@ -311,7 +311,8 @@ func Test_WHEN_createProduction_THEN_SUCCESS(t *testing.T) {
 	stub.PutStateReturns(nil)
 
 	// WHEN
-	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false)
+	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false, "Energy",
+		"greenhouse")
 
 	// THEN
 	require.Nil(t, err)
@@ -326,7 +327,8 @@ func Test_WHEN_createProductionExists_THEN_FAILURE(t *testing.T) {
 	stub.GetStateReturns(bytes, nil)
 
 	// WHEN
-	err = ctx.CreateProduction("1", 2, "12/2", "oscar", true, false)
+	err = ctx.CreateProduction("1", 2, "12/2", "oscar", true, false, "Energy",
+		"greenhouse")
 
 	// THEN
 	require.EqualError(t, err, "production with id already exists on the market")
@@ -339,7 +341,8 @@ func Test_WHEN_createProductionBlcokError_THEN_FAILURE(t *testing.T) {
 	stub.PutStateReturns(fmt.Errorf("error"))
 
 	// WHEN
-	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false)
+	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false, "Energy",
+		"greenhouse")
 
 	// THEN
 	require.EqualError(t, err, "error")
@@ -375,7 +378,7 @@ func Test_WHEN_generateOfferString_THEN_SUCCESS(t *testing.T) {
 	ctx, _, _ := PerformTestStub()
 
 	// WHEN
-	str := ctx.OfferStringGenerator("reputation", true)
+	str := ctx.OfferStringGenerator("reputation", true, "")
 
 	// THEN
 	expected := `{"selector":{"docType":"offer", "active": true},` +
@@ -388,7 +391,7 @@ func Test_WHEN_generateNone_THEN_SUCCESS(t *testing.T) {
 	ctx, _, _ := PerformTestStub()
 
 	// WHEN
-	str := ctx.OfferStringGenerator("", false)
+	str := ctx.OfferStringGenerator("", false, "")
 
 	// THEN
 	expected := `{"selector":{"docType":"offer", "active": true}}`
@@ -400,11 +403,24 @@ func Test_WHEN_generateOfferStringDesc_THEN_SUCCESS(t *testing.T) {
 	ctx, _, _ := PerformTestStub()
 
 	// WHEN
-	str := ctx.OfferStringGenerator("reputation", false)
+	str := ctx.OfferStringGenerator("reputation", false, "")
 
 	// THEN
 	expected := `{"selector":{"docType":"offer", "active": true},` +
 		`"sort":[{"carbonReputation":"desc"}]}`
+	require.EqualValues(t, expected, str)
+}
+
+func Test_WHEN_generateOfferStringDescUser_THEN_SUCCESS(t *testing.T) {
+	// GIVEN
+	ctx, _, _ := PerformTestStub()
+
+	// WHEN
+	str := ctx.OfferStringGenerator("", false, "oscarIndustry")
+
+	// THEN
+	expected := `{"selector":{"docType":"offer", "active": true,` +
+		` "producer": "oscarIndustry"}}`
 	require.EqualValues(t, expected, str)
 }
 

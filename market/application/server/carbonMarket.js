@@ -119,7 +119,9 @@ carbonMarketRouter.get('/offers/list',
     const size = req.query.amount ? req.query.amount : 10;
     const field = req.query.field ? req.query.field : '';
     const ascending = !!req.query.direction;
-    const queryResult = await utils.getOffers(token, size, field, ascending, email);
+    const username = req.query.username ? req.query.username : '';
+    const queryResult = await utils.getOffers(token, size, field, ascending,
+      email, username);
     return res.json(queryResult);
   })));
 

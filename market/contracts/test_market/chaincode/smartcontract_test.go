@@ -273,6 +273,10 @@ func Test_WHEN_getProduction_THEN_SUCCESS(t *testing.T) {
 		callBackFunc.Call([]reflect.Value{*doc})
 		return nil
 	}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetHighThroughReturns(500, nil)
 	queryResultIterator := &chaincodefakes.QueryIterator{}
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 1,
 		Bookmark: ""}
@@ -286,6 +290,7 @@ func Test_WHEN_getProduction_THEN_SUCCESS(t *testing.T) {
 	require.Equal(t, "", result.Bookmark)
 	require.Equal(t, int32(1), result.FetchedRecordsCount)
 	require.Equal(t, 1, len(result.Records))
+	require.Equal(t, 500, result.Reputation)
 	production := result.Records[0]
 	require.Equal(t, false, production.Paid)
 }
@@ -297,6 +302,10 @@ func Test_WHEN_getProductionNone_THEN_SUCCESS(t *testing.T) {
 		_ interface{}) error {
 		return nil
 	}
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetHighThroughReturns(500, nil)
 	queryResultIterator := &chaincodefakes.QueryIterator{}
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 0,
 		Bookmark: ""}
@@ -315,6 +324,10 @@ func Test_WHEN_getProductionErrors_THEN_FAILURE(t *testing.T) {
 	// GIVEN
 	stub, ctx, contract := GetTestStubs()
 	stub.GetQueryResultWithPaginationReturns(nil, nil, fmt.Errorf("failure"))
+	expectedFirm := &chaincode.Producer{ID: "oscar"}
+	expectedFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(expectedFirm)
+	ctx.GetHighThroughReturns(500, nil)
 
 	// WHEN
 	result, err := contract.GetProduction(ctx, 5, "")

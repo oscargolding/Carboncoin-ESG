@@ -16,6 +16,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { storeContext, } from '../../utils/store';
 import { Alert, } from '@material-ui/lab';
 import API from '../../utils/API';
+import Link from '@mui/material/Link';
 
 /**
  * The offer card being used for the sale of carbon coin.
@@ -56,7 +57,12 @@ const OfferCard = (props) => {
       <CardContent>
         <HeaderCard>
           <Typography variant='h5' component='h2'>
-            Carboncoin Sale by {producer}
+            Carboncoin Sale by <Link
+              underline='hover'
+              onClick={() => history.push('/offer/user', { name: producer, })}
+            >
+              {producer}
+            </Link>
           </Typography>
           <ReputationElement repScore={reputation} />
         </HeaderCard>

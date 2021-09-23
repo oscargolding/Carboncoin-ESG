@@ -12,9 +12,11 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction, username)
   const [offers, setOffers] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [paginationToken, setPaginationToken] = useState(token);
+  const [response, setResponse] = useState({});
 
   useEffect(() => {
     setOffers([]);
+    setResponse({});
   }, [sortTerm, direction]);
 
   useEffect(() => {
@@ -30,6 +32,7 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction, username)
         });
         setHasMore(response.fetchedRecordsCount >= 10);
         setPaginationToken(response.bookmark);
+        setResponse(JSON.parse(JSON.stringify(response)));
         setLoading(false);
       } catch (err) {
         if (!(err instanceof DOMException)) {
@@ -40,7 +43,7 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction, username)
     offerRetrieval();
     return () => controller.abort();
   }, [token, sortTerm, direction]);
-  return { loading, error, offers, hasMore, paginationToken, setOffers, };
+  return { loading, error, offers, hasMore, paginationToken, setOffers, response, };
 };
 
 export default useOfferSearch;

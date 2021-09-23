@@ -31,6 +31,7 @@ type PaginatedQueryResultProd struct {
 	Records             []*Production `json:"records"`
 	FetchedRecordsCount int32         `json:"fetchedRecordsCount"`
 	Bookmark            string        `json:"bookmark"`
+	Reputation          int           `json:"reputation"`
 }
 
 // Public Functions //
@@ -301,6 +302,14 @@ func (s *SmartContract) GetProduction(ctx CustomMarketContextInterface,
 	if err != nil {
 		return nil, err
 	}
+	exists := ctx.GetProducer(firm)
+	if exists == nil {
+		return nil, fmt.Errorf("failed to get the producer")
+	}
+	carbon, err := exists.GetCarbon()
+	if err != nil {
+		return nil, err
+	}
 	queryString := fmt.Sprintf(
 		`{"selector":{"docType":"production", "producingFirm": "%s"}}`, firm)
 	stub := ctx.GetStub()
@@ -322,6 +331,7 @@ func (s *SmartContract) GetProduction(ctx CustomMarketContextInterface,
 		Records:             production,
 		FetchedRecordsCount: responseMetadata.FetchedRecordsCount,
 		Bookmark:            responseMetadata.Bookmark,
+		Reputation:          carbon,
 	}, nil
 }
 

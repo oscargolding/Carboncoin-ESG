@@ -20,6 +20,7 @@ const ProductionList = () => {
     offers,
     hasMore,
     paginationToken,
+    response,
   } = useOfferSearch(pageToken, authToken, API.getProduction);
   const observer = useRef();
   const lastElementRef = useCallback(node => {
@@ -40,6 +41,9 @@ const ProductionList = () => {
   }, [loading, hasMore]);
   return (
     <>
+      {'records' in response
+        ? <h2> Total Reputation {response.reputation}</h2>
+        : <></>}
       {offers.map((production, i) => {
         if (offers.length === i + 1) {
           return (

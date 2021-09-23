@@ -13,11 +13,11 @@ const OfferViewPage = () => {
   const name = location.state.name;
   const title = username === name
     ? 'Viewing your active offers'
-    : `Viewing offers for user ${name}`;
+    : `Viewing offers for firm ${name}`;
   return (
     <>
       <h1> {title} </h1>
-      <IndividualOffers username={username} />
+      <IndividualOffers username={name} />
     </>
   );
 };

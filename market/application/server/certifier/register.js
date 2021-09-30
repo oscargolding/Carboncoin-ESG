@@ -19,6 +19,13 @@ const productionList = [
     id: uuid4(),
   },
   {
+    name: 'Board Diversity and Structure',
+    value: 75,
+    firm: 'oscarIndustry',
+    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    id: uuid4(),
+  },
+  {
     name: 'Female Employee Rate',
     value: 55,
     firm: 'BHPPetrol',
@@ -41,6 +48,14 @@ const waterScore = {
   min: 0,
   max: 20000,
   Multiplier: 1,
+};
+
+const governance = {
+  name: 'Board Diversity and Structure',
+  category: 'Governance',
+  min: 0,
+  max: 100,
+  Multiplier: 2,
 };
 
 const blockchainCall = async (production, contract, certificate) => {
@@ -68,6 +83,10 @@ const main = async () => {
         waterScore.name, waterScore.category,
         waterScore.min, waterScore.max,
         waterScore.Multiplier);
+      await contract.submitTransaction('CreateCertificate',
+        governance.name, governance.category,
+        governance.min, governance.max,
+        governance.Multiplier);
       for (let i = 0; i < production.length; i += 1) {
         const produce = production[i];
         console.log(`Making call for ${produce.firm} (Register)`);

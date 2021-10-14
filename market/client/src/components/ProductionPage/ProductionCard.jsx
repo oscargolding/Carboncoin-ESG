@@ -24,7 +24,10 @@ import { PaperList, } from './styles/ProductionStyles';
  * @returns the produciton card
  */
 const ProductionCard = (props) => {
-  const { produced, date, paid, usingRef, id, category, description, } = props;
+  const {
+    produced, date, paid, usingRef, id, category, description,
+    statistic, multiplier,
+  } = props;
   const { authToken: [authToken], balance: [, setBalance], } = storeContext();
   const [hasPaid, setHasPaid] = useState(paid);
   const [loading, setLoading] = useState(false);
@@ -60,6 +63,12 @@ const ProductionCard = (props) => {
         <Typography varaint="body2" component="p">
           Amount of Reputation {props.ethical ? 'Gained' : 'Expensed'}
           : <b>{produced}</b>
+        </Typography>
+        <Typography varaint="body2" component="p">
+          <b>Underlying Statistic: {statistic}</b>
+        </Typography>
+        <Typography varaint="body2" component="p">
+          Reputation Multiplier: {multiplier}
         </Typography>
         <PaperList >
           {hasPaid
@@ -109,4 +118,6 @@ ProductionCard.propTypes = {
   ethical: PropTypes.bool.isRequired,
   category: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
+  statistic: PropTypes.string.isRequired,
+  multiplier: PropTypes.number.isRequired,
 };

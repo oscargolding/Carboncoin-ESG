@@ -76,7 +76,7 @@ func Test_WHEN_reportCertificate_THEN_SUCCESS(t *testing.T) {
 
 	// WHEN
 	err := register.RegisterUserCertificate(transactionContext,
-		"oscar", 3, "oscar", "12", "a")
+		"oscar", 3, "oscar", "12", "a", "12%")
 
 	// THEN
 	require.Nil(t, err)
@@ -92,7 +92,7 @@ func Test_WHEN_reportingOutBounds_THEN_FAILURE(t *testing.T) {
 
 	// WHEN
 	err := register.RegisterUserCertificate(transactionContext,
-		"oscar", 10, "oscar", "12", "a")
+		"oscar", 10, "oscar", "12", "a", "12%")
 
 	// THEN
 	require.EqualError(t, err, "err: value does not have the right format")
@@ -109,7 +109,7 @@ func Test_WHEN_reportingBadNetwork_THEN_FAILURE(t *testing.T) {
 
 	// WHEN
 	err := register.RegisterUserCertificate(transactionContext,
-		"oscar", 3, "oscar", "12", "a")
+		"oscar", 3, "oscar", "12", "a", "12%")
 
 	// THEN
 	require.EqualError(t, err, "err: failed calling chaincode: failed")

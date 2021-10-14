@@ -731,7 +731,7 @@ func Test_WHEN_producerProduction_THEN_SUCCESS(t *testing.T) {
 
 	// WHEN
 	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1",
-		"energy", "greenhouse")
+		"energy", "greenhouse", "12 co2e", 1)
 
 	// THEN
 	require.Nil(t, err)
@@ -744,7 +744,7 @@ func Test_WHEN_producerProductionNotCertifier_THEN_FAILURE(t *testing.T) {
 
 	// WHEN
 	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1", "energy",
-		"greenhouse")
+		"greenhouse", "12 co2e", 1)
 
 	// THEN
 	require.EqualError(t, err,
@@ -759,7 +759,7 @@ func Test_WHEN_producerProductionDNE_THEN_FAILURE(t *testing.T) {
 
 	// WHEN
 	err := contract.ProducerProduction(ctx, "oscar", 15, "1/1", "1", "energy",
-		"greenhouse")
+		"greenhouse", "12 co2e", 1)
 
 	// THEN
 	require.EqualError(t, err, "err: producer does not exist")
@@ -777,7 +777,7 @@ func Test_WHEN_producerProductionErrorCreating_FAILURE(t *testing.T) {
 
 	// WHEN
 	err := contract.ProducerProduction(ctx, "oscar", 10, "1/1", "1", "energy",
-		"greenhouse")
+		"greenhouse", "12 co2e", 1)
 
 	// THEN
 	require.EqualError(t, err, "failed adding production")

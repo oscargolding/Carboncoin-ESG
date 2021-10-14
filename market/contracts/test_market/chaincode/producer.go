@@ -12,8 +12,11 @@ const LARGE = "large"
 
 // Represents a producer being used
 type Producer struct {
-	ID  string                       `json:"ID"`
-	Ctx CustomMarketContextInterface `json:"-"`
+	ID          string                       `json:"ID"`
+	Environment int                          `json:"environment"`
+	Social      int                          `json:"int"`
+	Governance  int                          `json:"governance"`
+	Ctx         CustomMarketContextInterface `json:"-"`
 }
 
 const TOKEN = "%s-tokens"
@@ -45,7 +48,8 @@ func NewProducer(identification string, size string,
 	if err := ctx.UpdateHighThrough(highcarbon, "+", 0); err != nil {
 		return nil, err
 	}
-	return &Producer{ID: identification, Ctx: ctx}, nil
+	return &Producer{ID: identification, Ctx: ctx, Environment: 0, Social: 0,
+		Governance: 0}, nil
 }
 
 func (pro *Producer) EnforceCtx() error {
@@ -86,18 +90,27 @@ func (pro *Producer) GetCarbon() (int, error) {
 }
 
 // Add carbon production to the blockchain
-func (pro *Producer) AddCarbon(amount int) error {
+func (pro *Producer) AddCarbon(amount int, category string) error {
 	if err := pro.EnforceCtx(); err != nil {
 		return err
 	}
 	sign := "+"
+	highAmount := amount
 	if amount < 0 {
 		sign = "-"
-		amount = -amount
+		highAmount = -amount
 	}
 	highthrough := fmt.Sprintf(CARBON, pro.ID)
-	if err := pro.Ctx.UpdateHighThrough(highthrough, sign, amount); err != nil {
+	if err := pro.Ctx.UpdateHighThrough(highthrough, sign, highAmount); err != nil {
 		return err
+	}
+	switch category {
+	case "Environmental":
+		pro.Environment += amount
+	case "Social":
+		pro.Social += amount
+	case "Governance":
+		pro.Governance += amount
 	}
 	return nil
 }

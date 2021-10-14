@@ -32,6 +32,9 @@ type PaginatedQueryResultProd struct {
 	FetchedRecordsCount int32         `json:"fetchedRecordsCount"`
 	Bookmark            string        `json:"bookmark"`
 	Reputation          int           `json:"reputation"`
+	Environment         int           `json:"environment"`
+	Social              int           `json:"social"`
+	Governance          int           `json:"governance"`
 }
 
 // Public Functions //
@@ -332,6 +335,9 @@ func (s *SmartContract) GetProduction(ctx CustomMarketContextInterface,
 		FetchedRecordsCount: responseMetadata.FetchedRecordsCount,
 		Bookmark:            responseMetadata.Bookmark,
 		Reputation:          carbon,
+		Environment:         exists.Environment,
+		Social:              exists.Social,
+		Governance:          exists.Governance,
 	}, nil
 }
 
@@ -449,7 +455,8 @@ func (s *SmartContract) MakeOfferStale(ctx CustomMarketContextInterface,
 // Report the producer production - requires a certifier to call
 func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	firm string, carbonProduction int,
-	day string, id string, prodCategory string, description string) error {
+	day string, id string, prodCategory string, description string,
+	statistic string, multiplier int) error {
 	userType, err := ctx.GetUserType()
 	if err != nil {
 		return err
@@ -461,7 +468,7 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 	if producer == nil {
 		return fmt.Errorf("err: producer does not exist")
 	}
-	if err = producer.AddCarbon(carbonProduction); err != nil {
+	if err = producer.AddCarbon(carbonProduction, prodCategory); err != nil {
 		return err
 	}
 	tokens, err := producer.GetTokens()
@@ -477,17 +484,17 @@ func (s *SmartContract) ProducerProduction(ctx CustomMarketContextInterface,
 			return err
 		}
 		if err = ctx.CreateProduction(id, totalCarbonProduction, day, firm,
-			true, false, prodCategory, description); err != nil {
+			true, false, prodCategory, description, statistic, multiplier); err != nil {
 			return err
 		}
 	} else {
 		if err = ctx.CreateProduction(id, totalCarbonProduction, day, firm,
 			carbonProduction > 0, carbonProduction > 0, prodCategory,
-			description); err != nil {
+			description, statistic, multiplier); err != nil {
 			return err
 		}
 	}
-	return nil
+	return producer.ChainFlush(ctx)
 }
 
 // Pay for the production emitted by a producer

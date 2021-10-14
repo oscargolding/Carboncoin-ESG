@@ -312,7 +312,7 @@ func Test_WHEN_createProduction_THEN_SUCCESS(t *testing.T) {
 
 	// WHEN
 	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false, "Energy",
-		"greenhouse")
+		"greenhouse", "12co2e", 2)
 
 	// THEN
 	require.Nil(t, err)
@@ -328,7 +328,7 @@ func Test_WHEN_createProductionExists_THEN_FAILURE(t *testing.T) {
 
 	// WHEN
 	err = ctx.CreateProduction("1", 2, "12/2", "oscar", true, false, "Energy",
-		"greenhouse")
+		"greenhouse", "12co2e", 2)
 
 	// THEN
 	require.EqualError(t, err, "production with id already exists on the market")
@@ -342,7 +342,7 @@ func Test_WHEN_createProductionBlcokError_THEN_FAILURE(t *testing.T) {
 
 	// WHEN
 	err := ctx.CreateProduction("1", 2, "12/2", "oscar", true, false, "Energy",
-		"greenhouse")
+		"greenhouse", "12co2e", 2)
 
 	// THEN
 	require.EqualError(t, err, "error")

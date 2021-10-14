@@ -42,7 +42,7 @@ func (s *SmartContract) CreateCertificate(
 // Register that a user was allowed to create a certificate and gain reputation
 func (s *SmartContract) RegisterUserCertificate(
 	ctx contractapi.TransactionContextInterface, name string, value int,
-	firm string, day string, id string) error {
+	firm string, day string, id string, statistic string) error {
 	certificateJSON, err := ctx.GetStub().GetState(name)
 	if err != nil {
 		return fmt.Errorf("err: unable to get relevant ESG certificate %v", err)
@@ -64,6 +64,9 @@ func (s *SmartContract) RegisterUserCertificate(
 	matrix = append(matrix, []byte(id))
 	matrix = append(matrix, []byte(certificate.Category))
 	matrix = append(matrix, []byte(certificate.Name))
+	// Add the underlying statistic and the multiplier
+	matrix = append(matrix, []byte(statistic))
+	matrix = append(matrix, []byte(fmt.Sprintf("%d", certificate.Multiplier)))
 	res := ctx.GetStub().InvokeChaincode(CARBON_MARKET, matrix, CARBON_CHANNEL)
 	fmt.Printf("status code ->> %d", res.Status)
 	if res.Status != 200 {

@@ -186,9 +186,10 @@ func Test_WHEN_addCarbon_THEN_SUCCESS(t *testing.T) {
 	ctx.UpdateHighThroughReturns(nil)
 
 	// WHEN
-	err := producer.AddCarbon(50)
+	err := producer.AddCarbon(50, "Environmental")
 
 	// THEN
+	require.Equal(t, producer.Environment, 50)
 	require.Nil(t, err)
 }
 
@@ -199,7 +200,7 @@ func Test_WHEN_addCarbonExtreme_THEN_FAILURE(t *testing.T) {
 	ctx.UpdateHighThroughReturns(nil)
 
 	// WHEN
-	err := producer.AddCarbon(-50)
+	err := producer.AddCarbon(-50, "soc")
 	_, sign, amount := ctx.UpdateHighThroughArgsForCall(3)
 
 	// THEN
@@ -215,7 +216,7 @@ func Test_WHEN_addCarbonFailure_THEN_FAILURE(t *testing.T) {
 	ctx.UpdateHighThroughReturns(fmt.Errorf("error"))
 
 	// WHEN
-	err := producer.AddCarbon(50)
+	err := producer.AddCarbon(50, "Governance")
 
 	// THEN
 	require.EqualError(t, err, "error")

@@ -111,6 +111,9 @@ const NavBar = () => {
                   { name: username, })}>
                   View Your Offers
                 </MenuItem>
+                <MenuItem onClick={() => history.push('/faq')}>
+                  Frequently Asked Questions
+                </MenuItem>
                 <MenuItem onClick={() => {
                   setAuthToken('');
                   setBalance('');

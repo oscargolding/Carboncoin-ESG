@@ -2,10 +2,12 @@ import React, { useState, useRef, useCallback, } from 'react';
 import API from '../../utils/API';
 import { storeContext, } from '../../utils/store';
 import { CentralLoading, } from '../DashboardPage/styles/DashboardStyles';
-import { CircularProgress, } from '@material-ui/core';
+import { CircularProgress, Button, } from '@material-ui/core';
 import { Alert, } from '@material-ui/lab';
 import useOfferSearch from '../DashboardPage/useOfferSearch';
 import ProductionCard from './ProductionCard';
+import RepChart from './RepChart';
+import { ReputationDiv, } from './styles/ProductionStyles';
 
 /**
  * The production list
@@ -14,6 +16,7 @@ import ProductionCard from './ProductionCard';
 const ProductionList = () => {
   const { authToken: [authToken], } = storeContext();
   const [pageToken, setPageToken] = useState('');
+  const [button, setButton] = useState(false);
   const {
     loading,
     error,
@@ -42,7 +45,27 @@ const ProductionList = () => {
   return (
     <>
       {'records' in response
-        ? <h2> Total Reputation {response.reputation}</h2>
+        ? <>
+          <ReputationDiv reputation={response.reputation}>
+            <h2> Total Reputation {response.reputation}</h2>
+          </ReputationDiv>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => {
+              setButton(!button);
+            }}
+          >
+            ESG Breakdown
+          </Button>
+          {button
+            ? <><RepChart
+              environment={response.environment}
+              social={response.social}
+              governance={response.governance}
+            /></>
+            : <></>}
+        </>
         : <></>}
       {offers.map((production, i) => {
         if (offers.length === i + 1) {
@@ -57,6 +80,8 @@ const ProductionList = () => {
               id={production.productionID}
               category={production.category}
               description={production.description}
+              statistic={production.statistic}
+              multiplier={production.multiplier}
             />
           );
         } else {
@@ -70,6 +95,8 @@ const ProductionList = () => {
               id={production.productionID}
               category={production.category}
               description={production.description}
+              statistic={production.statistic}
+              multiplier={production.multiplier}
             />
           );
         }

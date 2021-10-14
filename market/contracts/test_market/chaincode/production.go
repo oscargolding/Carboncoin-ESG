@@ -12,6 +12,8 @@ type Production struct {
 	Ethical      bool   `json:"ethical"`
 	Category     string `json:"category"`
 	Description  string `json:"description"`
+	Statistic    string `json:"statistic"`
+	Multiplier   int    `json:"multiplier"`
 }
 
 // Flush the production to the blockchain

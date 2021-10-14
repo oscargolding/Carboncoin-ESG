@@ -26,7 +26,7 @@ type CustomMarketContextInterface interface {
 	CreateOffer(string, int, int, string, int) error
 	CreateChip(string, int) error
 	CreateProduction(string, int, string, string, bool, bool, string,
-		string) error
+		string, string, int) error
 	IteratorResults(shim.StateQueryIteratorInterface, interface{}) error
 	GetResult(string, interface{}) error
 	UpdateHighThrough(string, string, int) error
@@ -161,7 +161,7 @@ func (s *CustomMarketContext) CreateOffer(producerId string, amount int,
 // Create production on the blockchain
 func (s *CustomMarketContext) CreateProduction(productionId string, carbon int,
 	date string, firm string, paid bool, ethical bool, category string,
-	description string) error {
+	description string, statistic string, multiplier int) error {
 	duplicateProductionJSON, err := s.GetStub().GetState(productionId)
 	if err != nil || duplicateProductionJSON != nil {
 		return fmt.Errorf("production with id already exists on the market")
@@ -169,7 +169,8 @@ func (s *CustomMarketContext) CreateProduction(productionId string, carbon int,
 	// Create the production
 	production := Production{DocType: PRODUCTION_TYPE, ProductionID: productionId,
 		Produced: carbon, Date: date, Firm: firm, Paid: paid, Ethical: ethical,
-		Category: category, Description: description}
+		Category: category, Description: description, Statistic: statistic,
+		Multiplier: multiplier}
 	productionJSON, err := json.Marshal(production)
 	if err != nil {
 		return fmt.Errorf("unable to format production: %v", err)

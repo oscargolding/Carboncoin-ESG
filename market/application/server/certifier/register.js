@@ -10,6 +10,7 @@ const productionList = [
     firm: 'oscarIndustry',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
+    statistic: '80%',
   },
   {
     name: 'Water Score in Hydrogen Production',
@@ -17,6 +18,7 @@ const productionList = [
     firm: 'oscarIndustry',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
+    statistic: '200 Points',
   },
   {
     name: 'Board Diversity and Structure',
@@ -24,6 +26,7 @@ const productionList = [
     firm: 'oscarIndustry',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
+    statistic: '75%',
   },
   {
     name: 'Female Employee Rate',
@@ -31,6 +34,7 @@ const productionList = [
     firm: 'BHPPetrol',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
+    statistic: '55%',
   },
 ];
 
@@ -60,7 +64,8 @@ const governance = {
 
 const blockchainCall = async (production, contract, certificate) => {
   await contract.submitTransaction(certificate, production.name,
-    production.value, production.firm, production.date, production.id);
+    production.value, production.firm, production.date, production.id,
+    production.statistic);
 };
 /**
  * Represents the second organisation and connecting to the hyplerdger network

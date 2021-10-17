@@ -322,14 +322,14 @@ utils.getOffers = async (paginationToken, number, field, direction, email,
   return jsonResult;
 };
 
-utils.getProduction = async (userId, paginationToken, number) => {
-  console.log('>>> Getting production for a user');
+utils.getProduction = async (userId, paginationToken, number, username) => {
+  console.log(`>>> Getting production for a user -> ${username}`);
   console.log(`${paginationToken} ${number}`);
   const { contract, gateway } = await utils.getContract(userId);
 
   // Submit the request to get production for a user
   const result = await contract.submitTransaction('GetProduction', number,
-    paginationToken);
+    paginationToken, username);
 
   const jsonResult = JSON.parse(result);
   // Return and disconnect

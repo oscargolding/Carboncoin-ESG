@@ -300,12 +300,8 @@ func (s *SmartContract) GetOffers(ctx CustomMarketContextInterface,
 }
 
 func (s *SmartContract) GetProduction(ctx CustomMarketContextInterface,
-	pageSize int32, bookmark string) (*PaginatedQueryResultProd, error) {
-	firm, err := ctx.GetUserId()
-	if err != nil {
-		return nil, err
-	}
-	exists := ctx.GetProducer(firm)
+	pageSize int32, bookmark string, user string) (*PaginatedQueryResultProd, error) {
+	exists := ctx.GetProducer(user)
 	if exists == nil {
 		return nil, fmt.Errorf("failed to get the producer")
 	}
@@ -314,7 +310,7 @@ func (s *SmartContract) GetProduction(ctx CustomMarketContextInterface,
 		return nil, err
 	}
 	queryString := fmt.Sprintf(
-		`{"selector":{"docType":"production", "producingFirm": "%s"}}`, firm)
+		`{"selector":{"docType":"production", "producingFirm": "%s"}}`, user)
 	stub := ctx.GetStub()
 	resultsIterator, responseMetadata, err := stub.GetQueryResultWithPagination(
 		queryString, pageSize, bookmark)

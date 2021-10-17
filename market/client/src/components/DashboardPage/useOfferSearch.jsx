@@ -17,7 +17,7 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction, username)
   useEffect(() => {
     setOffers([]);
     setResponse({});
-  }, [sortTerm, direction]);
+  }, [sortTerm, direction, username]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -42,7 +42,7 @@ const useOfferSearch = (token, authToken, apiFun, sortTerm, direction, username)
     };
     offerRetrieval();
     return () => controller.abort();
-  }, [token, sortTerm, direction]);
+  }, [token, sortTerm, direction, username]);
   return { loading, error, offers, hasMore, paginationToken, setOffers, response, };
 };
 

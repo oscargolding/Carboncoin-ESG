@@ -136,7 +136,8 @@ carbonMarketRouter.get('/production/list',
   catchErrors(authed(async (req, res, email) => {
     const token = req.query.token ? req.query.token : '';
     const size = req.query.amount ? req.query.amount : 10;
-    const queryResult = await utils.getProduction(email, token, size);
+    const username = req.query.username ? req.query.username : '';
+    const queryResult = await utils.getProduction(email, token, size, username);
     return res.json(queryResult);
   })));
 

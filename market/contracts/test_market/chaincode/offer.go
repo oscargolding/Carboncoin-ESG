@@ -7,13 +7,16 @@ import (
 )
 
 type OfferModel struct {
-	Producer   string `json:"producer"`
-	Amount     int    `json:"amount"`
-	Active     bool   `json:"active"`
-	OfferID    string `json:"offerId"`
-	Tokens     int    `json:"tokens"`
-	Reputation int    `json:"reputation"`
-	Owned      bool   `json:"owned"`
+	Producer    string `json:"producer"`
+	Amount      int    `json:"amount"`
+	Active      bool   `json:"active"`
+	OfferID     string `json:"offerId"`
+	Tokens      int    `json:"tokens"`
+	Reputation  int    `json:"reputation"`
+	Owned       bool   `json:"owned"`
+	Environment int    `json:"environment"`
+	Social      int    `json:"social"`
+	Governance  int    `json:"governance"`
 }
 
 type Offer struct {
@@ -66,6 +69,10 @@ func (off *Offer) ReturnModel() (*OfferModel, error) {
 		return nil, err
 	}
 	userId, err := off.Ctx.GetUserId()
+	buyer := off.Ctx.GetProducer(off.Producer)
+	if buyer == nil {
+		return nil, fmt.Errorf("no producer")
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +86,9 @@ func (off *Offer) ReturnModel() (*OfferModel, error) {
 	}
 	return &OfferModel{Producer: off.Producer, Amount: off.Amount,
 		Active: off.Active, OfferID: off.OfferID, Tokens: balance,
-		Reputation: off.CarbonReputation, Owned: owned}, nil
+		Reputation: buyer.Total, Owned: owned,
+		Environment: buyer.Environment, Social: buyer.Social,
+		Governance: buyer.Governance}, nil
 }
 
 // Get the balance on the offer

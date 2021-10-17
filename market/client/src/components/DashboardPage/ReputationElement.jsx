@@ -2,12 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Popover, } from '@material-ui/core';
 import { ButtonScore, PopoverText, } from './styles/DashboardStyles';
+import { useHistory, } from 'react-router-dom';
+import Link from '@mui/material/Link';
 
 // Represents the reputation of a user
 const ReputationElement = (props) => {
-  const { repScore, } = props;
+  const { repScore, username, } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
   console.log(`Score --> ${repScore}`);
+  console.log(`Producer --> ${username}`);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -17,12 +20,12 @@ const ReputationElement = (props) => {
     setAnchorEl(null);
   };
 
-  const starterString = `Carbon Reputation: carbon emissions of seller at offer 
-  creation.`;
+  const starterString = `Seller Reputation: score provided to the user in relation 
+  to Environmental, Social and Governance contributions.`;
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-
+  const history = useHistory();
   return (
     <div>
       <ButtonScore
@@ -49,15 +52,20 @@ const ReputationElement = (props) => {
         }}
       >
         <PopoverText>
-          {repScore <= -500
-            ? starterString +
-            '\nWarning: bad carbon reputation.'
-            : ''}
-          {repScore < -250 && repScore >= -500
-            ? starterString +
-            '\nAverage carbon reputation.'
-            : ''}
-          {repScore > -250 ? starterString + '\nGreat carbon reputation.' : ''}
+          {starterString + '\n'}
+          <b>
+            {repScore <= -500
+              ? '\nWarning: bad reputation.'
+              : ''}
+            {repScore < -250 && repScore >= -500
+              ? '\nAverage reputation.'
+              : ''}
+            {repScore > -250 ? '\nGreat reputation.' : ''}
+          </b>
+          <Link onClick={() => {
+            history.push('/production',
+              { name: username, });
+          }}> Visit Reputation Breakdown of {username} </Link>
         </PopoverText>
       </Popover>
     </div>
@@ -68,4 +76,5 @@ export default ReputationElement;
 
 ReputationElement.propTypes = {
   repScore: PropTypes.number.isRequired,
+  username: PropTypes.string.isRequired,
 };

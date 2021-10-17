@@ -101,7 +101,8 @@ const NavBar = () => {
                 open={open}
                 onClose={handleClose}
               >
-                <MenuItem onClick={() => history.push('/production')}>
+                <MenuItem onClick={() => history.push('/production',
+                  { name: username, })}>
                   Reputation Breakdown
                 </MenuItem>
                 <MenuItem onClick={() => history.push('/direct/purchase')}>

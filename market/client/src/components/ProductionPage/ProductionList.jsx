@@ -8,15 +8,17 @@ import useOfferSearch from '../DashboardPage/useOfferSearch';
 import ProductionCard from './ProductionCard';
 import RepChart from './RepChart';
 import { ReputationDiv, } from './styles/ProductionStyles';
+import PropTypes from 'prop-types';
 
 /**
  * The production list
  * @returns the production associated with an individual on the carbon market.
  */
-const ProductionList = () => {
+const ProductionList = (props) => {
   const { authToken: [authToken], } = storeContext();
   const [pageToken, setPageToken] = useState('');
   const [button, setButton] = useState(false);
+  const { username, } = props;
   const {
     loading,
     error,
@@ -24,7 +26,8 @@ const ProductionList = () => {
     hasMore,
     paginationToken,
     response,
-  } = useOfferSearch(pageToken, authToken, API.getProduction);
+  } = useOfferSearch(pageToken, authToken, API.getProduction(username),
+    '', '', username);
   const observer = useRef();
   const lastElementRef = useCallback(node => {
     if (loading === true) {
@@ -113,3 +116,7 @@ const ProductionList = () => {
 };
 
 export default ProductionList;
+
+ProductionList.propTypes = {
+  username: PropTypes.string.isRequired,
+};

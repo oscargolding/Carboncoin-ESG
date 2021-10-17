@@ -113,8 +113,9 @@ API.getOffers = async (userAuthToken, signal, paginationToken, sortTerm,
   return jsonResponse;
 };
 
-API.getProduction = async (userAuthToken, signal, paginationToken) => {
-  const queryParam = `${access}/api/production/list?token${paginationToken}`;
+API.getProduction = (username) => async (userAuthToken, signal, paginationToken) => {
+  const queryParam = `${access}/api/production/` +
+    `list?token${paginationToken}&username=${username}`;
   const response = await fetch(queryParam, {
     method: 'GET',
     signal: signal,

@@ -77,21 +77,21 @@ const ProductionCard = (props) => {
               label='Paid For'
               clickable={false}
               color='primary'
-              ethical={false}
+              ethical={0}
             />
             : <OfferStatus
               icons={<BlockIcon />}
               label='Requires Payment with Carboncoin'
               clickable={false}
               color='secondary'
-              ethical={false}
+              ethical={0}
             />}
           <OfferStatus
             icons={<BlockIcon />}
             label={category}
             clickable={false}
             color='secondary'
-            ethical={true} />
+            ethical={1} />
         </PaperList>
       </CardContent>
       <CardActions>

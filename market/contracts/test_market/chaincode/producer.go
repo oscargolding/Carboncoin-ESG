@@ -16,6 +16,7 @@ type Producer struct {
 	Environment int                          `json:"environment"`
 	Social      int                          `json:"int"`
 	Governance  int                          `json:"governance"`
+	Total       int                          `json:"total"`
 	Ctx         CustomMarketContextInterface `json:"-"`
 }
 
@@ -49,7 +50,7 @@ func NewProducer(identification string, size string,
 		return nil, err
 	}
 	return &Producer{ID: identification, Ctx: ctx, Environment: 0, Social: 0,
-		Governance: 0}, nil
+		Governance: 0, Total: 0}, nil
 }
 
 func (pro *Producer) EnforceCtx() error {
@@ -112,6 +113,7 @@ func (pro *Producer) AddCarbon(amount int, category string) error {
 	case "Governance":
 		pro.Governance += amount
 	}
+	pro.Total += amount
 	return nil
 }
 

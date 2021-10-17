@@ -283,7 +283,7 @@ func Test_WHEN_getProduction_THEN_SUCCESS(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
 
 	// WHEN
-	result, err := contract.GetProduction(ctx, 5, "")
+	result, err := contract.GetProduction(ctx, 5, "", "oscar")
 
 	// THEN
 	require.Nil(t, err)
@@ -312,7 +312,7 @@ func Test_WHEN_getProductionNone_THEN_SUCCESS(t *testing.T) {
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
 
 	// WHEN
-	result, err := contract.GetProduction(ctx, 5, "")
+	result, err := contract.GetProduction(ctx, 5, "", "oscar")
 
 	// THEN
 	require.Nil(t, err)
@@ -330,7 +330,7 @@ func Test_WHEN_getProductionErrors_THEN_FAILURE(t *testing.T) {
 	ctx.GetHighThroughReturns(500, nil)
 
 	// WHEN
-	result, err := contract.GetProduction(ctx, 5, "")
+	result, err := contract.GetProduction(ctx, 5, "", "oscar")
 
 	// THEN
 	require.EqualError(t, err, "error with query: failure")
@@ -429,6 +429,9 @@ func Test_WHEN_getOffers_THEN_SUCCESS(t *testing.T) {
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 1,
 		Bookmark: ""}
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
+	expectedFirm := &chaincode.Producer{ID: "oscar", Total: 10}
+	expectedFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(expectedFirm)
 
 	// WHEN
 	result, err := contract.GetOffers(ctx, 5, "", "", false, "")
@@ -455,6 +458,9 @@ func Test_WHEN_getOffersNone_THEN_SUCCESS(t *testing.T) {
 	responseData := &peer.QueryResponseMetadata{FetchedRecordsCount: 0,
 		Bookmark: ""}
 	stub.GetQueryResultWithPaginationReturns(queryResultIterator, responseData, nil)
+	expectedFirm := &chaincode.Producer{ID: "oscar", Total: 10}
+	expectedFirm.InsertContext(ctx)
+	ctx.GetProducerReturns(expectedFirm)
 
 	// WHEN
 	result, err := contract.GetOffers(ctx, 5, "", "", false, "")

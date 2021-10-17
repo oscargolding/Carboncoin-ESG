@@ -17,6 +17,8 @@ import { storeContext, } from '../../utils/store';
 import { Alert, } from '@material-ui/lab';
 import API from '../../utils/API';
 import Link from '@mui/material/Link';
+import InfoIcon from '@mui/icons-material/Info';
+import RepChart from '../ProductionPage/RepChart';
 
 /**
  * The offer card being used for the sale of carbon coin.
@@ -27,10 +29,12 @@ const OfferCard = (props) => {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [openReputation, closeReputation] = useState(false);
   const { authToken: [authToken], } = storeContext();
   const {
     producer, price, quantity, active,
     offerid, reputation, usingRef, owned, deleteOfferFn,
+    environment, social, governance,
   } = props;
   const history = useHistory();
   const handleClickOpen = () => {
@@ -64,7 +68,7 @@ const OfferCard = (props) => {
               {producer}
             </Link>
           </Typography>
-          <ReputationElement repScore={reputation} />
+          <ReputationElement repScore={reputation} username={producer} />
         </HeaderCard>
         <Typography variant="body2" component="p">
           Price Per Token: <b>${price}</b>
@@ -94,6 +98,14 @@ const OfferCard = (props) => {
           }
         >
           Purchase From Offer
+        </Button>
+        <Button
+          variant="contained"
+          color="default"
+          startIcon={<InfoIcon />}
+          onClick={() => closeReputation(!openReputation)}
+        >
+          Seller Reputation
         </Button>
         <Dialog
           open={open}
@@ -132,6 +144,13 @@ const OfferCard = (props) => {
           : <></>
         }
       </CardActions>
+      {openReputation
+        ? <><RepChart
+          environment={environment}
+          social={social}
+          governance={governance}
+        /> </>
+        : <></>}
     </SpacedCard>
   );
 };
@@ -148,4 +167,7 @@ OfferCard.propTypes = {
   owned: PropTypes.bool.isRequired,
   usingRef: PropTypes.func,
   deleteOfferFn: PropTypes.func,
+  environment: PropTypes.number.isRequired,
+  social: PropTypes.number.isRequired,
+  governance: PropTypes.number.isRequired,
 };

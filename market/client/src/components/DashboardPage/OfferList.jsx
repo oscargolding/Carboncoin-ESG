@@ -67,6 +67,9 @@ const OfferList = (props) => {
               owned={offer.owned}
               deleteOfferFn={deleteOffer}
               usingRef={lastElementRef}
+              environment={offer.environment}
+              social={offer.social}
+              governance={offer.governance}
             />
           );
         } else {
@@ -81,6 +84,9 @@ const OfferList = (props) => {
               owned={offer.owned}
               offerid={offer.offerId}
               deleteOfferFn={deleteOffer}
+              environment={offer.environment}
+              social={offer.social}
+              governance={offer.governance}
             />
           );
         }

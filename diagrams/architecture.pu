@@ -1,0 +1,46 @@
+@startuml architecture
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!include <office/Servers/file_server>
+!include <osa/contract/contract>
+!include <office/Security/token_service>
+
+
+AddContainerTag("files", $sprite="file_server", $legendText="cryptographic wallet")
+AddContainerTag("contract", $sprite="contract", $legendText="smart contract")
+AddContainerTag("edge",$sprite="token_service", $legendText="registered edge device", $bgColor="#444444")
+
+Person(admin, "Hydrogen Producer")
+Container(edge, "Registered Production Device", "CO2e", $tags="edge")
+System_Boundary(c1, "Carbonmarket Application") {
+    Container(web_app, "Web Application", "React", "Allows users to purchase/sell Carboncoin for Emissions Trading")
+    Container(api, "HTTPS API", "Express", "Allow frontend to query the API for user actions")
+    Container(wallet, "Cryptograhpic Wallet", "X.509", $tags="files")
+    Container(credentials, "Identity Management", "Database")
+}
+System_Boundary(blockchain, "Emissions Trading Blockchain") {
+    System_Boundary(market_channel, "Carbonmarket Blockchain Channel") {
+        Container(cmsc, "Carbonmarket Smart Contracts", "Chaincode", "Immutable Recording of Emissions Trading", $tags="contract")
+        Container(cmec, "Energy Production Index Smart Contract", "Chaincode", "Immutable Recording of Energy Production", $tags="contract")
+        Container(cmesg, "ESG Index Smart Contract", "Chaincode", "Immutable Recording of ESG Certificates", $tags="contract")
+    }
+    System_Boundary(certification, "ESG Channel") {
+        Container(cc, "Smart Contracts for ESG and Energy Certification", "Chaincode", "Business Logic for Creating Certificates")
+    }
+}
+
+
+Rel(admin, web_app, "Uses", "HTTPS")
+Rel(admin, cc, "Submits ESG Raw Data/Reports")
+Rel(web_app, api, "Read/update resources", "HTTPS")
+Rel_L(api, credentials, "Check user", "Local")
+Rel(cmec, cmsc, "Report Energy Production", "Chaincode Invoke")
+Rel(cmesg, cmsc, "Report ESG Certification", "Chaincode Invoke")
+Rel(api, cmsc, "Emissions Trading Operation", "Chaincode Invoke")
+Rel_U(api, wallet, "Retrieve X.509 Credentials", "File Operation")
+Rel(cc, cmec, "Final Index Report", "Chaincode Invoke")
+Rel(cc, cmesg, "Final Index Report", "Chaincode Invoke")
+Rel(edge, cc, "Submits Raw CO2e from Production", "Chaincode Invoke")
+
+SHOW_LEGEND()
+@enduml

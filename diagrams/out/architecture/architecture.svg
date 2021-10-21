@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="1494px" preserveAspectRatio="none" style="width:1130px;height:1494px;background:#FFFFFF;" version="1.1" viewBox="0 0 1130 1494" width="1130px" zoomAndPan="magnify"><defs/><g><!--MD5=[84dda40acb3410cad7262261daba2aaf]
+cluster c1--><rect fill="#FFFFFF" height="554.5" style="stroke:#444444;stroke-width:1.0;stroke-dasharray:7.0,7.0;" width="542" x="7" y="294.5"/><text fill="#444444" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="213" x="171.5" y="313.604">Carbonmarket Application</text><text fill="#444444" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="49" x="253.5" y="331.1201">[System]</text><!--MD5=[15762fc0c6a0c1094f6fb2338076f869]
+cluster blockchain--><rect fill="#FFFFFF" height="1096" style="stroke:#444444;stroke-width:1.0;stroke-dasharray:7.0,7.0;" width="551" x="573" y="228"/><text fill="#444444" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="239" x="729" y="247.104">Emissions Trading Blockchain</text><text fill="#444444" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="49" x="824" y="264.6201">[System]</text><!--MD5=[f1dd99f98d142f1316ba7230c8f9e8d0]
+cluster market_channel--><rect fill="#FFFFFF" height="714" style="stroke:#444444;stroke-width:1.0;stroke-dasharray:7.0,7.0;" width="503" x="597" y="586"/><text fill="#444444" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="281" x="708" y="605.104">Carbonmarket Blockchain Channel</text><text fill="#444444" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="49" x="824" y="622.6201">[System]</text><!--MD5=[42505f511701a7f07898e1623763752a]
+cluster certification--><rect fill="#FFFFFF" height="210" style="stroke:#444444;stroke-width:1.0;stroke-dasharray:7.0,7.0;" width="248" x="598" y="293"/><text fill="#444444" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="101" x="671.5" y="312.104">ESG Channel</text><text fill="#444444" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="49" x="697.5" y="329.6201">[System]</text><!--MD5=[d40ecb68fd03c4f349b7481a726a4cee]
+entity web_app--><rect fill="#438DD5" height="134.4078" style="stroke:#3C7FC0;stroke-width:1.5;" width="220" x="88" y="351.5"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="130" x="133" y="378.604">Web Application</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="35" x="180.5" y="396.1201">[React]</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="200" y="414.6021"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="196" x="102" y="433.67">Allows users to purchase/sell</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="171" x="110.5" y="452.7379">Carboncoin for Emissions</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="53" x="171.5" y="471.8058">Trading</text><!--MD5=[e2307af040e3f87d22824e7603ca28ec]
+entity api--><rect fill="#438DD5" height="115.3399" style="stroke:#3C7FC0;stroke-width:1.5;" width="213" x="320.5" y="718"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="80" x="387" y="745.104">HTTPS API</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="46" x="404" y="762.6201">[Express]</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="429" y="781.1021"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="185" x="334.5" y="800.17">Allow frontend to query the</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131" x="361.5" y="819.2379">API for user actions</text><!--MD5=[d80926c91208070f1daa3c471ba18e8e]
+entity wallet--><rect fill="#438DD5" height="106.1362" style="stroke:#3C7FC0;stroke-width:1.5;" width="189" x="343.5" y="365.5"/><image height="48" width="39" x="418.5" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAwCAIAAAAdEvRBAAABFElEQVR4Xu3YMQrCQBCF4dzNA3iBHMALeAAPoJWVpLOwsExnFewsLUQMCIIIghDwBg5sCCQvGXY22bXIwNcY1/ndRMQYTZaX8CI8FEBZjZN8d/pkt69Uei5m2zvO5ZVVt2QF5/LKKg4Swbm8kVfpk2Vj4CouauXwkkpL1QHO5WlVCufytCqFc3lalcK5PK1K4VyeVqVwLs9XdZE+cRn9Ep2ur76qm+Mb1xjz/UNWpXdKO2hlmcyk1dXh1dhQH1ZVuq0wy3reImSivdJJozW0XXxKqrNKjQZz5fgLZqmzao4gv9X/7BWZ66pVoc6qOYL8VukLuiFEFYU4w0irTmpVesAw/2MNX7Uxpmqc5HjypWq/1gL7AWAW0pisc+eNAAAAAElFTkSuQmCC" y="375.5"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="169" x="353.5" y="440.604">Cryptograhpic Wallet</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="36" x="420" y="458.1201">[X.509]</text><!--MD5=[a063d9786b974b9057353a6037bc33e1]
+entity credentials--><rect fill="#438DD5" height="58.1362" style="stroke:#3C7FC0;stroke-width:1.5;" width="196" x="23" y="746.5"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="176" x="33" y="773.604">Identity Management</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="57" x="92.5" y="791.1201">[Database]</text><!--MD5=[f79649fa49b86b27474c160ba78a34fd]
+entity cmsc--><rect fill="#438DD5" height="265.132" style="stroke:#3C7FC0;stroke-width:1.5;" width="194" x="625" y="1019"/><image height="128" width="128" x="658" xlink:href="data:image/png;base64,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" y="1029"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="170" x="635" y="1174.104">Carbonmarket Smart</text><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="78" x="683" y="1195.8961">Contracts</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="62" x="691" y="1213.4122">[Chaincode]</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="724" y="1231.8941"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="164" x="640" y="1250.9621">Immutable Recording of</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="124" x="660" y="1270.03">Emissions Trading</text><!--MD5=[477981161ce4b707d87914871129b647]
+entity cmec--><rect fill="#438DD5" height="265.132" style="stroke:#3C7FC0;stroke-width:1.5;" width="217" x="613.5" y="643"/><image height="128" width="128" x="658" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAIAAABMXPacAAAJ7ElEQVR4Xu2dz4rdNhTG+256gPsCegC/gB8gD9CsugrddTGLLrPrKmQXyCaLUqZQCJTAQCClE0gpFKYHfb0H5Xy2rqQr+8q1hx+DR5Zk6/uO/tj32vON+/bngxvyDScdrMlhwI05DLgxxQZ8+OPvbXH/8IVb0Q9lBqBJL14/DD/81jlykndvPgqv7v/EaXNzeqDAAGmDNOb03S+8q0/kVMWJZy9/H398L370aUOZAdISTu8csUE8kA3//a8yHPXmQZkBnLgJpB+g48pvjEic51YUGPD41z+cuBXQCcDznz70MxztxQAZPOPZS/pEJx7sxQBRXOYAk9LDlLAXA0R9XkH04MFeDJDxR4Z+Tr+5B3sxwIW5d/IiRjx4+/7zrTzYkQGyEDLTgHJDD3ZkgMwBIjSng1t5sCMDRGKeh02G9T1YxABpyct3n2Ryk/bcvfk4OfJeRC9fqzE1TC6EuMjKHrQ3QK9x9E6kmMHZ0sh4LQXnhuwcUEM85kht8fXwHCt70N4AiK7aiQ1igEaiSPDi9UO8IMHdyiHcQIZAskuKfAj3vRG2ko4M8idurqESPQpWmZKIK15TA/LIxtxCyLCmB40NkObJecvZ8y4BoqBtMkBBC9nAYAXnIBnW5pIoWoiFyC/ILgxu+K0ftqBO1CD54xp02IFJOQa4Fa8PGhsgLYcEvEuEkF24GsIwhWyxjrIhIrrz/TIELwxQHdFdREeko0PIBnqP/MYhUEM8BBUZ4MKBVvCgsQHcA0RE6IiPRHRAUK11I95mA+IhS/LANuQxNYPrDXDniWRRDxob4M5zgLYcg4MPE6AGMjoKJufYAAxEbt4A7WFQE3mwgR4g9UPlJgZI5qU/SmtvgK6CRF+oj6EG47IgTUI61Jk0AG5JQZ0DkEGdkwzoAUO4zak1a21xDSgLA0xHucjpPJ8v5EF7A1yQSVouakKpyXTVRbZFON2GW6fw0RWmUFFNHXLnIQg1ywa61BCuPCS/LnsgXDwJu9CxSg1woSpEDO+6nkUM6JZ8A05hLaugky3hwR4NmJsGjOiGhRamuzMAS1j8ySqnWWJhulMDqsHiqqEHhwHFYFXWyoN9GYB7Sj5cGzKs9Ry41uH6K9idATKO4+6eQTqH/gawitU/NV0U7cuAU1jMwAO1QUR/Hu6kvjh/n/cu3MFV5E/JIPljP/R6k49SxL4MUOJYFobwhWrTOSaNie94N5mQ92iAGUzUgDkPgBmvYMP1k8HeDZjsBJOTBNAMw/mL77gNxUfJ5DDgPwPYA2NDnK49RtJxq46Pkkl7A+KF3SZQNdkARrNpccwErEMmixhgmrQt5hSPUfXRgcSATHGY9gZsAjMKmbEoEUNxHpRy4dGVanHaGxCf4rZguY3iinqGJvdlALdh08xJ368BPRCrk8CoWQHq6csA7rArM5wn0skQLoVFN+q7NQ2IjzoH9+KVyVnG5MO6927ArTiFG2RzIJa5lJatQIuvasBFuBevhon9ya7ApQA3JBPXmwEcfavBok/CBYfkUJPG9WbADfFfr+XNn2YXF6/DHQbEcFAvbYM7DIiZ03c5G9xhQIwROrHLwFVl4g4DYhIGAJZeqesK7jDAkNA03Qkmi1zE9WaApyV2E6AOryY5p1l0anFejPKq1Beqf+rQAI6p6zHaGR0ZzpBTqkL9U4cGtEVjfw5Wra4IHzoT15sBPCZUM1DkciBzKU+jUE6RObiBBtebARxx1bB28S7OP1dwsoZMuIEG15sBTfB0U4HzJDDFK2oooi8DuBeXMtAsynnizKx1UQ0MNypNXwawIqXkDxpxTlNkMjETblSavgy4notaIMYTcJ6KuM6nLwO4RxcxUA9I7J0Doifq8U39uH/4ol/a1UduM2lvAMdjKZNqcnoazm+Owmdehw8vAfBh7SsG3IWX9LB6c7Q34HrYkjniQDa7TAofpRVqNsL/5btPYkD+iHRLA+bGBLQngZFea4vzaArnbIieKtTHozW9G+C/HsoRoSor9JrzYFJ6rTbOpomcsxU4Wxe+VDGGN+RD/bfvPz89PbGAk6xqgEqvWqvi2BXvNR4kpAfGVM7QHBzFnb8Rg2cFXoVX6fRoQCxunB47AeCESeQKTSX5VjUBR4TuugTCq0iewg8LOMlKBuB0VRcW3aAecFUMKlcyS12JnuEYHqTRZysR/rc0AGdmQLDodgxnjrNxOpNTWyncrhjojsbCAJ0AitR36xgQS2PUT6vGu6qrKoXbxW3U8MfgUxH+bgkDDHF7hnnVeBTCQDSeH8qdKxtXwkdfgsnwrxj9QXsDTChBGt2ew5QyxTl/ZvHr4QaO58+Zxyj88cDw/9MA7OUiF8s2wbSubfi7JQyIwVmaIWUStDYxCpkaND8fdFG0OVDfhD+LdpH2BsThE4sVpySIM0/WsAJzvprw19sP1eHvKgzgIDXELWH5WPEcWKNF4UaBsXX4uyUMiJlsDxJZ5VjuOLM2+7bgTDj8ZfUpynRkgImmufhl3dkGzcbFq+ETzmScCX+xQZR5zL79aejXgBguXg2fcA7DVPjjdU5jeCl5RwYYIB+noyUJoNfYx/ijpzFS+A/h1VkdGcBBp2py+hxxBi64JmjROBP++DByAwZARxY6B65wTXwy/MdgTF8GMMN8J8CuSa2RwrWtDM4kEf7dGcASxyondsV75zKvQ9wcDYJxKvz9VgwYyscfrmE1TFsS4d+jAWnS+uouLngTxpnwfx5egYxdGzPAJ6+E+5He54W/36IBigY+7+oBE/648WDC32/agJ7JDH9/GLAQmeHvDwOWALMRh794YMLfd2iAjuzbBSoPQf10+PvDgOY8C/85AOGPpWci/H2HBmwdjP5DXvj7Dg3gmNoQpeHvDwMagpBHEzLD33dowHbRS3GonxP+vkMDOLL6hE97nPrGVTr8/WFANea068Lfd2jAFhlqw98fBjSBw/8ufOHnYvj7w4DruSb8/WHA9eDKCxsa/qJ+Tvj7w4AruTL8/coG8OG3zpXh7w8DrsGEP5aemH4zw98fBlQznG87+6nw155xkRsYMNBFzRYZw9cAEuGfyWFAJenw5/xzrG0An8FGQfijRXrjoTT8h8OAOhDjagBWn/qFQ86f4DCgBlH8dH6kMF7+l4b/cBhQBwxAczAD353/WzZnTnMYUIxZ/zwL7zoR9Z+FzyNLgQErPaSH1TGfxLbQCWA4j/7V6kONx9WekpRpCku3TYMwOoXH3rH+gfqc8yJSifSelQyQY8iR7h++yBk/j/7b/eaQ84d8so2b/tUtehXez1etvis1AD+P4bHY7fIyPFsqUY+xmzMUAU1YrkwKDHCRB5v+kU78GLqy3VH7w0LlU2YAsMff2o8EPmK/yQ/rU0SNAZumoXZN2K8BvOsm7M6A3vgXYmIlk++UwZUAAAAASUVORK5CYII=" y="653"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="197" x="623.5" y="798.104">Energy Production Index</text><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="123" x="660.5" y="819.8961">Smart Contract</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="62" x="691" y="837.4122">[Chaincode]</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="724" y="855.8941"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="164" x="640" y="874.9621">Immutable Recording of</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="124" x="660" y="894.03">Energy Production</text><!--MD5=[db0873dd9cd489b7135ea30f13733cf2]
+entity cmesg--><rect fill="#438DD5" height="265.132" style="stroke:#3C7FC0;stroke-width:1.5;" width="218" x="866" y="643"/><image height="128" width="128" x="911" xlink:href="data:image/png;base64,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" y="653"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="132" x="907" y="798.104">ESG Index Smart</text><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="70" x="940" y="819.8961">Contract</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="62" x="944" y="837.4122">[Chaincode]</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="977" y="855.8941"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="194" x="880" y="874.9621">Immutable Recording of ESG</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="937" y="894.03">Certificates</text><!--MD5=[db956f40f2dc50163091c98812b3e6f0]
+entity cc--><rect fill="#438DD5" height="137.132" style="stroke:#3C7FC0;stroke-width:1.5;" width="216" x="614" y="350"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="192" x="624" y="377.104">Smart Contracts for ESG</text><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="194" x="625" y="398.8961">and Energy Certification</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="62" x="691" y="416.4122">[Chaincode]</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="724" y="434.8941"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="184" x="630" y="453.9621">Business Logic for Creating</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="684" y="473.03">Certificates</text><!--MD5=[79a439086b036a57b90a01d7b2f8bbd1]
+entity admin--><rect fill="#08427B" height="89.792" style="stroke:#073B6F;stroke-width:1.5;" width="174" x="409" y="24"/><image height="48" width="48" x="472" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=" y="34"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="154" x="419" y="99.104">Hydrogen Producer</text><!--MD5=[ce247ceb37f676e33360d84601c77157]
+entity edge--><rect fill="#444444" height="123.9282" style="stroke:#3C7FC0;stroke-width:1.5;" width="202" x="621" y="7"/><image height="44" width="48" x="698" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAsCAIAAACsdKwwAAADWklEQVR4Xs1YbZXjMBBbcAYQACUQACWwAEqgAEqgAEwgnE7PumjV8TjNpt3b048+x/GHrJHHTj/Kf4aPWPHb2EXofD7fbrf7/V5rXZYFvyij5vPzMzZ9GU8IgQpJjIC376U1JDRNEzTQrCiD3Ol0Qj1+qZm4QjDUxyEOYUgIc5DK9XqN7wx4qzi+hVNOSGwghioxH6JzuVzw63OjDTmhlyoPIyGEKQMbBEiOVhBRg3o2ECfE8WugQ0gIcWhZFfzooXmeKQx+UaaH8JbN0P4tgYuEKI/E5y7TrAHkKp0Y6BdFioQYEc6BtTq5FCRBVdCL3WOj7+CBEBkAdA/iAgG8QQqJhF7e/RgeCGlErphb2hukqGtq0HqwkthoN3JCfORx4Q1S8Bhh+WcJYd07CSl5vpmQNGfIsJN3how5IljwGPJdxiVSsO2zk+lHm8DXcwyREA9UeYK+Hq2YCVrxYt89om4gEsLiaoN8wEOj14kBlckkzysGKj2hsi7U7UydKAaysz+qDTPknk2wjYQQRfLAlRYdUGEiwC/KHkcFaxTc/UgIlTVHc8XbDhX7NKzgx1PZK68No2FzQsVuFJSq7z/ZlXJZjz8HrwOE16syPbOHhIodlksToDYLE3z0tz1j3hQIlOcGXhCINL5bhOjTnehvHdqwKfr2xJAQM16POvgI6fcXjTjCyJ1DQiN55PcAeghupYWdza19wSFAqERBEa8t0AD6akPkhHhv7FGbPXuurE8lSfMkk2oALZUTqpkGyxoXNzvB/eLbiui3ntBzYppNCOFFmE/QRg0icSzfVnVsW8FjhzK1jISU6FJoowbS1cQQrT5PBkgkFzIS8lwXUC2/6SrnYECZUevAPQ55zrfbA6F0GiGEIEStriZ4J6ENeZbupuaJygdVLn4aMrXMQzavF5oRQh5zOWl2XUuIPlU6+jzOBXwR8hBwOD0uWSIupiiDFQjVwfFJjBr/JYTlogU4zusHPPuIUDq0RA125rVJ0wRp8Sg29/bFwvJWYhTEKXXo1D4zNFZptmBZ5AiMw/PBhXHVNf4TQmVNX+lBWFrURum4d4kj9UDZQ6i0dceqFSOiRGTxiNi6YRehY/DTitac2h9Lqkyl/ReEQnR+jRDBm5DX+O2nx48T+i7+ABc/IZmwtDedAAAAAElFTkSuQmCC" y="17"/><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="178" x="631" y="78.104">Registered Production</text><text fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold" lengthAdjust="spacing" textLength="52" x="696" y="99.8961">Device</text><text fill="#FFFFFF" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="35" x="704.5" y="117.4122">[CO2e]</text><!--MD5=[c9a491b8f535f1f749b3bed59ed45685]
+link admin to web_app--><path d="M438.46,114.11 C403.73,142.29 359.79,180.8 326,220 C293.1,258.17 262.19,305.39 238.99,344.1 " fill="none" id="admin-to-web_app" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="234.75,351.22,241.4254,345.8872,236.2729,342.8128,234.75,351.22" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="28" x="388.5" y="183.3281">Uses</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="39" x="383" y="199.6722">[HTTPS]</text><!--MD5=[5047e8c38439a122d01413c2280de7ce]
+link admin to cc--><path d="M524.62,114.01 C562,171.48 628,272.96 673.31,342.63 " fill="none" id="admin-to-cc" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="677.9,349.69,676.0617,341.3461,671.0286,344.6123,677.9,349.69" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="104" x="583" y="183.3281">Submits ESG Raw</text><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="79" x="597" y="199.6722">Data/Reports</text><!--MD5=[62149fdea859922d9027b162fa59db84]
+link web_app to api--><path d="M234.73,485.77 C249.83,512.26 267.78,542.86 285,570 C315.54,618.12 352.3,670.93 380.76,710.83 " fill="none" id="web_app-to-api" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="385.62,717.62,383.3993,709.3696,378.522,712.8642,385.62,717.62" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="138" x="286" y="541.3281">Read/update resources</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="39" x="335.5" y="557.6722">[HTTPS]</text><!--MD5=[24f5a9c3365645992a603d80ad0245ea]
+reverse link credentials to api--><path d="M227.11,775.5 C257.33,775.5 290.24,775.5 320.48,775.5 " fill="none" id="credentials-backto-api" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="219.08,775.5,227.08,778.5,227.08,772.5,219.08,775.5" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="65" x="237.25" y="752.3281">Check user</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="34" x="252.75" y="768.6722">[Local]</text><!--MD5=[43a0b33cdbe6c4560d2da6aa0f559a9b]
+link cmec to cmsc--><path d="M722,908.1 C722,941.3 722,977.08 722,1010.68 " fill="none" id="cmec-to-cmsc" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="722,1018.71,725,1010.71,719,1010.71,722,1018.71" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="85" x="729.5" y="951.8281">Report Energy</text><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="66" x="740.5" y="968.1722">Production</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="101" x="723" y="984.5163">[Chaincode Invoke]</text><!--MD5=[63ce4bfcc508b194a186b2e867e52942]
+link cmesg to cmsc--><path d="M887.4,908.17 C869.47,934.96 850.67,962.92 833,989 C827.96,996.44 822.78,1004.06 817.53,1011.75 " fill="none" id="cmesg-to-cmsc" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="812.71,1018.83,819.6977,1013.9135,814.7419,1010.5311,812.71,1018.83" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="144" x="865" y="960.3281">Report ESG Certification</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="101" x="886.5" y="976.6722">[Chaincode Invoke]</text><!--MD5=[6005982e8a2db4548a56c488fdbba78d]
+link api to cmsc--><path d="M471.8,833.3 C510.92,882.89 569.16,956.73 619.61,1020.69 " fill="none" id="api-to-cmsc" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="624.78,1027.24,622.1931,1019.097,617.4767,1022.8058,624.78,1027.24" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="110" x="593" y="951.8281">Emissions Trading</text><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="61" x="619" y="968.1722">Operation</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="101" x="599" y="984.5163">[Chaincode Invoke]</text><!--MD5=[2e895be14634bbaa11048a634a7c78df]
+reverse link wallet to api--><path d="M436.13,479.82 C434.07,546.45 430.77,652.88 428.75,717.96 " fill="none" id="wallet-backto-api" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="436.39,471.5,433.1486,479.4053,439.1459,479.5873,436.39,471.5" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="85" x="435" y="532.8281">Retrieve X.509</text><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="69" x="444.5" y="549.1722">Credentials</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="82" x="438" y="565.5163">[File Operation]</text><!--MD5=[dc8f40610e7efee312821bc9c8bdb255]
+link cc to cmec--><path d="M722,487.11 C722,528.83 722,583.91 722,634.68 " fill="none" id="cc-to-cmec" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="722,642.79,725,634.79,719,634.79,722,642.79" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="111" x="723" y="541.3281">Final Index Report</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="101" x="728" y="557.6722">[Chaincode Invoke]</text><!--MD5=[47c73496bcc6d8932915685db9a0ce8f]
+link cc to cmesg--><path d="M812.81,487.11 C823.64,497.16 834.02,507.89 843,519 C871.22,553.91 895.89,595.81 916.04,635.49 " fill="none" id="cc-to-cmesg" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="919.75,642.87,918.8352,634.3751,913.4751,637.0712,919.75,642.87" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="111" x="875" y="541.3281">Final Index Report</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="101" x="880" y="557.6722">[Chaincode Invoke]</text><!--MD5=[db81170b58aafe0935e8f0690ec79135]
+link edge to cc--><path d="M722,131.33 C722,189.97 722,278.56 722,341.63 " fill="none" id="edge-to-cc" style="stroke:#666666;stroke-width:1.0;"/><polygon fill="#666666" points="722,349.96,725,341.96,719,341.96,722,349.96" style="stroke:#666666;stroke-width:1.0;"/><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="145" x="723" y="174.8281">Submits Raw CO2e from</text><text fill="#666666" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="66" x="764" y="191.1722">Production</text><text fill="#666666" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="101" x="746.5" y="207.5163">[Chaincode Invoke]</text><rect fill="#FFFFFF" height="141.3396" rx="5" ry="5" style="stroke:#FFFFFF;stroke-width:1.0;" width="211" x="897" y="1337"/><rect height="19.0679" style="stroke:none;stroke-width:1.0;fill:none;" width="199" x="903" y="1344"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="51" x="903" y="1358.9659">Legend</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="958" y="1358.9659"/><rect fill="#08427B" height="19.0679" style="stroke:none;stroke-width:1.0;" width="199" x="903" y="1363.0679"/><text fill="#073B6F" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="8" x="907" y="1378.0339">▯</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="919" y="1378.0339"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="47" x="923" y="1378.0339">person</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="978" y="1378.0339"/><rect fill="#438DD5" height="19.0679" style="stroke:none;stroke-width:1.0;" width="199" x="903" y="1382.1358"/><text fill="#3C7FC0" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="8" x="907" y="1397.1018">▯</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="919" y="1397.1018"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="64" x="923" y="1397.1018">container</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="995" y="1397.1018"/><rect fill="#438DD5" height="19.0679" style="stroke:none;stroke-width:1.0;" width="199" x="903" y="1401.2038"/><text fill="#3C7FC0" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="8" x="907" y="1416.1697">▯</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="919" y="1416.1697"/><image height="12" width="10" x="919" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAMCAIAAADUCbv3AAAAXUlEQVR4XmPwmni9afNjOMpccs+59yocMQCFDtz8iIwGt/TGC++AjODpNxHSYTNvoqmLmXMbJL39yvu1597mr7iPXbp16xPPiddwSkM42KXhjoyfd3v2oZfICOg0AKUABYDf9UPXAAAAAElFTkSuQmCC" y="1408.2717"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="138" x="936.75" y="1416.1697">cryptographic wallet</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="1082.75" y="1416.1697"/><rect fill="#438DD5" height="32" style="stroke:none;stroke-width:1.0;" width="199" x="903" y="1420.2717"/><text fill="#3C7FC0" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="8" x="907" y="1448.1697">▯</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="919" y="1448.1697"/><image height="32" width="32" x="919" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAACkklEQVR4XrWW70tTYRTH/d+CoCgKBCEYBI2iQBCCQVEgBYEQFkPtpwwzy2qpDAuxsKIkItSIsLnmnbvbzJazTKQX9WJ99OBzH57nenenCz5cjuc+O9/znHOex9u0p3P2v9KkrNb7uWjffMuNTBgujhYfTVXscDaewO3XZft1AMf65jvGSrbfYOcC7Jjn+ZGC/UrHX+DS09Leq5/t1YrDPXPN1zNinxly7QUKH4GDXWkx7rz9fjSRRYyKt6cKbQ8W8CQmy4Pvl19lfu2Lexnw1g4t+AjAm+xapDf7bHZVxFpuZpDZH08PvFs+O+zyZIGxxaGZFSO04C8QkgNd6UPdHtP5dXvNrgSoPjvrebnU/eJbLJlHYyK9aqzZlQAROROt93LnRgoXRoto2A33F2BIwsAgIcCBOHnX4Rnp/ULRjET9BVgdwKmBXNvgguGUNhhxTAHVLnIJgOicMp7H+x3+1PsMoQSCkWo0X5ujMoChvw0lYGdNsqQM2Jw+saNbSnULGHcngRgVsYl45NZGlXiqBXULGA1k/mgsdcdQ4FG91Yk9dkmohoAQ3RgYB6gJEaNb4bCNsii4YNpTxfLanxoCtO70wzwQSzoJVAl0j0LPiX9E3Ik1BCi0VEbCYSMmo2n3X+BX7JV7t7L+V8U0BdRqKT2TIxqERsBojAyrDuknpyqJSS/9bQWkROQrAmLbldEhCS6++MRS0BQZOyC0zDs/ttM3tkL6wzMrGKEE6oWR7RhbvDy+GAkpYOcYzIl+R9JvvMBm+g658wlTh0B4OIN0KPXhh/I0WIDiXHn+VaUfCRawh68mCDz5+FP3NFIglnSBy0d3bnvQuED42uGLKjxU5lPpt+6Zds0vF09gB1SrVdtp8A8y4UMsZRRAYgAAAABJRU5ErkJggg==" y="1420.2717"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="98" x="959" y="1448.1697">smart contract</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="1065" y="1448.1697"/><rect fill="#444444" height="19.0679" style="stroke:none;stroke-width:1.0;" width="199" x="903" y="1452.2717"/><text fill="#3C7FC0" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="8" x="907" y="1467.2376">▯</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="919" y="1467.2376"/><image height="11" width="12" x="919" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAALCAIAAADEEvsIAAAAzUlEQVR4Xm2PQQeEQBiG+3HRLSIiIiJKERERnfsBnbp1jYjYW6dOMf9pn52vbbe172FmPt8z8z1jmO/Udd227VV+x5BtmibLsjzPg4ui6M5oaNu2qqqknud5WZYbIpBSipekbpqm67obItA4jr7vu67Lue/7fd//QIQGTqaWgw6CIM9zvoLlB1I6x3Gw8iqK0PglScKdF4SHQPRYi6K4FOHSND3FyTAMcmYKPYHWdS3L8hzHCMdxTO2ER5ZlD50wDG3bPqGf4BHHMXPl5hNFWaJqxW3u1gAAAABJRU5ErkJggg==" y="1460.3396"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="155" x="939" y="1467.2376">registered edge device</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="1102" y="1467.2376"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1344" y2="1344"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1363.0679" y2="1363.0679"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1382.1358" y2="1382.1358"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1401.2038" y2="1401.2038"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1420.2717" y2="1420.2717"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1452.2717" y2="1452.2717"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="1102" y1="1471.3396" y2="1471.3396"/><line style="stroke:#00000000;stroke-width:1.0;" x1="903" x2="903" y1="1344" y2="1471.3396"/><line style="stroke:#00000000;stroke-width:1.0;" x1="1102" x2="1102" y1="1344" y2="1471.3396"/><!--MD5=[9a1d3f592441f85f055f97d79c87f829]
+@startuml architecture
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!include <office/Servers/file_server>
+!include <osa/contract/contract>
+!include <office/Security/token_service>
+
+
+AddContainerTag("files", $sprite="file_server", $legendText="cryptographic wallet")
+AddContainerTag("contract", $sprite="contract", $legendText="smart contract")
+AddContainerTag("edge",$sprite="token_service", $legendText="registered edge device", $bgColor="#444444")
+
+Person(admin, "Hydrogen Producer")
+Container(edge, "Registered Production Device", "CO2e", $tags="edge")
+System_Boundary(c1, "Carbonmarket Application") {
+    Container(web_app, "Web Application", "React", "Allows users to purchase/sell Carboncoin for Emissions Trading")
+    Container(api, "HTTPS API", "Express", "Allow frontend to query the API for user actions")
+    Container(wallet, "Cryptograhpic Wallet", "X.509", $tags="files")
+    Container(credentials, "Identity Management", "Database")
+}
+System_Boundary(blockchain, "Emissions Trading Blockchain") {
+    System_Boundary(market_channel, "Carbonmarket Blockchain Channel") {
+        Container(cmsc, "Carbonmarket Smart Contracts", "Chaincode", "Immutable Recording of Emissions Trading", $tags="contract")
+        Container(cmec, "Energy Production Index Smart Contract", "Chaincode", "Immutable Recording of Energy Production", $tags="contract")
+        Container(cmesg, "ESG Index Smart Contract", "Chaincode", "Immutable Recording of ESG Certificates", $tags="contract")
+    }
+    System_Boundary(certification, "ESG Channel") {
+        Container(cc, "Smart Contracts for ESG and Energy Certification", "Chaincode", "Business Logic for Creating Certificates")
+    }
+}
+
+
+Rel(admin, web_app, "Uses", "HTTPS")
+Rel(admin, cc, "Submits ESG Raw Data/Reports")
+Rel(web_app, api, "Read/update resources", "HTTPS")
+Rel_L(api, credentials, "Check user", "Local")
+Rel(cmec, cmsc, "Report Energy Production", "Chaincode Invoke")
+Rel(cmesg, cmsc, "Report ESG Certification", "Chaincode Invoke")
+Rel(api, cmsc, "Emissions Trading Operation", "Chaincode Invoke")
+Rel_U(api, wallet, "Retrieve X.509 Credentials", "File Operation")
+Rel(cc, cmec, "Final Index Report", "Chaincode Invoke")
+Rel(cc, cmesg, "Final Index Report", "Chaincode Invoke")
+Rel(edge, cc, "Submits Raw CO2e from Production", "Chaincode Invoke")
+
+SHOW_LEGEND()
+@enduml
+
+@startuml architecture
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+skinparam defaultTextAlignment center
+
+skinparam wrapWidth 200
+skinparam maxMessageSize 150
+
+skinparam LegendBorderColor transparent
+skinparam LegendBackgroundColor transparent
+skinparam LegendFontColor #FFFFFF
+
+skinparam shadowing<<legendArea>> false
+skinparam rectangle<<legendArea>> {
+    backgroundcolor #00000000
+    bordercolor #00000000
+}
+
+skinparam rectangle {
+    StereotypeFontSize 12
+    shadowing false
+}
+
+skinparam database {
+    StereotypeFontSize 12
+    shadowing false
+}
+
+skinparam queue {
+    StereotypeFontSize 12
+    shadowing false
+}
+
+skinparam arrow {
+    Color #666666
+    FontColor #666666
+    FontSize 12
+}
+
+skinparam actor {
+    StereotypeFontSize 12
+    shadowing false
+    style awesome
+}
+
+skinparam person {
+    StereotypeFontSize 12
+    shadowing false
+}
+
+skinparam package {
+    StereotypeFontSize 6
+    StereotypeFontColor transparent
+    FontStyle plain
+    BackgroundColor transparent
+}
+
+skinparam rectangle<<boundary>> {
+    Shadowing false
+    StereotypeFontSize 6
+    StereotypeFontColor transparent
+    FontColor #444444
+    BorderColor #444444
+    BackgroundColor transparent
+    BorderStyle dashed
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+skinparam rectangle<<person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #08427B
+    BorderColor #073B6F
+}
+skinparam database<<person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #08427B
+    BorderColor #073B6F
+}
+skinparam queue<<person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #08427B
+    BorderColor #073B6F
+}
+skinparam actor<<person>> {
+    StereotypeFontColor #08427B
+    FontColor #08427B
+    BackgroundColor #08427B
+    BorderColor #073B6F
+}
+skinparam person<<person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #08427B
+    BorderColor #073B6F
+}
+
+
+skinparam rectangle<<external_person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #686868
+    BorderColor #8A8A8A
+}
+skinparam database<<external_person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #686868
+    BorderColor #8A8A8A
+}
+skinparam queue<<external_person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #686868
+    BorderColor #8A8A8A
+}
+skinparam actor<<external_person>> {
+    StereotypeFontColor #686868
+    FontColor #686868
+    BackgroundColor #686868
+    BorderColor #8A8A8A
+}
+skinparam person<<external_person>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #686868
+    BorderColor #8A8A8A
+}
+
+
+skinparam rectangle<<system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #1168BD
+    BorderColor #3C7FC0
+}
+skinparam database<<system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #1168BD
+    BorderColor #3C7FC0
+}
+skinparam queue<<system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #1168BD
+    BorderColor #3C7FC0
+}
+skinparam actor<<system>> {
+    StereotypeFontColor #1168BD
+    FontColor #1168BD
+    BackgroundColor #1168BD
+    BorderColor #3C7FC0
+}
+skinparam person<<system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #1168BD
+    BorderColor #3C7FC0
+}
+
+
+skinparam rectangle<<external_system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #999999
+    BorderColor #8A8A8A
+}
+skinparam database<<external_system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #999999
+    BorderColor #8A8A8A
+}
+skinparam queue<<external_system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #999999
+    BorderColor #8A8A8A
+}
+skinparam actor<<external_system>> {
+    StereotypeFontColor #999999
+    FontColor #999999
+    BackgroundColor #999999
+    BorderColor #8A8A8A
+}
+skinparam person<<external_system>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #999999
+    BorderColor #8A8A8A
+}
+
+
+
+
+
+sprite $person [48x48/16] {
+000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000
+0000000000000000000049BCCA7200000000000000000000
+0000000000000000006EFFFFFFFFB3000000000000000000
+00000000000000001CFFFFFFFFFFFF700000000000000000
+0000000000000001EFFFFFFFFFFFFFF80000000000000000
+000000000000000CFFFFFFFFFFFFFFFF6000000000000000
+000000000000007FFFFFFFFFFFFFFFFFF100000000000000
+00000000000001FFFFFFFFFFFFFFFFFFF900000000000000
+00000000000006FFFFFFFFFFFFFFFFFFFF00000000000000
+0000000000000BFFFFFFFFFFFFFFFFFFFF40000000000000
+0000000000000EFFFFFFFFFFFFFFFFFFFF70000000000000
+0000000000000FFFFFFFFFFFFFFFFFFFFF80000000000000
+0000000000000FFFFFFFFFFFFFFFFFFFFF80000000000000
+0000000000000DFFFFFFFFFFFFFFFFFFFF60000000000000
+0000000000000AFFFFFFFFFFFFFFFFFFFF40000000000000
+00000000000006FFFFFFFFFFFFFFFFFFFE00000000000000
+00000000000000EFFFFFFFFFFFFFFFFFF800000000000000
+000000000000007FFFFFFFFFFFFFFFFFF100000000000000
+000000000000000BFFFFFFFFFFFFFFFF5000000000000000
+0000000000000001DFFFFFFFFFFFFFF70000000000000000
+00000000000000000BFFFFFFFFFFFF500000000000000000
+0000000000000000005DFFFFFFFFA1000000000000000000
+0000000000000000000037ABB96100000000000000000000
+000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000
+000000000000025788300000000005886410000000000000
+000000000007DFFFFFFD9643347BFFFFFFFB400000000000
+0000000004EFFFFFFFFFFFFFFFFFFFFFFFFFFB1000000000
+000000007FFFFFFFFFFFFFFFFFFFFFFFFFFFFFD200000000
+00000006FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE10000000
+0000003FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0000000
+000000BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5000000
+000003FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD000000
+000009FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF200000
+00000DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF600000
+00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF800000
+00001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA00000
+00001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB00000
+00001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB00000
+00001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB00000
+00001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA00000
+00000EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF700000
+000006FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE100000
+0000008FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD3000000
+000000014555555555555555555555555555555300000000
+000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000
+}
+
+sprite $person2 [48x48/16] {
+0000000000000000000049BCCA7200000000000000000000
+0000000000000000006EFFFFFFFFB3000000000000000000
+00000000000000001CFFFFFFFFFFFF700000000000000000
+0000000000000001EFFFFFFFFFFFFFF80000000000000000
+000000000000000CFFFFFFFFFFFFFFFF6000000000000000
+000000000000007FFFFFFFFFFFFFFFFFF100000000000000
+00000000000001FFFFFFFFFFFFFFFFFFF900000000000000
+00000000000006FFFFFFFFFFFFFFFFFFFF00000000000000
+0000000000000BFFFFFFFFFFFFFFFFFFFF40000000000000
+0000000000000EFFFFFFFFFFFFFFFFFFFF70000000000000
+0000000000000FFFFFFFFFFFFFFFFFFFFF80000000000000
+0000000000000FFFFFFFFFFFFFFFFFFFFF80000000000000
+0000000000000DFFFFFFFFFFFFFFFFFFFF60000000000000
+0000000000000AFFFFFFFFFFFFFFFFFFFF40000000000000
+00000000000006FFFFFFFFFFFFFFFFFFFE00000000000000
+00000000000000EFFFFFFFFFFFFFFFFFF800000000000000
+000000000000007FFFFFFFFFFFFFFFFFF100000000000000
+000000000000000BFFFFFFFFFFFFFFFF5000000000000000
+0000000000000001DFFFFFFFFFFFFFF70000000000000000
+00000000000000000BFFFFFFFFFFFF500000000000000000
+0000000000000000005DFFFFFFFFA1000000000000000000
+0000000000000000000037ABB96100000000000000000000
+000000000002578888300000000005888864100000000000
+0000000007DFFFFFFFFD9643347BFFFFFFFFFB4000000000
+00000004EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB10000000
+0000007FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD2000000
+000006FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE100000
+00003FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB00000
+0000BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF50000
+0003FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD0000
+0009FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF2000
+000DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF6000
+000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8000
+001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB000
+001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB000
+001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB000
+001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA000
+000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8000
+000DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF6000
+0009FFFFFFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFFFFFF2000
+0003FFFFFFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFFFFFD0000
+0000BFFFFFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFFFFF50000
+00003FFFFFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFFFFB00000
+000006FFFFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFFFE100000
+0000007FFFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFFD2000000
+00000004EFFF8FFFFFFFFFFFFFFFFFFFFFF8FFFB10000000
+0000000007DF8FFFFFFFFFFFFFFFFFFFFFF8FB4000000000
+000000000002578888888888888888888864100000000000
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+skinparam rectangle<<container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam database<<container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam queue<<container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam actor<<container>> {
+    StereotypeFontColor #438DD5
+    FontColor #438DD5
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam person<<container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+
+
+skinparam rectangle<<external_container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #B3B3B3
+    BorderColor #A6A6A6
+}
+skinparam database<<external_container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #B3B3B3
+    BorderColor #A6A6A6
+}
+skinparam queue<<external_container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #B3B3B3
+    BorderColor #A6A6A6
+}
+skinparam actor<<external_container>> {
+    StereotypeFontColor #B3B3B3
+    FontColor #B3B3B3
+    BackgroundColor #B3B3B3
+    BorderColor #A6A6A6
+}
+skinparam person<<external_container>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #B3B3B3
+    BorderColor #A6A6A6
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sprite $file_server [39x48/16] {
+000000000000000000000000000000000000000
+000000000000000000000000000000000000000
+0028AAAAAAAAAAAAAAAAA930000000000000000
+008AAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAA2222222222222AAAA0000000000000000
+00AAAA0000000000000AAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000000000000000
+00AAAAAAAAAAAAAAAAAAAAA0000005AAAAAA810
+00AAAAAAAAAAAAAAAAAAAAA000007AAAAAAAA40
+00AAAAAAAAAAAA85555555500007AAAAAAAAA40
+00AAAAAAAAAAA60000000000000000000000000
+00AAAAAAAAAA9008AAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA706AAAAAAAAAAAAAAAAAAAAAA40
+00AAAA777777507AAAAAAAAAAAAAAAAAAAAAA40
+00AAAA000000007AAAAAAAAAAAAAAAAAAAAAA40
+00AAAA777777507AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+00AAAA000000007AAAAAAAAAAAAAAAAAAAAAA40
+00AAAA111111007AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+00AAAAAAAAAA707AAAAAAAAAAAAAAAAAAAAAA40
+004444444444307AAAAAAAAAAAAAAAAAAAAAA40
+000000000000007AAAAAAAAAAAAAAAAAAAAAA40
+000000000000007AAAAAAAAAAAAAAAAAAAAAA40
+000000000000002444444444444444444444410
+000000000000000000000000000000000000000
+}
+
+sprite $contract [128x128/16] {
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDC0000000000000000000000000000000000000000000000000000
+000000000000000DD7333333333333333333333333333333333333333333333333333333788ADD00000000000000000000000000000000000000000000000000
+00000000000000DA10000000000000000000000000000000000000000000000000000000013547DD000000000000000000000000000000000000000000000000
+00000000000000D4000000000000000000000000000000000000000000000000000000000001502CD00000000000000000000000000000000000000000000000
+00000000000000D00000000000000000000000000000000000000000000000000000000000003101AD0000000000000000000000000000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000050006DD00000000000000000000000000000000000000000000
+00000000000000E00000000000000000000000000000000000000000000000000000000000000410003DD0000000000000000000000000000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000003200003CD000000000000000000000000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000024000003CD00000000000000000000000000000000000000000
+00000000000000E00000000000000000000000000000000000000000000000000000000000000160000003CD0000000000000000000000000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000610000003BD000000000000000000000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000005200000003BD00000000000000000000000000000000000000
+00000000000000E00000000000000000000000000000000000000000000000000000000000000043000000003BD0000000000000000000000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000340000000003BD000000000000000000000000000000000000
+00000000000000E000000000000039CB81000000000000000003100000000000000000000310002400000000003BD00000000000000000000000000000000000
+00000000000000E0000000000003DD8AD900000000000000005D200000000000000000005D300025000000000003BD0000000000000000000000000000000000
+00000000000000E000000000000AD2008910057610054375019D724537215762001674119D7200261000000000003BD000000000000000000000000000000000
+00000000000000E000000000001DB00000009DBDC10CCBAD72CDB38DCC29C9CC00BDAD82CDB4001610000000000003CD00000000000000000000000000000000
+00000000000000E000000000002D80000004D603D80CC00CA06D208D4004318D15D505606D300016100000000000004CD0000000000000000000000000000000
+00000000000000E000000000001DB0002207D200CA0CA00CA06D208D1005ACCD27D200006D3000161000000000000005DD000000000000000000000000000000
+00000000000000E000000000000AD300BD25D402D90CA00BA06D208D102D816D26D504616D30001610000000000000017DD00000000000000000000000000000
+00000000000000E0000000000003DD9BD802CC7BD30CA00BA05D838D002D95CD32CC7CA05D830016200000000000000019DD0000000000000000000000000000
+00000000000000E000000000000028B9500028B930097009801AB46A0005A95A4039B72019B40006200000000000000001BD0000000000000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000062000000000000111112CD000000000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000000621000000011111111113CD00000000000000000000000000
+00000000000000E00000000000000000000000000000000000000000000000000000000000000006310011111111111111114CD0000000000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000063111111111111111111116DD000000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000000631111111111111111111118DD00000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000000532222222211111111111111AD00000000000000000000000
+00000000000000E00000000000000000000000000000000000000000000000000000000000000005445555556565553211111112CD0000000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000013444556677888999986421113DD000000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000000000111223344555667788874116DD00000000000000000000
+00000000000000E0000000000000000000000000000000000000000000000000000000000000000001111223334455566665555641AD00000000000000000000
+00000000000000E00000000000000000000000000000000000000000000000000000000000000000011111223344455555555444354CC0000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000000111112223344445555444433359D0000000000000000000
+00000000000000E000000000000222222222222222222222222222222222222222222222222222222222223333344444444443332226D0000000000000000000
+00000000000000E000000000000233333333333333333333333333333333333333333333333333333333333333344444333333322212DE000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000000000000000011111112222333333332222110DE000000000000000000
+00000000000000E000000000000222222222222222222222222222222222222222222222222222222222222223333333222222211100DE000000000000000000
+00000000000000E000000000000333333333333333333333333333333333333333333333333333333333333333333333222221111100DE000000000000000000
+00000000000000E000000000000000000000000000000000000000000000000000000001100000000000111111111111111111111100DE000000000000000000
+00000000000000E000000000000222222222222222222222222222222222222222222234433222222222222222222222111111111000DE000000000000000000
+00000000000000E100000000000333333333333333333333333333333333333333333344444333333333333333333333111111111000DE000000000000000000
+00000000000000E100000000000000000000000000000000000000000000000000013333333332100000000111111111111111111000DE000000000000000000
+00000000000000E111111111111222222222222222222222222222222222222222224444444444332222222211111111111111111110DE000000000000000000
+00000000000000E111111111111333333333333333333333333333333333333333334444444444444333333311111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111111111111111111112333323333333321111111111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111111111111111111111333311233333333211111111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111111111111111111111333321112333333332111111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111111111111111111111233331111233333333311111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111111111111111111111233331111113333333332111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111111111111111111111133332111123333333333321111111111111110DE000000000000000000
+00000000000000E111111111111222222222222222222222222222223344443322222244444223444443443333211111111111111110DE000000000000000000
+00000000000000E111111111111333333333333333333333333333344444444433333334444334444433333332111111111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111111112333333333321111123333333333211111211111111111111111110DE000000000000000000
+00000000000000E111111111111222222222222222222222222234444444444322222224444444443222222222222222111111111110DE000000000000000000
+00000000000000E111111111111333333333333333333333333344444333343333333334444444433333333333333333111111111110DE000000000000000000
+00000000000000E111111111111111111111111111111111112333321111111111111112333332111111111111111111111111111111DE000000000000000000
+00000000000000E111111111111222222222222222222222234444322222222233333323444432222222222222221111111111111111DE000000000000000000
+00000000000000E111111111111333333333333333333333344443333333333444444433444443333333333333331111111111111111DE000000000000000000
+00000000000000E111111111111111111111111111111111133331111111233333333331233332111111111111111111111111111111DE000000000000000000
+00000000000000E111111111111222222222222222222222344443222234444444444443344443222221111111111111111111111111C5567000000000000000
+00000000000000E11111111111133333333333333333333334444433344444444444444434444433333111111111111111111111111252468A00000000000000
+00000000000000E11111111111111111111111111111111113333333333333321113333313333111111111111111111111111111111434679AE0000000000000
+00000000000000E11111111111111111111111111222221113444444444432111112444412421111111111111111111111111111113446789AE0000000000000
+00000000000000E1111111111111111111111123444334322134444444321111111244431121111111111111111111111111111112201479ABF0000000000000
+00000000000000E1111111111111111111112343222212334323444432111111111344431111111111111111111111111111111113101359ACF0000000000000
+00000000000000E1111111111111111111134321111222222332222211111111112444321111111111111111111111111111111124355568BFF0000000000000
+00000000000000E1111111111111111111242112222222222233211111111111124444211111111111111111111111111111111133245889CFF0000000000000
+00000000000000E111111111111333333343334444433333333443333333333334444333333333333333333333333111111111124134579AFF00000000000000
+00000000000000E111111111111333333443344444443333333343333344334444444333333333333333333333333111111111133245689CFF00000000000000
+00000000000000E11111111111111111331134444444322222223411344444444443111111111111111111111111111111111124134578BFF000000000000000
+00000000000000E1111111111113333343334444444443333333343444444444443333333333333333333333333333331111114224568ADFF000000000000000
+00000000000000E1111111111113333343334444444443333333344344444444433333333333333333333333333333331111124134578BFF0000000000000000
+00000000000000E111111111111111134222344444444332222223412234433211111111111111111111111111111111111114224568ADF00000000000000000
+00000000000000E111111111111333344333344444444444333334433333333333333333333333333333333333332111111124134678BFF00000000000000000
+00000000000000E12222222222233334433334444444444444444443333333333333333333333333333333333333222222224224568ADF000000000000000000
+00000000000000E122222222222222233222223344444444432223422222222222222222222222222222222222222222222341346789EF000000000000000000
+00000000000000E1222222222223333343333333444444444443344333333333333333333333333322222222222222222224224568A7EE000000000000000000
+00000000000000E122222222222333334333333344444444444444433333333333333333333333332222222222222222223413467994DE000000000000000000
+00000000000000E122222222222222224322222234444444444334222222222222222222222222222222222222222222224224568A73DE000000000000000000
+00000000000000E122222222222333333433333334444444443344333333333333333333333333333333333333333333234134679952DE000000000000000000
+00000000000000E12222222222233333344344444444444444444433333333333333333333333333333333333333333324224568A741DE000000000000000000
+00000000000000E122222222222222222343333333344443333442222222222222222222222222222222222222222222341346799521DE000000000000000000
+00000000000000E1222222222223333333444333333444433344333333333333333333333333333333333333333322224224568A7421DE000000000000000000
+00000000000000E122222222222333333334444444444444444333333333333333333333333333333333333333332223313467995221DE000000000000000000
+00000000000000E122222222222222222222244433333334432222222222222222222222222222222222222222222224224568A63221DE000000000000000000
+00000000000000E122222222222222222222223344444443222222222222222222222222222222222222222222222233134679952221DE000000000000000000
+00000000000000E12222222222222222222222222333222222222222222222222222222222222222222222222222224224578A632221DE000000000000000000
+00000000000000E122222222222222222222222222222222222222222222222222222222222222222222222222222331346799522221DE000000000000000000
+00000000000000E1222222222222222222222222222222222222222222222222222222222222222222222222222224224578A6322221DE000000000000000000
+00000000000000E122222222222222222222222222222222222222222222222222222222222222222222222222224313467985222221DE000000000000000000
+00000000000000E122222222222333333333333333333333333333333333333333333333333333333333333333335234578A63222221DE000000000000000000
+00000000000000E122222222222333333333333333333333333333333333333333333333333333333333333333353135679852222221DE000000000000000000
+00000000000000E12222222222222222222222222222222222222222222222222222222222222222222222222224234578A632222221DE000000000000000000
+00000000000000E122222222222333333333333333333333333333333333333333333333333333333333333333531356798522222221DE000000000000000000
+00000000000000E1222222222223333333333333333333333333333333333333333333333333333333333333345234578A6322222221DE000000000000000000
+00000000000000E122222222222222222222222222222222222222222222222222222222222222222222222224324567985222222221DE000000000000000000
+00000000000000E122222222222333333333333333333333333333333333333333333333333333333332222234134578A63222222221DE000000000000000000
+00000000000000E122222222222333333333333333333333333333333333333333333333333333333332222243245679852222222221DE000000000000000000
+00000000000000E12222222222222222222222222222222222222222222222222222222222222222222222234134578A632222222221DE000000000000000000
+00000000000000E122222222222222222222222222222222222222222222222222222222222222222222222432456898522222222221DE000000000000000000
+00000000000000E1222222222222222222222222222222222222222222222222222222222222222222222234134578A6322222222221DE000000000000000000
+00000000000000E122222222222222222222222222222222222222222222222222222222222222222222224224568A85222222222221DE000000000000000000
+00000000000000E122222222222222222222222222222222222222222222222222222222222222222222234134578A63222222222221DE000000000000000000
+00000000000000E22222222222222222222222222222222222222222222222222222222222222222222224224568A852222222222221DE000000000000000000
+00000000000000E222222222222222222222222222222222222222222222222222222222222222222222341346789632222222222221DE000000000000000000
+00000000000000E2222222222222222222222222222222222222222222222222222222222222222222235224568A8422222222222221DE000000000000000000
+00000000000000E223333333333333333333333333333333333333333333333333333333333333333334413467896333333333333331DE000000000000000000
+00000000000000E223333333333333333333333333333333333333333333333333333333333333333335224568A84333333333333331DE000000000000000000
+00000000000000E233333333333333333333333333333333333333333333333333333333333333333334123679963333333333333331DE000000000000000000
+00000000000000E23333333333333333333333333333333333333333333333333333333333333333334312357A743333333333333331DE000000000000000000
+00000000000000E233333333333333333333333333333333333333333333333333333333333333333351134578633333333333333331DE000000000000000000
+00000000000000E233333333333333333333333333333333333333333333333333333333333333333351234687433333333333333331DE000000000000000000
+00000000000000E233333333333333333333333333333333333333333333333333333333333333333441345875333333333333333331DF000000000000000000
+00000000000000E423333333333333333333333333333333333333333333333333333333333333333431357753333333333333333323EF000000000000000000
+00000000000000EA22222222222222222222222222222222222222222222222222222222222222222421467532222222222222222218EF000000000000000000
+00000000000000FEC76666666666666666666666666666666666666666666666666666666666666667226987666666666666666666AEF0000000000000000000
+00000000000000FFFEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE945DFEEEEEEEEEEEEEEEEEEEEEFF0000000000000000000
+000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCECFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000
+00000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDDFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000FFFF00000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000FFF000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+}
+
+
+
+
+
+sprite $token_service [48x44/16] {
+000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000
+000000000000489ABA985000000000000000000000000000
+00000000004ABBBBBBBBBA50000000000000000000000000
+0000000018BBA8421248ABB9100000000000000000000000
+000000009BA70000000007ABA10000000000000000000000
+00000009BA2000156510002AB90000000000000000000000
+0000006BA20049ABBBA94002AB8000000000000000000000
+000000AB5006A8310138A6005BA100000000000000000000
+000006B9004A600000006A4009B800000000000000000000
+00000BB401B90000000009B104BB00000000000000000000
+00001BB203A00000000000A402BB20000000000000000000
+00002BB107A00000000000A701BB30000000000000000000
+00002BB0089000000000009800BB30000000000000000000
+00002BB0079000000000009700BB30000000000000000000
+00001BB105A00000000000A501BB20000000000000000000
+00000BB302B50000000005B203BB10000000000000000000
+000008B8007A200000002A7008BA00000000000000000000
+000001AA3009A5000005A9003BB300000000000000000000
+0000008B90007AA767AA70009B9000000000000000000000
+0000001AB800026898620008BA2000000000000000000000
+00000003AB910000000001ABA50000028300007710000000
+000000002ABB810000018BBB4000008AAA0000AAA6000000
+0000000004BBBAA999AABBBA1000004AAA4336AAA2000000
+0000000009BBBBBBBBBBBBBB8000001AAAAAAAAA80000000
+000000005BBBBBBBABBBBBBB9000003AAAAAAAAA91000000
+000000009BBBBBBB3ABBBBBB407303AAA852359AAA114500
+00000006BBBBBBBA09BBBBBA03AAAAAA30000005AAAAAA20
+0000000ABBBBBBB904BBBBB608AAAAA4000000005AAAAA70
+0000007BBBBBBBB6009BBBB704AAAA800000000009AAA930
+000001ABBBBBBBB2007BBBBA4004AA500000000005AA4000
+000008BBBBBBBBA0002BBBBBB902AA300000000003AA1000
+00002BBBBBBBBB800009BBBBA702AA300000000003AA1000
+00008BBBBBBBBB500005BBBA1006AA500000000006AA4000
+0003BBBBBBBBBB100002BBB607AAAA90000000001AAAAA50
+0009BBBA9BBBB90000008BB707AAAAA6000000007AAAAA60
+0027531007BBB60000003BB902AA89AA61000017AA97AA20
+00000000007BB30000001BA2006202AAAA7457AAA9000300
+000000000009A100000008400000001AAAAAAAAA90000000
+0000000000006000000001000000000AAAAAAAAAA0000000
+0000000000000000000000000000005AAA3113AAA4000000
+0000000000000000000000000000005AA90000AAA4000000
+000000000000000000000000000000005200004500000000
+000000000000000000000000000000000000000000000000
+}
+
+
+
+skinparam rectangle<<files>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam database<<files>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam queue<<files>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam actor<<files>> {
+    StereotypeFontColor #438DD5
+    FontColor #438DD5
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam person<<files>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+
+
+
+skinparam rectangle<<contract>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam database<<contract>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam queue<<contract>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam actor<<contract>> {
+    StereotypeFontColor #438DD5
+    FontColor #438DD5
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+skinparam person<<contract>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #438DD5
+    BorderColor #3C7FC0
+}
+
+
+
+skinparam rectangle<<edge>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #444444
+    BorderColor #3C7FC0
+}
+skinparam database<<edge>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #444444
+    BorderColor #3C7FC0
+}
+skinparam queue<<edge>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #444444
+    BorderColor #3C7FC0
+}
+skinparam actor<<edge>> {
+    StereotypeFontColor #444444
+    FontColor #444444
+    BackgroundColor #444444
+    BorderColor #3C7FC0
+}
+skinparam person<<edge>> {
+    StereotypeFontColor #FFFFFF
+    FontColor #FFFFFF
+    BackgroundColor #444444
+    BorderColor #3C7FC0
+}
+
+
+
+
+rectangle "<$person>\n==Hydrogen Producer" <<person>> as admin 
+rectangle "<$token_service>\n==Registered Production Device\n//<size:12>[CO2e]</size>//" <<edge>><<container>> as edge 
+rectangle "==Carbonmarket Application\n<size:12>[System]</size>" <<boundary>> as c1  {
+    rectangle "==Web Application\n//<size:12>[React]</size>//\n\n Allows users to purchase/sell Carboncoin for Emissions Trading" <<container>> as web_app 
+    rectangle "==HTTPS API\n//<size:12>[Express]</size>//\n\n Allow frontend to query the API for user actions" <<container>> as api 
+    rectangle "<$file_server>\n==Cryptograhpic Wallet\n//<size:12>[X.509]</size>//" <<files>><<container>> as wallet 
+    rectangle "==Identity Management\n//<size:12>[Database]</size>//" <<container>> as credentials 
+}
+rectangle "==Emissions Trading Blockchain\n<size:12>[System]</size>" <<boundary>> as blockchain  {
+rectangle "==Carbonmarket Blockchain Channel\n<size:12>[System]</size>" <<boundary>> as market_channel  {
+        rectangle "<$contract>\n==Carbonmarket Smart Contracts\n//<size:12>[Chaincode]</size>//\n\n Immutable Recording of Emissions Trading" <<contract>><<container>> as cmsc 
+        rectangle "<$contract>\n==Energy Production Index Smart Contract\n//<size:12>[Chaincode]</size>//\n\n Immutable Recording of Energy Production" <<contract>><<container>> as cmec 
+        rectangle "<$contract>\n==ESG Index Smart Contract\n//<size:12>[Chaincode]</size>//\n\n Immutable Recording of ESG Certificates" <<contract>><<container>> as cmesg 
+    }
+rectangle "==ESG Channel\n<size:12>[System]</size>" <<boundary>> as certification  {
+        rectangle "==Smart Contracts for ESG and Energy Certification\n//<size:12>[Chaincode]</size>//\n\n Business Logic for Creating Certificates" <<container>> as cc 
+    }
+}
+
+
+admin - ->> web_app : **Uses**\n//<size:12>[HTTPS]</size>//
+admin - ->> cc : **Submits ESG Raw Data/Reports**
+web_app - ->> api : **Read/update resources**\n//<size:12>[HTTPS]</size>//
+api -LEFT->> credentials : **Check user**\n//<size:12>[Local]</size>//
+cmec - ->> cmsc : **Report Energy Production**\n//<size:12>[Chaincode Invoke]</size>//
+cmesg - ->> cmsc : **Report ESG Certification**\n//<size:12>[Chaincode Invoke]</size>//
+api - ->> cmsc : **Emissions Trading Operation**\n//<size:12>[Chaincode Invoke]</size>//
+api -UP->> wallet : **Retrieve X.509 Credentials**\n//<size:12>[File Operation]</size>//
+cc - ->> cmec : **Final Index Report**\n//<size:12>[Chaincode Invoke]</size>//
+cc - ->> cmesg : **Final Index Report**\n//<size:12>[Chaincode Invoke]</size>//
+edge - ->> cc : **Submits Raw CO2e from Production**\n//<size:12>[Chaincode Invoke]</size>//
+
+hide stereotype
+legend right
+<#00000000,#00000000>|<color:#000000>**Legend**</color> |
+|<#08427B><color:#073B6F> <U+25AF></color> <color:#FFFFFF> person </color> |
+|<#438DD5><color:#3C7FC0> <U+25AF></color> <color:#FFFFFF> container </color> |
+|<#438DD5><color:#3C7FC0> <U+25AF></color> <color:#FFFFFF><$file_server,scale=0.25>  cryptographic wallet </color> |
+|<#438DD5><color:#3C7FC0> <U+25AF></color> <color:#FFFFFF><$contract,scale=0.25>  smart contract </color> |
+|<#444444><color:#3C7FC0> <U+25AF></color> <color:#FFFFFF><$token_service,scale=0.25>  registered edge device </color> |
+endlegend
+@enduml
+
+PlantUML version 1.2021.7(Sun May 23 22:40:07 AEST 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

@@ -107,6 +107,9 @@ const OfferFinder = () => {
             active={offer.active}
             reputation={offer.reputation}
             offerid={offer.offerId}
+            environment={offer.environment}
+            social={offer.social}
+            governance={offer.governance}
           />
         );
       })}

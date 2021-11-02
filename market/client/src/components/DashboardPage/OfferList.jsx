@@ -70,6 +70,7 @@ const OfferList = (props) => {
               environment={offer.environment}
               social={offer.social}
               governance={offer.governance}
+              offers={[]}
             />
           );
         } else {
@@ -87,6 +88,7 @@ const OfferList = (props) => {
               environment={offer.environment}
               social={offer.social}
               governance={offer.governance}
+              offers={[]}
             />
           );
         }

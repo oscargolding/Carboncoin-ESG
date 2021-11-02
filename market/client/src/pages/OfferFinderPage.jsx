@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, } from 'react';
+import { useLocation, } from 'react-router';
 import OfferFinder from '../components/OfferFinderPage/OfferFinder';
 
 /**
@@ -6,10 +7,12 @@ import OfferFinder from '../components/OfferFinderPage/OfferFinder';
  * @returns the OfferFinderPage
  */
 const OfferFinderPage = () => {
+  const location = useLocation();
+  const [offers, setOffers] = useState(location.state.offers);
   return (
     <>
       <h1> Carboncoin Offer Finder </h1>
-      <OfferFinder />
+      <OfferFinder setOffers={setOffers} offers={offers} />
     </>
   );
 };

@@ -34,7 +34,7 @@ const OfferCard = (props) => {
   const {
     producer, price, quantity, active,
     offerid, reputation, usingRef, owned, deleteOfferFn,
-    environment, social, governance,
+    environment, social, governance, offers,
   } = props;
   const history = useHistory();
   const handleClickOpen = () => {
@@ -71,7 +71,7 @@ const OfferCard = (props) => {
           <ReputationElement repScore={reputation} username={producer} />
         </HeaderCard>
         <Typography variant="body2" component="p">
-          Price Per Token: <b>${price}</b>
+          Price Per Token: <b>AUD{price}</b>
           <br />
           Quantity Offered: <b>{quantity}</b>
         </Typography>
@@ -93,7 +93,13 @@ const OfferCard = (props) => {
         <Button
           size="small"
           onClick={() => history.push('/offer/purchase',
-            { offerid: offerid, quantity: quantity, producer: producer, price: price, }
+            {
+              offerid: offerid,
+              quantity: quantity,
+              producer: producer,
+              price: price,
+              offers: offers,
+            }
           )
           }
         >
@@ -170,4 +176,5 @@ OfferCard.propTypes = {
   environment: PropTypes.number.isRequired,
   social: PropTypes.number.isRequired,
   governance: PropTypes.number.isRequired,
+  offers: PropTypes.array.isRequired,
 };

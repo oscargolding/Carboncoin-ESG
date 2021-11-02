@@ -49,7 +49,7 @@ const Offer = (props) => {
       />
       {dollar !== '0' && quantity !== '0'
         ? <p>Sell {quantity} Carboncoin
-          for price ${dollar} dollars </p>
+          for price AUD{dollar} dollars </p>
         : <></>}
       <SellButton
         variant="contained"

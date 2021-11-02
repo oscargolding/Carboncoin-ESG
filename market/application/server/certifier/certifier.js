@@ -38,8 +38,8 @@ const productionList = [
 
 const simpleList = [
   {
-    firm: 'riotinto@gmail.com',
-    carbonProduction: '50',
+    firm: 'modernenergy@hydrogen.com',
+    carbonProduction: '-50',
     date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     id: uuid4(),
   },

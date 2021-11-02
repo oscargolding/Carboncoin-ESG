@@ -1,5 +1,7 @@
 @startuml Token
 
+skinparam monochrome true
+
 (*) -right-> "Issue Carbon Token"
 note top: Token Template
 note bottom: Policy Contract

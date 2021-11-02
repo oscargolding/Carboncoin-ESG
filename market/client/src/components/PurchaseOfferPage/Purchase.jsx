@@ -1,6 +1,6 @@
 import React, { useState, } from 'react';
 import PropTypes from 'prop-types';
-import { useLocation, } from 'react-router';
+import { useHistory, useLocation, } from 'react-router';
 import { OfferForm, } from '../CreateOffer/styles/OfferStyles';
 import {
   InputAdornment, TextField, Button,
@@ -29,6 +29,8 @@ const Purchase = (props) => {
   const quantityAvailable = location.state.quantity;
   const producer = location.state.producer;
   const price = location.state.price;
+  const offers = location.state.offers;
+  const history = useHistory();
   const [sellableQuantity, setSellableQuantity] = useState(quantityAvailable);
   const purchaseTokens = async () => {
     setLoading(true);
@@ -47,10 +49,27 @@ const Purchase = (props) => {
   };
   return (
     <OfferForm>
+      {offers.length > 0
+        ? <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={() => {
+            const offerCopy = JSON.parse(JSON.stringify(offers));
+            if (sellableQuantity === 0) {
+              offerCopy.splice(offerCopy.findIndex((offer) => {
+                return offer.offerId === offerId;
+              }), 1);
+            }
+            history.push('/offerfinder', { offers: offerCopy, });
+          }}
+        > Go Back to Offer Finder
+        </Button>
+        : <></>}
       <h1> Purchase Carboncoin from Seller: {producer} </h1>
       <OfferDetails elevation={3}>
         <h2> Offer Details: </h2>
-        <h3> Price Offered per Carboincoin: ${price}</h3>
+        <h3> Price Offered per Carboincoin: AUD{price}</h3>
         <h3> Quantity Available for Purchase: {sellableQuantity} </h3>
       </OfferDetails>
       <TextField
@@ -88,6 +107,7 @@ const Purchase = (props) => {
 
 Purchase.propTypes = {
   acceptOffer: PropTypes.func.isRequired,
+  offers: PropTypes.array.isRequired,
 };
 
 export default Purchase;

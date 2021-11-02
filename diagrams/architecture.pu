@@ -5,16 +5,17 @@
 !include <osa/contract/contract>
 !include <office/Security/token_service>
 
+skinparam monochrome true
 
 AddContainerTag("files", $sprite="file_server", $legendText="cryptographic wallet")
 AddContainerTag("contract", $sprite="contract", $legendText="smart contract")
 AddContainerTag("edge",$sprite="token_service", $legendText="registered edge device", $bgColor="#444444")
 
 Person(admin, "Hydrogen Producer")
-Person(regulator, "Carbonmarket Regulator")
+Person(regulator, "Carbon Market Regulator")
 Person(consumer, "Consumer")
 Container(edge, "Registered Production Device", "CO2e", $tags="edge")
-System_Boundary(c1, "Carbonmarket Application") {
+System_Boundary(c1, "Carbon Market Application") {
     Container(web_app, "Web Application", "React", "Allows users to purchase/sell Carboncoin for Emissions Trading")
 }
 System_Boundary(cli, "Regulator Application") {
@@ -29,8 +30,8 @@ System_Boundary(web_server, "Replicated Web Server") {
     Container(credentials, "Identity Management", "Database")
 }
 System_Boundary(blockchain, "Permissioned Emissions Trading Blockchain") {
-    System_Boundary(market_channel, "Carbonmarket Blockchain Channel") {
-        Container(cmsc, "Carbonmarket Smart Contracts", "Chaincode", "Immutable Recording of Emissions Trading", $tags="contract")
+    System_Boundary(market_channel, "Carbon Market Blockchain Channel") {
+        Container(cmsc, "Carbon Market Smart Contracts", "Chaincode", "Immutable Recording of Emissions Trading", $tags="contract")
         Container(cmec, "Energy Production Index Smart Contract", "Chaincode", "Immutable Recording of Energy Production", $tags="contract")
         Container(cmesg, "ESG Index Smart Contract", "Chaincode", "Immutable Recording of ESG Certificates", $tags="contract")
     }

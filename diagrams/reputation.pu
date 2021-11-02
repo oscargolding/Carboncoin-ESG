@@ -1,0 +1,36 @@
+@startuml reputation 
+
+skinparam monochrome true
+
+box "ESG Channel"
+participant "Smart Contracts for ESG Certification" as C
+end box
+
+box "Carbon Market Channel"
+participant "ESG Index Smart Contract" as I
+participant "Carbon Market Smart Contracts" as CM
+end box
+
+C -> I: Report finalised ESG Index
+activate I
+I -> I: Store finalised index on blockchain with applied weight
+activate CM
+
+alt user has sufficient tokens and is energy production
+
+    I -> CM: Tokens for user are spent
+
+else insufficient tokens and energy production
+
+    I -> CM: Smart contract records a carbon debt
+else not energy production
+
+    I -> CM: Smart contract adds to reputation of producer
+end
+
+deactivate CM
+
+deactivate I
+
+@enduml
+ 

@@ -72,7 +72,10 @@ const Dashboard = (props) => {
         {main
           ? <Button
             variant='contained'
-            onClick={() => { history.push('/offerfinder'); }}
+            onClick={() => {
+              history.push('/offerfinder',
+                { offers: [], });
+            }}
           >
             Offer Finder
           </Button>

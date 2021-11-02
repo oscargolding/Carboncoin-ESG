@@ -1,24 +1,26 @@
 import { Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, InputAdornment, TextField, } from '@material-ui/core';
 import { Alert, } from '@material-ui/lab';
-import React, { useState, } from 'react';
+import React, { useState, useEffect, } from 'react';
 import API from '../../utils/API';
 import { storeContext, } from '../../utils/store';
 import OfferCard from '../DashboardPage/OfferCard';
 import { CentralLoading, } from '../DashboardPage/styles/DashboardStyles';
 import { OfferFinderForm, } from './styles/OfferFinderStyles';
 import { Link, } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 /**
  * Find offers on the open market
  */
-const OfferFinder = () => {
+const OfferFinder = (props) => {
+  const { setOffers, offers, } = props;
   const [quantity, setQuantity] = useState(0);
   const [carbonReputation, setCarbonReputation] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [offers, setOffers] = useState([]);
   const [empty, setEmpty] = useState(false);
   const { authToken: [authToken], } = storeContext();
+  useEffect(() => { }, []);
   const handleSubmit = async () => {
     setLoading(true);
     setEmpty(false);
@@ -110,6 +112,7 @@ const OfferFinder = () => {
             environment={offer.environment}
             social={offer.social}
             governance={offer.governance}
+            offers={offers}
           />
         );
       })}
@@ -118,3 +121,8 @@ const OfferFinder = () => {
 };
 
 export default OfferFinder;
+
+OfferFinder.propTypes = {
+  setOffers: PropTypes.func.isRequired,
+  offers: PropTypes.any.isRequired,
+};

@@ -87,7 +87,7 @@
         \item On-chain order book.
         \item A template token pattern is utilised to place all
               \textit{Carboncoin} sale offers on-chain.
-        \item Generate trust in the market at the expense of chaincode
+        \item Generates trust in the market at the expense of chaincode
               performance.
     \end{itemize}
 \end{frame}
@@ -138,7 +138,7 @@
         \item The user is given an on-chain offer token to purchase
               \textit{Carboncoin}.
         \item The price per token is calculated using the maximum offer on the
-              open market.
+              open market (see Equation~\ref{eq:1}).
         \item Each $x_i$ in Equation~\ref{eq:1} represents an active offer
               in the market in Australian dollars.
     \end{itemize}
@@ -187,7 +187,7 @@
               equivalence is given a negative weight of one whilst good
               quality water used in production is given a score
               of positive two.
-        \item The carbon market can weight ESG data outside of the
+        \item The carbon market can weigh ESG data outside of the
               environment - such as the female employee rate found
               inside a company's Annual Report.
         \item The baseline weight is for carbon dioxide equivalence (CO2e), it
@@ -196,10 +196,9 @@
 \end{frame}
 \begin{frame}{ESG Integration Architecture}
     \begin{itemize}
-        \item The carbon market has specific chaincode to handle
-              the `ESG Channel' compiling an index for a market
-              participant.
-        \item Chaincode applies a weight specified by the regulator
+        \item The carbon market has specific chaincode for communicating with
+              the `ESG Channel', which receives ESG index scores.
+        \item Market chaincode applies a weight specified by the regulator
               to provide to the \textit{Carbonmarket} smart contract.
               \begin{figure}
                   \caption{ESG Architecture Interaction}

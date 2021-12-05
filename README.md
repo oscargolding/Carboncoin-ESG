@@ -58,7 +58,7 @@ Launch the HTTPS API.
 
 ### (Optional) populate the carbon market with dummy data
 
-`cd ../market/application/server/certifier`
+`cd ../application/server/certifier`
 
 `./create.sh`
 

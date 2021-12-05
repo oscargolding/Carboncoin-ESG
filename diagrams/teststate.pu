@@ -1,0 +1,51 @@
+@startuml teststate
+
+skinparam monochrome true
+
+left to right direction
+'top to bottom direction
+
+node ReputationObject <<blockchain data>>
+node ProducerRegistryObject <<blockchain data>>
+node CarboncoinObject <<blockchain data>>
+node SaleOfferObject <<blockchain data>>
+node ProducerObject <<blockchain data>>
+
+
+component addOffer <<smart contract>> as aOff 
+component createProducer <<smart contract>> as cPro 
+component reportProduction <<smart contract>> as rPro
+
+component getOffers <<smart contract>> as gOff
+component getDirect <<smart contract>> as gDir 
+component readBalance <<smart contract>> as rBal
+component getESG <<smart contract>> as gESG
+
+'cPro -[hidden]-> aOff
+'aOff -[hidden]-> rPro
+' rPro -[hidden]-> gOff
+
+' gOff -[hidden]-> gDir
+' gDir -[hidden]-> rBal 
+' rBal -[hidden]-> gESG
+
+aOff ..> ProducerObject : read
+aOff ..> CarboncoinObject : read
+aOff ..> SaleOfferObject : read
+
+rBal ..> CarboncoinObject : read
+
+cPro ..> ProducerRegistryObject : read
+
+gOff ..> SaleOfferObject : read
+gOff ..> ReputationObject : read
+
+gDir ..> SaleOfferObject : read
+
+gESG ..> ReputationObject : read
+
+rPro ..> ProducerObject : read
+rPro ..> CarboncoinObject : read
+
+
+

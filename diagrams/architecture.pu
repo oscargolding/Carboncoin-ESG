@@ -5,11 +5,31 @@
 !include <osa/contract/contract>
 !include <office/Security/token_service>
 
-skinparam monochrome true
+!$COLOR_A_5 = "#7f3b08"
+!$COLOR_A_4 = "#b35806"
+!$COLOR_A_3 = "#e08214"
+!$COLOR_A_2 = "#fdb863"
+!$COLOR_A_1 = "#fee0b6"
+!$COLOR_NEUTRAL = "#f7f7f7"
+!$COLOR_B_1 = "#d8daeb"
+!$COLOR_B_2 = "#b2abd2"
+!$COLOR_B_3 = "#8073ac"
+!$COLOR_B_4 = "#542788"
+!$COLOR_B_5 = "#2d004b"
+!$COLOR_REL_LINE = "#8073ac"
+!$COLOR_REL_TEXT = "#8073ac"
+
+UpdateElementStyle("container", $bgColor="grey", $fontColor=$COLOR_NEUTRAL, $borderColor=$COLOR_A_1, $shadowing="true")
+UpdateElementStyle("person", $bgColor="black", $fontColor=$COLOR_NEUTRAL, $borderColor=$COLOR_A_1, $shadowing="true")
+
+AddElementTag("ESG Channel", $borderColor="#d73027", $bgColor="DimGrey", $fontColor="white")
 
 AddContainerTag("files", $sprite="file_server", $legendText="cryptographic wallet")
 AddContainerTag("contract", $sprite="contract", $legendText="smart contract")
 AddContainerTag("edge",$sprite="token_service", $legendText="registered edge device", $bgColor="#444444")
+
+UpdateElementStyle("contract", $bgColor="grey", $fontColor=$COLOR_NEUTRAL, $borderColor=$COLOR_A_1, $shadowing="true")
+UpdateElementStyle("files", $bgColor="grey", $fontColor=$COLOR_NEUTRAL, $borderColor=$COLOR_A_1, $shadowing="true")
 
 Person(admin, "Hydrogen Producer")
 Person(regulator, "Carbon Market Regulator")
@@ -35,7 +55,7 @@ System_Boundary(blockchain, "Permissioned Emissions Trading Blockchain") {
         Container(cmec, "Energy Production Index Smart Contract", "Chaincode", "Immutable Recording of Energy Production", $tags="contract")
         Container(cmesg, "ESG Index Smart Contract", "Chaincode", "Immutable Recording of ESG Certificates", $tags="contract")
     }
-    System_Boundary(certification, "ESG Channel") {
+    System_Boundary(certification, "ESG Channel", $tags="ESG Channel") {
         Container(cc, "Smart Contracts for ESG and Energy Certification", "Chaincode", "Business Logic for Creating Certificates")
     }
     Container(c_auth, "Certificate Authority", "Blockchain Certificate Services")
